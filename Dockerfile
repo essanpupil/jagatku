@@ -17,6 +17,7 @@ RUN useradd -m -r insan && \
 COPY --from=base /usr/local/lib/python3.9/site-packages/ /usr/local/lib/python3.9/site-packages/
 COPY --from=base /usr/local/bin/ /usr/local/bin/
 WORKDIR /app
+RUN mkdir static
 COPY --chown=insan:insan . .
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
