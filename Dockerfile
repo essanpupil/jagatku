@@ -1,4 +1,5 @@
 FROM python:3.9-slim AS base
+RUN apt-get update && apt-get install -y --no-install-recommends
 LABEL authors="essanpupil"
 RUN mkdir /app
 WORKDIR /app
