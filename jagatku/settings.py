@@ -125,3 +125,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Prod deployment
 CSRF_COOKIE_SECURE = bool(os.environ.get('CSRF_COOKIE_SECURE') == 'true')
 SESSION_COOKIE_SECURE = bool(os.environ.get('SESSION_COOKIE_SECURE') == 'true')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+    }
+}
