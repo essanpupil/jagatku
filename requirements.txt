@@ -12,7 +12,9 @@ opentelemetry-exporter-otlp-proto-common==1.35.0
 opentelemetry-exporter-otlp-proto-grpc==1.35.0
 opentelemetry-exporter-otlp-proto-http==1.35.0
 opentelemetry-instrumentation==0.56b0
+opentelemetry-instrumentation-dbapi==0.56b0
 opentelemetry-instrumentation-django==0.56b0
+opentelemetry-instrumentation-psycopg==0.56b0
 opentelemetry-instrumentation-wsgi==0.56b0
 opentelemetry-proto==1.35.0
 opentelemetry-sdk==1.35.0
