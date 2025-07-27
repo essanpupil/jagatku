@@ -1,10 +1,11 @@
-asgiref==3.8.1
-certifi==2025.7.9
+asgiref==3.9.1
+certifi==2025.7.14
 charset-normalizer==3.4.2
-click==8.1.8
-Django==4.2.23
+click==8.2.1
+Django==5.2.4
+django-health-check==3.20.0
 googleapis-common-protos==1.70.0
-grpcio==1.73.1
+grpcio==1.74.0
 gunicorn==23.0.0
 h11==0.16.0
 idna==3.10
@@ -30,7 +31,7 @@ psycopg==3.2.9
 psycopg-binary==3.2.9
 requests==2.32.4
 sqlparse==0.5.3
-typing_extensions==4.14.0
+typing_extensions==4.14.1
 urllib3==2.5.0
 uvicorn==0.35.0
 uvicorn-worker==0.3.0
