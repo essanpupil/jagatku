@@ -1,7 +1,0 @@
-.idea/
-.git/
-.gitignore
-.gitlab-ci.yml
-*.md
-.dockerignore
-Dockerfile
