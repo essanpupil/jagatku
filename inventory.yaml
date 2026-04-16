@@ -29,13 +29,11 @@ all:
           hosts:
             node1:
               ansible_user: vagrant
-              # ansible_port: 2222
               ansible_ssh_private_key_file: .vagrant/machines/node1/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.54.11
-              k3s_role: server
-              k3s_server_init: true
+              k3s_node_name: node1
         k3s_agents:
           vars:
             k3s_control_node: false
@@ -45,29 +43,15 @@ all:
           hosts:
             node2:
               ansible_user: vagrant
-              # ansible_port: 2200
               ansible_ssh_private_key_file: .vagrant/machines/node2/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.54.12
-              k3s_role: agent
+              k3s_node_name: node2
             node3:
               ansible_user: vagrant
-              # ansible_port: 2201
               ansible_ssh_private_key_file: .vagrant/machines/node3/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.54.13
-              k3s_role: agent
-
-    # Additional groups for specific purposes
-    monitoring:
-      hosts:
-        node1:  # Run monitoring on server node
-    ingress:
-      hosts:
-        node1:  # Run ingress on server node
-    storage:
-      hosts:
-        node2:  # Run storage workloads on agent nodes
-        node3:
+              k3s_node_name: node3
