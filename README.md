@@ -9,7 +9,50 @@
 
 ## Initial setup
 1. Start vagrant machines: `vagrant up`
+2. Initialize K3s cluster: `ansible-playbook init-k3s-cluster.yml`
 
+## K3s Cluster Setup
+
+This repository includes Ansible automation to initialize a K3s Kubernetes cluster.
+
+### Cluster Architecture
+- **node1** (192.168.54.11): K3s server (control plane)
+- **node2** (192.168.54.12): K3s agent (worker)
+- **node3** (192.168.54.13): K3s agent (worker)
+
+### Files Structure
+```
+├── ansible.cfg              # Ansible configuration
+├── inventory.yaml           # Ansible inventory with cluster nodes
+├── init-k3s-cluster.yml     # Main playbook for K3s initialization
+├── roles/
+│   ├── k3s_server/         # Role for K3s server installation
+│   │   └── tasks/
+│   │       └── main.yml
+│   └── k3s_agent/           # Role for K3s agent installation
+│       └── tasks/
+│           └── main.yml
+└── cluster-provisioning.yaml # Additional cluster components
+```
+
+### Usage
+```bash
+# Initialize the K3s cluster
+ansible-playbook init-k3s-cluster.yml
+
+# Install additional components (monitoring, ingress, etc.)
+ansible-playbook cluster-provisioning.yaml
+```
+
+### Verification
+```bash
+# SSH into the server node
+vagrant ssh node1
+
+# Check cluster status
+kubectl get nodes
+kubectl cluster-info
+```
 
 ## Errors
 ### undefined method `exists`?

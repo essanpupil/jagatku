@@ -1,0 +1,78 @@
+---
+all:
+  vars:
+    # K3s configuration
+    k3s_version: v1.30.2+k3s1
+    k3s_channel: stable
+    k3s_install_dir: /usr/local/bin
+    k3s_config_dir: /etc/rancher/k3s
+
+    # Cluster configuration
+    cluster_domain: jagat.local
+    cluster_cidr: 10.42.0.0/16
+    service_cidr: 10.43.0.0/16
+
+  children:
+    k3s_cluster:
+      children:
+        k3s_servers:
+          hosts:
+            node1:
+              ansible_user: vagrant
+              # ansible_port: 2222
+              ansible_ssh_private_key_file: .vagrant/machines/node1/virtualbox/private_key
+              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_python_interpreter: /usr/bin/python3
+              ansible_host: 192.168.54.11
+              k3s_role: server
+              k3s_server_init: true
+        k3s_agents:
+          hosts:
+            node2:
+              ansible_user: vagrant
+              # ansible_port: 2200
+              ansible_ssh_private_key_file: .vagrant/machines/node2/virtualbox/private_key
+              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_python_interpreter: /usr/bin/python3
+              ansible_host: 192.168.54.12
+              k3s_role: agent
+            node3:
+              ansible_user: vagrant
+              # ansible_port: 2201
+              ansible_ssh_private_key_file: .vagrant/machines/node3/virtualbox/private_key
+              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_python_interpreter: /usr/bin/python3
+              ansible_host: 192.168.54.13
+              k3s_role: agent
+
+    # Additional groups for specific purposes
+    monitoring:
+      hosts:
+        node1:  # Run monitoring on server node
+    ingress:
+      hosts:
+        node1:  # Run ingress on server node
+    storage:
+      hosts:
+        node2:  # Run storage workloads on agent nodes
+        node3:
+
+# Group variables
+k3s_servers:
+  vars:
+    k3s_control_node: true
+    k3s_server_options:
+      - "--cluster-init"
+      - "--tls-san={{ ansible_host }}"
+      - "--node-ip={{ ansible_host }}"
+      - "--advertise-address={{ ansible_host }}"
+      - "--cluster-cidr={{ cluster_cidr }}"
+      - "--service-cidr={{ service_cidr }}"
+      - "--cluster-domain={{ cluster_domain }}"
+
+k3s_agents:
+  vars:
+    k3s_control_node: false
+    k3s_agent_options:
+      - "--node-ip={{ ansible_host }}"
+      - "--server=https://192.168.54.11:6443"
