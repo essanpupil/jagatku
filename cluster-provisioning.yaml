@@ -1,10 +1,7 @@
 ---
 - name: Install required Helm charts on local Kubernetes cluster
-  hosts: localhost
-  connection: local
+  hosts: node1
   gather_facts: false
-  collections:
-    - kubernetes.core
 
   vars:
     helm_namespace_prometheus: monitoring
@@ -12,15 +9,16 @@
     helm_namespace_tempo: tracing
     helm_namespace_argocd: argocd
     helm_namespace_traefik: traefik
+    helm_namespace_certmanager: cert-manager
 
   tasks:
     - name: Install helm-diff plugin
-      helm_plugin:
+      kubernetes.core.helm_plugin:
         plugin_path: "https://github.com/databus23/helm-diff"
         state: present
   
     - name: Ensure Helm repos are added
-      helm_repository:
+      kubernetes.core.helm_repository:
         name: "{{ item.name }}"
         repo_url: "{{ item.url }}"
       loop:
@@ -32,7 +30,7 @@
       ansible.builtin.command: helm repo update
 
     - name: Create namespaces for observability stack
-      k8s:
+      kubernetes.core.k8s:
         state: present
         definition:
           apiVersion: v1
@@ -44,9 +42,18 @@
         - "{{ helm_namespace_loki }}"
         - "{{ helm_namespace_tempo }}"
         - "{{ helm_namespace_argocd }}"
+        - "{{ helm_namespace_certmanager }}"
+
+    # - name: Install cert-manager
+    #   kubernetes.core.helm:
+    #     name: certmanager
+    #     chart_ref: "oci://quay.io/jetstack/charts/cert-manager"
+    #     chart_version: "v1.20.2"
+    #     release_namespace: "{{ helm_namespace_certmanager }}"
+    #     release_state: present
 
     - name: Install kube-prometheus-stack
-      helm:
+      kubernetes.core.helm:
         name: kube-prometheus-stack
         chart_ref: prometheus-community/kube-prometheus-stack
         release_namespace: "{{ helm_namespace_prometheus }}"
@@ -55,11 +62,12 @@
           grafana:
             ingress:
               enabled: true
+              ingressClassName: traefik
               hosts:
                 - "grafana.jagat.local"
 
     - name: Install Loki
-      helm:
+      kubernetes.core.helm:
         name: loki
         chart_ref: grafana/loki
         release_namespace: "{{ helm_namespace_loki }}"
@@ -82,19 +90,19 @@
                 chunks: chunks
 
     - name: Install Grafana Tempo
-      helm:
+      kubernetes.core.helm:
         name: tempo
         chart_ref: grafana/tempo
         release_namespace: "{{ helm_namespace_tempo }}"
         create_namespace: false
 
-    - name: Install Argo CD
-      helm:
-        name: argocd
-        chart_ref: argo/argo-cd
-        release_namespace: "{{ helm_namespace_argocd }}"
-        create_namespace: false
-        values:
-          server:
-            service:
-              type: ClusterIP
+    # - name: Install Argo CD
+    #   kubernetes.core.helm:
+    #     name: argocd
+    #     chart_ref: argo/argo-cd
+    #     release_namespace: "{{ helm_namespace_argocd }}"
+    #     create_namespace: false
+    #     values:
+    #       server:
+    #         service:
+    #           type: ClusterIP
