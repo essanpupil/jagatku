@@ -1,4 +1,5 @@
 Vagrant.configure("2") do |config|
+  config.vm.provision "shell", path: "k3s_node_provisioning.sh"
 
   config.vm.define "node1" do |node|
     node.vm.box = "cloud-image/ubuntu-24.04"
