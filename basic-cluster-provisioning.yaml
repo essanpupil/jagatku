@@ -25,10 +25,10 @@
       kubernetes.core.helm:
         name: certmanager
         chart_ref: "oci://quay.io/jetstack/charts/cert-manager"
-        chart_version: "v1.20.2"
+        # chart_version: "v1.20.2"
         release_namespace: kube-system
-        release_state: present
-        wait: true
+        release_state: absent
+        wait: false
         atomic: false
         values:
           crds:
