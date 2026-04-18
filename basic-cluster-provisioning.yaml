@@ -1,0 +1,45 @@
+---
+- name: Install required Helm charts on local Kubernetes cluster
+  hosts: node1
+  gather_facts: false
+  tasks:
+    - name: Install helm-diff plugin
+      kubernetes.core.helm_plugin:
+        plugin_path: "https://github.com/databus23/helm-diff"
+        state: present
+  
+    - name: Ensure Helm repos are added
+      kubernetes.core.helm_repository:
+        name: "{{ item.name }}"
+        repo_url: "{{ item.url }}"
+      loop:
+        - { name: prometheus-community, url: https://prometheus-community.github.io/helm-charts }
+        - { name: grafana, url: https://grafana.github.io/helm-charts }
+        - { name: argo, url: https://argoproj.github.io/argo-helm }
+        - { name: bitnami-labs, url:  https://bitnami-labs.github.io/sealed-secrets/ }
+
+    - name: Update Helm repo cache
+      ansible.builtin.command: helm repo update
+
+    - name: Install sealed secrets
+      kubernetes.core.helm:
+        name: sealed-secrets-controller
+        chart_ref: "bitnami-labs/sealed-secrets"
+        chart_version: "2.18.5"
+        release_namespace: kube-system
+        release_state: present
+        wait: true
+        atomic: true
+
+    - name: Install cert-manager
+      kubernetes.core.helm:
+        name: certmanager
+        chart_ref: "oci://quay.io/jetstack/charts/cert-manager"
+        chart_version: "v1.20.2"
+        release_namespace: kube-system
+        release_state: present
+        wait: true
+        atomic: true
+        values:
+          crds:
+            enabled: true
