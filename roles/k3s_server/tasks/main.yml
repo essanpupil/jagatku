@@ -1,0 +1,62 @@
+---
+- name: Check if K3s is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Install K3s server
+  block:
+    - name: Download K3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+
+    - name: Install K3s server with cluster init
+      ansible.builtin.command: >
+        /tmp/k3s-install.sh
+        {{ k3s_server_options | join(' ') }}
+      args:
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_SKIP_START: "true"
+        INSTALL_K3S_CHANNEL: "{{ k3s_channel }}"
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        K3S_NODE_NAME: "{{ k3s_node_name }}"
+        K3S_TOKEN: "{{ k3s_token | default('default-token') }}"
+      register: k3s_install
+      changed_when: k3s_install.rc == 0
+
+    - name: Enable and start K3s service
+      ansible.builtin.systemd:
+        name: k3s
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Wait for K3s server to be ready
+      ansible.builtin.wait_for:
+        path: /etc/rancher/k3s/k3s.yaml
+        timeout: 120
+
+    - name: Get K3s node token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token
+      when: k3s_server_init | default(false)
+
+    - name: Set fact for node token
+      ansible.builtin.set_fact:
+        k3s_node_token: "{{ node_token.content | b64decode | trim }}"
+      when: k3s_server_init | default(false)
+
+    - name: Display server information
+      ansible.builtin.debug:
+        msg: |
+          K3s server installed on {{ inventory_hostname }}
+          Node token: {{ k3s_node_token | default('N/A') }}
+          Server URL: https://{{ ansible_host }}:6443
+      when: k3s_server_init | default(false)
+
+  when: not k3s_binary.stat.exists
+  tags: k3s_server
