@@ -21,16 +21,6 @@
     - name: Update Helm repo cache
       ansible.builtin.command: helm repo update
 
-    - name: Install sealed secrets
-      kubernetes.core.helm:
-        name: sealed-secrets-controller
-        chart_ref: "bitnami-labs/sealed-secrets"
-        chart_version: "2.18.5"
-        release_namespace: kube-system
-        release_state: present
-        wait: true
-        atomic: true
-
     - name: Install cert-manager
       kubernetes.core.helm:
         name: certmanager
@@ -39,7 +29,7 @@
         release_namespace: kube-system
         release_state: present
         wait: true
-        atomic: true
+        atomic: false
         values:
           crds:
             enabled: true
