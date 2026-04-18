@@ -12,24 +12,6 @@
     helm_namespace_argocd: argocd
 
   tasks:
-    - name: Install helm-diff plugin
-      kubernetes.core.helm_plugin:
-        plugin_path: "https://github.com/databus23/helm-diff"
-        state: present
-  
-    - name: Ensure Helm repos are added
-      kubernetes.core.helm_repository:
-        name: "{{ item.name }}"
-        repo_url: "{{ item.url }}"
-      loop:
-        - { name: prometheus-community, url: https://prometheus-community.github.io/helm-charts }
-        - { name: grafana, url: https://grafana.github.io/helm-charts }
-        - { name: argo, url: https://argoproj.github.io/argo-helm }
-        - { name: bitnami-labs, url:  https://bitnami-labs.github.io/sealed-secrets/ }
-
-    - name: Update Helm repo cache
-      ansible.builtin.command: helm repo update
-
     - name: Create namespaces for observability stack
       kubernetes.core.k8s:
         state: present
