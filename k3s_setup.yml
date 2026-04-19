@@ -25,6 +25,42 @@
       args:
         creates: /usr/local/bin/k3s
 
+    - name: Wait for K3s to be ready
+      ansible.builtin.wait_for:
+        path: /etc/rancher/k3s/k3s.yaml
+        timeout: 300
+
+    - name: Create kubectl config directory
+      ansible.builtin.file:
+        path: /home/{{ ansible_user }}/.kube
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy kubeconfig to user directory
+      ansible.builtin.copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /home/{{ ansible_user }}/.kube/config
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+        remote_src: true
+
+    - name: Update kubeconfig server URL
+      ansible.builtin.replace:
+        path: /home/{{ ansible_user }}/.kube/config
+        regexp: 'server: https://127.0.0.1:6443'
+        replace: 'server: https://{{ ansible_host }}:6443'
+
+    - name: Append KUBECONFIG to .bashrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ ansible_user }}/.bashrc"
+        line: 'export KUBECONFIG=/home/{{ ansible_user }}/.kube/config'
+        create: yes
+        state: present
+        insertafter: EOF
+
 - name: Setup K3s Worker Nodes
   hosts: k3s_agents
   become: true
