@@ -112,45 +112,6 @@
             hosts:
               - grafana.jagat.local
 
-    - name: Install kube-prometheus-stack
-      kubernetes.core.helm:
-        name: kube-prometheus-stack
-        chart_ref: prometheus-community/kube-prometheus-stack
-        chart_version: 83.6.0
-        namespace: "{{ namespaces['observability'] }}"
-        create_namespace: false
-        # state: absent
-        values:
-          prometheus:
-            prometheusSpec:
-              storageSpec:
-                volumeClaimTemplate:
-                  spec:
-                    # storageClassName: "standard" # Replace with your storage class
-                    accessModes: ["ReadWriteOnce"]
-                    resources:
-                      requests:
-                        storage: 2Gi
-          prometheusOperator:
-            admissionWebhooks:
-              failurePolicy: "Ignore"
-          grafana:
-            persistence:
-              enabled: true
-              size: 1Gi
-            ingress:
-              enabled: true
-              IngressClassName: traefik
-              hosts:
-                - "grafana.jagat.local"
-            admin:
-              existingSecret: grafana-credentials
-              userKey: admin-user
-              passwordKey: admin-password
-            enable: true
-            service:
-              enable: false
-
     - name: Install Loki
       kubernetes.core.helm:
         name: loki
@@ -158,7 +119,7 @@
         # chart_version: "6.53.0"
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
-        state: absent
+        # state: absent
         values:
           global:
             dnsService: "kube-dns"
@@ -223,6 +184,49 @@
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
 
+    - name: Install K8S monitoring
+      kubernetes.core.helm:
+        name: k8s-monitoring
+        chart_ref: grafana/k8s-monitoring
+        chart_version: 4.0.2
+        namespace: "{{ namespaces['observability'] }}"
+        create_namespace: false
+        values:
+          clusterMetrics:
+            enabled: true  # Enables infra-level metrics (Nodes, Pods)
+          clusterEvents:
+            enabled: true  # Gathers K8s events via alloy-singleton
+          podLogs:
+            enabled: true  # Gathers stdout/stderr logs via alloy-logs DaemonSet
+          nodeLogs:
+            enabled: false # Optional: gather journald logs from nodes
+          cluster:
+            name: "default"
+          destinations:
+            localPrometheus:
+              type: prometheus
+              url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
+
+            localLogs:
+              type: loki
+              url: https://loki-gateway.observability.svc.cluster.local/loki/api/v1/push
+              # auth:
+              #   type: basic
+              #   username: "my-username"
+              #   password: "my-password"
+              #   tenantIdFrom: env("LOKI_TENANT_ID")
+
+            otlpGateway:
+              type: otlp
+              url: https://tempo.observability.svc.cluster.local:4317/v1/traces
+              # auth:
+              #   type: basic
+              #   username: "my-username"
+              #   password: "my-password"
+              metrics: { enabled: true }
+              logs:    { enabled: true }
+              traces:  { enabled: true }
+
     # - name: Install Argo CD
     #   kubernetes.core.helm:
     #     name: argocd
@@ -233,3 +237,52 @@
     #       server:
     #         service:
     #           type: ClusterIP
+
+    - name: Install kube-prometheus-stack
+      kubernetes.core.helm:
+        name: kube-prometheus-stack
+        chart_ref: prometheus-community/kube-prometheus-stack
+        chart_version: 83.6.0
+        namespace: "{{ namespaces['observability'] }}"
+        create_namespace: false
+        # state: absent
+        values:
+          prometheus:
+            prometheusSpec:
+              storageSpec:
+                volumeClaimTemplate:
+                  spec:
+                    # storageClassName: "standard" # Replace with your storage class
+                    accessModes: ["ReadWriteOnce"]
+                    resources:
+                      requests:
+                        storage: 2Gi
+          prometheusOperator:
+            admissionWebhooks:
+              failurePolicy: "Ignore"
+          grafana:
+            additionalDataSources:
+              - name: Loki
+                type: loki
+                url: http://loki-gateway.observability.svc.cluster.local
+                jsonData:
+                  timeout: 60
+                  maxLines: 1000
+                  httpHeaderName1: 'X-Scope-OrgID'
+                secureJsonData:
+                  httpHeaderValue1: 'jagatku'
+            persistence:
+              enabled: true
+              size: 1Gi
+            ingress:
+              enabled: true
+              IngressClassName: traefik
+              hosts:
+                - "grafana.jagat.local"
+            admin:
+              existingSecret: grafana-credentials
+              userKey: admin-user
+              passwordKey: admin-password
+            enable: true
+            service:
+              enable: false
