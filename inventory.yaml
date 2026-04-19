@@ -17,8 +17,8 @@ all:
               - "--cluster-init"
               - "--tls-san={{ ansible_host }}"
               - "--node-ip={{ ansible_host }}"
-              - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
-              - "--advertise-address={{ ansible_host }}"
+              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
+              # - "--advertise-address={{ ansible_host }}"
           hosts:
             node1:
               ansible_user: vagrant
@@ -32,7 +32,7 @@ all:
             k3s_control_node: false
             k3s_agent_options:
               - "--node-ip={{ ansible_host }}"
-              - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
+              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
               - "--server=https://192.168.54.11:6443"
           hosts:
             node2:

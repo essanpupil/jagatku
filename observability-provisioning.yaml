@@ -28,6 +28,7 @@
 
     - name: Ingress route for grafana
       kubernetes.core.k8s:
+        state: absent
         namespace: "{{ helm_namespace_prometheus }}"
         definition:          
           apiVersion: traefik.io/v1alpha1
@@ -41,7 +42,7 @@
             - match: Host(`grafana.jagat.local`)
               kind: Rule
               services:
-              - name: kube-prometheus-stack-grafana
+              - name: grafana
                 port: 80
 
     - name: Create secrets for grafana
@@ -59,11 +60,24 @@
     - name: Install Grafana helm
       kubernetes.core.helm:
         name: grafana
+        state: absent
         chart_ref: grafana-community/grafana
         chart_version: 12.1.1
         release_namespace: "{{ helm_namespace_prometheus }}"
         create_namespace: false
         values:
+          persistence:
+            enabled: true
+            size: 1Gi
+          datasources:
+            datasources.yaml:
+              apiVersion: 1
+              datasources:
+                - name: Prometheus
+                  type: prometheus
+                  url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+                # - name: Loki
+                #   type: loki
           admin:
             existingSecret: grafana-credentials
             userKey: admin-user
@@ -78,16 +92,40 @@
       kubernetes.core.helm:
         name: kube-prometheus-stack
         chart_ref: prometheus-community/kube-prometheus-stack
-        # chart_version: 82.18.0
+        chart_version: 83.6.0
         release_namespace: "{{ helm_namespace_prometheus }}"
         create_namespace: false
         # state: absent
         values:
+          prometheus:
+            prometheusSpec:
+              storageSpec:
+                volumeClaimTemplate:
+                  spec:
+                    # storageClassName: "standard" # Replace with your storage class
+                    accessModes: ["ReadWriteOnce"]
+                    resources:
+                      requests:
+                        storage: 2Gi
           prometheusOperator:
             admissionWebhooks:
               failurePolicy: "Ignore"
           grafana:
-            enable: false
+            persistence:
+              enabled: true
+              size: 1Gi
+            ingress:
+              enabled: true
+              IngressClassName: traefik
+              hosts:
+                - "grafana.jagat.local"
+            admin:
+              existingSecret: grafana-credentials
+              userKey: admin-user
+              passwordKey: admin-password
+            enable: true
+            service:
+              enable: false
 
     - name: Install Loki
       kubernetes.core.helm:

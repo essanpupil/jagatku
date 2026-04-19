@@ -40,7 +40,7 @@
       args:
         creates: /usr/local/bin/k3s
       environment:
-        INSTALL_K3S_SKIP_START: "true"
+        # INSTALL_K3S_SKIP_START: "true"
         INSTALL_K3S_CHANNEL: "{{ k3s_channel }}"
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
         K3S_NODE_NAME: "{{ k3s_node_name }}"
