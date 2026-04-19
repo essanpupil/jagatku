@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
     node.vm.network "private_network", ip: "192.168.54.11"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
-      v.memory = 4196
+      v.memory = 6144
       v.cpus = 2
     end
   end
@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
     node.vm.network "private_network", ip: "192.168.54.12"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
-      v.memory = 4196
+      v.memory = 6144
       v.cpus = 2
     end
   end
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     node.vm.network "private_network", ip: "192.168.54.13"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
-      v.memory = 4196
+      v.memory = 6144
       v.cpus = 2
     end
   end
