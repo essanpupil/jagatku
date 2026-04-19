@@ -1,0 +1,64 @@
+---
+- name: Uninstall K3s Agents
+  hosts: k3s_agents
+  become: true
+  tasks:
+    - name: Check if k3s-agent-uninstall.sh exists
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s-agent-uninstall.sh
+      register: agent_uninstall_script
+
+    - name: Run K3s agent uninstall script
+      ansible.builtin.command: /usr/local/bin/k3s-agent-uninstall.sh
+      when: agent_uninstall_script.stat.exists
+      changed_when: true
+
+    - name: Remove K3s agent configuration directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/rancher/k3s
+        - /var/lib/rancher/k3s
+
+- name: Uninstall K3s Servers
+  hosts: k3s_servers
+  become: true
+  tasks:
+    - name: Check if k3s-uninstall.sh exists
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s-uninstall.sh
+      register: server_uninstall_script
+
+    - name: Run K3s server uninstall script
+      ansible.builtin.command: /usr/local/bin/k3s-uninstall.sh
+      when: server_uninstall_script.stat.exists
+      changed_when: true
+
+    - name: Remove K3s server configuration directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/rancher/k3s
+        - /var/lib/rancher/k3s
+
+    - name: Remove kubectl config directory from user home
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: absent
+
+    - name: Remove KUBECONFIG export from .bashrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ ansible_user }}/.bashrc"
+        line: 'export KUBECONFIG=/home/{{ ansible_user }}/.kube/config'
+        state: absent
+
+- name: Final Cleanup
+  hosts: k3s_cluster
+  become: true
+  tasks:
+    - name: Remove downloaded K3s install script
+      ansible.builtin.file:
+        path: /tmp/k3s-install.sh
+        state: absent

@@ -2,15 +2,10 @@
 all:
   vars:
     # K3s configuration
-    k3s_version: v1.30.2+k3s1
+    k3s_version: v1.35.3+k3s1
     k3s_channel: stable
     k3s_install_dir: /usr/local/bin
     k3s_config_dir: /etc/rancher/k3s
-
-    # Cluster configuration
-    cluster_domain: jagat.local
-    cluster_cidr: 10.42.0.0/16
-    service_cidr: 10.43.0.0/16
 
   children:
     k3s_cluster:
@@ -22,10 +17,8 @@ all:
               - "--cluster-init"
               - "--tls-san={{ ansible_host }}"
               - "--node-ip={{ ansible_host }}"
-              - "--advertise-address={{ ansible_host }}"
-              - "--cluster-cidr={{ cluster_cidr }}"
-              - "--service-cidr={{ service_cidr }}"
-              - "--cluster-domain={{ cluster_domain }}"
+              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
+              # - "--advertise-address={{ ansible_host }}"
           hosts:
             node1:
               ansible_user: vagrant
@@ -39,6 +32,7 @@ all:
             k3s_control_node: false
             k3s_agent_options:
               - "--node-ip={{ ansible_host }}"
+              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
               - "--server=https://192.168.54.11:6443"
           hosts:
             node2:
