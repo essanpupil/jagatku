@@ -1,0 +1,44 @@
+---
+- name: Prepare K3s Nodes
+  hosts: k3s_cluster
+  become: true
+  tasks:
+    - name: Install dependencies
+      apt:
+        name: [curl, ca-certificates]
+        state: present
+        update_cache: yes
+
+- name: Setup K3s Control Plane
+  hosts: k3s_servers
+  become: true
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Install K3s Server
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - server \
+        --node-ip={{ ansible_host }} \
+        --advertise-address={{ ansible_host }} \
+        --flannel-iface=eth1 \
+        --node-name={{ k3s_node_name }}
+      args:
+        creates: /usr/local/bin/k3s
+
+- name: Setup K3s Worker Nodes
+  hosts: k3s_agents
+  become: true
+  vars_files:
+    - vault.yaml
+  vars:
+    master_ip: "{{ hostvars[groups['k3s_servers'][0]]['ansible_host'] }}"
+  tasks:
+    - name: Join K3s Cluster
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL=https://{{ master_ip }}:6443 \
+        K3S_TOKEN={{ k3s_token }} sh -s - agent \
+        --node-ip={{ ansible_host }} \
+        --flannel-iface=eth1 \
+        --node-name={{ k3s_node_name }}
+      args:
+        creates: /usr/local/bin/k3s
