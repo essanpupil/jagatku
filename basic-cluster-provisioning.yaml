@@ -130,7 +130,7 @@
               replication_factor: 1
             schemaConfig:
               configs:
-                - from: "2026-04-16"
+                - from: "2026-04-17"
                   store: tsdb
                   object_store: s3
                   schema: v13
@@ -188,10 +188,17 @@
       kubernetes.core.helm:
         name: k8s-monitoring
         chart_ref: grafana/k8s-monitoring
-        chart_version: 4.0.2
+        chart_version: 3.8.6
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
         values:
+          alloy-metrics:
+            enabled: true
+          alloy-singleton:
+            enabled: true
+          alloy-logs:
+            enabled: true
+          # collectors:
           clusterMetrics:
             enabled: true  # Enables infra-level metrics (Nodes, Pods)
           clusterEvents:
@@ -203,11 +210,10 @@
           cluster:
             name: "default"
           destinations:
-            localPrometheus:
+            - name: localPrometheus
               type: prometheus
               url: http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
-
-            localLogs:
+            - name: localLogs
               type: loki
               url: https://loki-gateway.observability.svc.cluster.local/loki/api/v1/push
               # auth:
@@ -215,8 +221,7 @@
               #   username: "my-username"
               #   password: "my-password"
               #   tenantIdFrom: env("LOKI_TENANT_ID")
-
-            otlpGateway:
+            - name: otlpGateway
               type: otlp
               url: https://tempo.observability.svc.cluster.local:4317/v1/traces
               # auth:
