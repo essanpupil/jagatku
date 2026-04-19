@@ -191,6 +191,11 @@
         chart_ref: grafana/tempo
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
+        # state: absent
+        values:
+          persistence:
+            enabled: true
+            size: "3Gi"
 
     - name: Install K8S monitoring
       kubernetes.core.helm:
@@ -280,13 +285,30 @@
               - name: Loki
                 type: loki
                 orgId: 1
-                url: http://loki-gateway.observability.svc.cluster.local
+                url: "http://loki-gateway.{{ namespaces['observability'] }}.svc.cluster.local"
                 jsonData:
                   timeout: 60
                   maxLines: 1000
                   httpHeaderName1: 'X-Scope-OrgID'
                 secureJsonData:
                   httpHeaderValue1: 'jagatku'
+              - name: Tempo
+                type: tempo
+                uid: tempo
+                url: "http://tempo.{{ namespaces['observability'] }}.svc.cluster.local:3200"
+                jsonData:
+                  # Optional: Link traces to Loki logs
+                  tracesToLogsV2:
+                    datasourceUid: loki
+                    groupFilters: []
+                  # Optional: Link traces to Prometheus metrics
+                  tracesToMetrics:
+                    datasourceUid: prometheus
+                  serviceMap:
+                    datasourceUid: prometheus
+                  nodeGraph:
+                    enabled: true
+
             persistence:
               enabled: true
               size: 1Gi
