@@ -31,6 +31,15 @@
         path: /etc/rancher/k3s/k3s.yaml
         timeout: 300
 
+    - name: Configure local registry mirroring
+      ansible.builtin.copy:
+        content: |
+          mirrors:
+            "*":
+              endpoint:
+                - "http://localhost:6443"
+        dest: /etc/rancher/k3s/registries.yaml
+
     - name: Create kubectl config directory
       ansible.builtin.file:
         path: /home/{{ ansible_user }}/.kube
@@ -76,7 +85,6 @@
         K3S_TOKEN={{ k3s_token }} sh -s - agent \
         --node-ip={{ ansible_host }} \
         --flannel-iface=eth1 \
-        --node-name={{ k3s_node_name }} \
-        --embedded-registry
+        --node-name={{ k3s_node_name }}
       args:
         creates: /usr/local/bin/k3s
