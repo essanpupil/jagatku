@@ -193,6 +193,10 @@
         create_namespace: false
         # state: absent
         values:
+          tempo:
+            metricsGenerator:
+              enabled: true
+              remoteWriteUrl: "http://kube-prometheus-stack-prometheus.{{ namespaces['observability'] }}.svc.cluster.local:9090/api/v1/write"
           persistence:
             enabled: true
             size: "3Gi"
