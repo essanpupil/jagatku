@@ -225,7 +225,7 @@
           destinations:
             - name: localPrometheus
               type: prometheus
-              url: "http://kube-prometheus-stack-prometheus.{{ namespaces['observability'] }}.svc.cluster.local:9090"
+              url: "http://kube-prometheus-stack-prometheus.{{ namespaces['observability'] }}.svc.cluster.local:9090/api/v1/write"
             - name: localLogs
               type: loki
               url: "http://loki-gateway.{{ namespaces['observability'] }}.svc.cluster.local/loki/api/v1/push"
