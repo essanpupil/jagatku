@@ -205,7 +205,7 @@
       kubernetes.core.helm:
         name: k8s-monitoring
         chart_ref: grafana/k8s-monitoring
-        chart_version: 3.8.6
+        chart_version: 4.0.2
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
         values:
@@ -227,10 +227,10 @@
           cluster:
             name: "default"
           destinations:
-            - name: localPrometheus
+            localPrometheus:
               type: prometheus
               url: "http://kube-prometheus-stack-prometheus.{{ namespaces['observability'] }}.svc.cluster.local:9090/api/v1/write"
-            - name: localLogs
+            localLogs:
               type: loki
               url: "http://loki-gateway.{{ namespaces['observability'] }}.svc.cluster.local/loki/api/v1/push"
               # auth:
@@ -238,7 +238,7 @@
               #   username: "my-username"
               #   password: "my-password"
               tenantId: "jagatku"
-            - name: otlpGateway
+            otlpGateway:
               type: otlp
               url: https://tempo.observability.svc.cluster.local:4317/v1/traces
               # auth:
