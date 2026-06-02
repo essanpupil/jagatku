@@ -209,21 +209,6 @@
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
         values:
-          alloy-metrics:
-            enabled: true
-          alloy-singleton:
-            enabled: true
-          alloy-logs:
-            enabled: true
-          # collectors:
-          clusterMetrics:
-            enabled: true  # Enables infra-level metrics (Nodes, Pods)
-          clusterEvents:
-            enabled: true  # Gathers K8s events via alloy-singleton
-          podLogs:
-            enabled: true  # Gathers stdout/stderr logs via alloy-logs DaemonSet
-          nodeLogs:
-            enabled: true # Optional: gather journald logs from nodes
           cluster:
             name: "default"
           destinations:
@@ -248,6 +233,32 @@
               # metrics: { enabled: true }
               # logs:    { enabled: true }
               # traces:  { enabled: true }
+          
+          # Features
+          clusterMetrics:
+            enabled: true  # Enables infra-level metrics (Nodes, Pods)
+            collector: alloy-metrics
+          clusterEvents:
+            enabled: true
+            collector: alloy-singleton
+          podLogs:
+            enabled: true  # Gathers stdout/stderr logs via alloy-logs DaemonSet
+          nodeLogs:
+            enabled: true
+            collector: alloy-logs
+
+          # Collectors
+          collectors:
+            alloy-metrics:
+              presets: [clustered]
+            alloy-singleton:
+              enabled: true
+            alloy-logs:
+              enabled: true
+              presets: [filesystem-log-reader, daemonset]
+          telemetryServices:
+            kube-state-metrics:
+              deploy: true
 
     # - name: Install Argo CD
     #   kubernetes.core.helm:
