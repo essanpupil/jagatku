@@ -81,37 +81,6 @@
             admin-user: "{{ grafana_admin_user | b64encode }}"
             admin-password: "{{ grafana_admin_password | b64encode }}"
 
-    - name: Install Grafana helm
-      kubernetes.core.helm:
-        name: grafana
-        state: absent
-        chart_ref: grafana-community/grafana
-        chart_version: 12.1.1
-        namespace: "{{ namespaces['observability'] }}"
-        create_namespace: false
-        values:
-          persistence:
-            enabled: true
-            size: 1Gi
-          datasources:
-            datasources.yaml:
-              apiVersion: 1
-              datasources:
-                - name: Prometheus
-                  type: prometheus
-                  url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
-                # - name: Loki
-                #   type: loki
-          admin:
-            existingSecret: grafana-credentials
-            userKey: admin-user
-            passwordKey: admin-password
-          ingress:
-            enabled: true
-            ingressClassName: traefik
-            hosts:
-              - grafana.jagat.local
-
     - name: Install Loki
       kubernetes.core.helm:
         name: loki
@@ -241,8 +210,9 @@
           clusterEvents:
             enabled: true
             collector: alloy-singleton
-          podLogs:
-            enabled: true  # Gathers stdout/stderr logs via alloy-logs DaemonSet
+          podLogsViaLoki:
+            enabled: true
+            collector: alloy-logs
           nodeLogs:
             enabled: true
             collector: alloy-logs
