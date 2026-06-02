@@ -11,6 +11,20 @@
       certmanager: "cert-manager"
 
   tasks:
+    - name: Workarround coredns empty import
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: coredns-custom
+            namespace: kube-system
+          data:
+            log.override: |
+              #
+            stub.server: |
+              #
     - name: Install helm-diff plugin
       kubernetes.core.helm_plugin:
         plugin_path: "https://github.com/databus23/helm-diff"
