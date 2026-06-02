@@ -105,7 +105,7 @@
               replication_factor: 3
             schemaConfig:
               configs:
-                - from: "2026-04-17"
+                - from: "2026-05-31"
                   store: tsdb
                   object_store: s3
                   schema: v13
@@ -174,9 +174,10 @@
       kubernetes.core.helm:
         name: k8s-monitoring
         chart_ref: grafana/k8s-monitoring
-        chart_version: 4.0.2
+        chart_version: 4.1.3
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
+        # state: absent
         values:
           cluster:
             name: "default"
@@ -216,17 +217,24 @@
           nodeLogs:
             enabled: true
             collector: alloy-logs
+          hostMetrics:
+            enabled: true
+            collector: alloy-metrics
+            linuxHosts:
+              enabled: true
 
           # Collectors
           collectors:
             alloy-metrics:
-              presets: [clustered]
+              presets: [medium, clustered, statefulset]
             alloy-singleton:
               enabled: true
             alloy-logs:
               enabled: true
               presets: [filesystem-log-reader, daemonset]
           telemetryServices:
+            node-exporter:
+              deploy: true
             kube-state-metrics:
               deploy: true
 
@@ -245,9 +253,10 @@
       kubernetes.core.helm:
         name: kube-prometheus-stack
         chart_ref: prometheus-community/kube-prometheus-stack
-        chart_version: 83.6.0
+        chart_version: 86.1.0
         namespace: "{{ namespaces['observability'] }}"
         create_namespace: false
+        # update_repo_cache: true
         # state: absent
         values:
           prometheus:
@@ -261,7 +270,7 @@
                     resources:
                       requests:
                         storage: 2Gi
-                    volumeName: pvc-4735d14e-9c07-42eb-9a2c-851112e76b7b
+                    # volumeName: pvc-4735d14e-9c07-42eb-9a2c-851112e76b7b
           prometheusOperator:
             admissionWebhooks:
               failurePolicy: "Ignore"
@@ -293,7 +302,6 @@
                     datasourceUid: prometheus
                   nodeGraph:
                     enabled: true
-
             persistence:
               enabled: true
               size: 1Gi
