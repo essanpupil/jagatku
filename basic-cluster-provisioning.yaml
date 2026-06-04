@@ -252,16 +252,23 @@
             kube-state-metrics:
               deploy: true
 
-    # - name: Install Argo CD
-    #   kubernetes.core.helm:
-    #     name: argocd
-    #     chart_ref: argo/argo-cd
-    #     release_namespace: "{{ helm_namespace_argocd }}"
-    #     create_namespace: false
-    #     values:
-    #       server:
-    #         service:
-    #           type: ClusterIP
+    - name: Install Argo CD
+      kubernetes.core.helm:
+        name: argocd
+        chart_ref: argo/argo-cd
+        chart_version: 9.5.17
+        release_namespace: "argocd"
+        create_namespace: true
+        values:
+          global:
+            domain: argocd.jagat.local
+          configs:
+            params:
+              server.insecure: true
+          server:
+            ingress:
+              enabled: true
+              ingressClassName: traefik
 
     - name: Install kube-prometheus-stack
       kubernetes.core.helm:
