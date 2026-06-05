@@ -1,0 +1,38 @@
+---
+- name: Basic kubernetes provisioning
+  hosts: node1
+  gather_facts: true
+  vars_files:
+    - vault.yaml
+
+  tasks:
+    - name: Workarround coredns empty import
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: coredns-custom
+            namespace: kube-system
+          data:
+            log.override: |
+              #
+            stub.server: |
+              #
+    - name: Install helm-diff plugin
+      kubernetes.core.helm_plugin:
+        plugin_path: "https://github.com/databus23/helm-diff"
+        plugin_version: 3.5.17
+        state: present
+  
+    - name: Ensure Helm repos are added
+      kubernetes.core.helm_repository:
+        name: "{{ item.name }}"
+        repo_url: "{{ item.url }}"
+      loop:
+        - { name: prometheus-community, url: https://prometheus-community.github.io/helm-charts }
+        - { name: grafana-community, url: https://grafana-community.github.io/helm-charts/ }
+        - { name: grafana, url: https://grafana.github.io/helm-charts }
+        - { name: argo, url: https://argoproj.github.io/argo-helm }
+        - { name: bitnami-labs, url:  https://bitnami-labs.github.io/sealed-secrets/ }
