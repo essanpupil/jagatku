@@ -1,5 +1,5 @@
 ---
-- name: Basic kubernetes provisioning
+- name: Core kubernetes provisioning
   hosts: node1
   gather_facts: true
   vars_files:

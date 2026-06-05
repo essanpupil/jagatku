@@ -1,5 +1,5 @@
 ---
-- name: Basic kubernetes provisioning
+- name: Observability provisioning
   hosts: node1
   gather_facts: true
   vars_files:
