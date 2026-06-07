@@ -7,18 +7,18 @@
       file:
         path: /etc/apt/keyrings
         state: directory
-        mode: '0755'
+        mode: "0755"
     - name: Download Docker GPG key
       get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
         dest: /etc/apt/keyrings/docker.asc
-        mode: '0644'
+        mode: "0644"
         force: true
     - name: Download kubeadm gpg key
       get_url:
         url: https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key
         dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
-        mode: '0644'
+        mode: "0644"
         force: true
     - name: De-armor Docker GPG key for APT
       command: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/docker.asc
@@ -38,12 +38,12 @@
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
         state: present
         filename: kubernetes
-    - name: Update apt and install Docker Engine
+    - name: Install Docker Engine
       apt:
         pkg:
           - docker-ce
           # - docker-ce-cli
-          # - containerd.io
+          - containerd.io
           # - docker-buildx-plugin
           # - docker-compose-plugin
         state: latest
@@ -52,6 +52,20 @@
       service:
         name: docker
         state: started
+        enabled: yes
+    - name: Enable cri plugin
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^\s*disabled_plugins'
+        backup: yes
+        backrefs: yes
+        line: 'disabled_plugins = []'
+        firstmatch: yes
+        state: present
+    - name: Restart containerd service
+      service:
+        name: containerd
+        state: restarted
         enabled: yes
     - name: Install kubeadm package
       apt:
