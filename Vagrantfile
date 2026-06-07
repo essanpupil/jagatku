@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "node1" do |node|
     node.vm.box = "bento/ubuntu-26.04"
-    # node.vm.network "private_network", ip: "192.168.54.11"
+    node.vm.network "private_network", ip: "192.168.54.11"
     node.vm.network "public_network", bridge: "en0: Wi-Fi"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
