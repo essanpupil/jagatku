@@ -3,6 +3,7 @@ all:
   vars:
     ansible_distribution: 'Ubuntu'
     kubernetes_cidr: "10.244.0.0/16"
+    calico_version: "3.32.0"
     # K3s configuration
     # k3s_version: v1.35.3+k3s1
     # k3s_channel: stable
@@ -23,11 +24,11 @@ all:
               # - "--advertise-address={{ ansible_host }}"
           hosts:
             node1:
-              ansible_user: vagrant
-              ansible_ssh_private_key_file: .vagrant/machines/node1/virtualbox/private_key
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_user: essan
+              ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+              # ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.11
+              ansible_host: 192.168.1.14
               node_name: node1
         # k3s_agents:
         #   vars:
