@@ -2,6 +2,7 @@
 all:
   vars:
     ansible_distribution: 'Ubuntu'
+    kubernetes_cidr: "10.244.0.0/16"
     # K3s configuration
     # k3s_version: v1.35.3+k3s1
     # k3s_channel: stable
@@ -27,7 +28,7 @@ all:
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.54.11
-              # k3s_node_name: node1
+              node_name: node1
         # k3s_agents:
         #   vars:
         #     k3s_control_node: false

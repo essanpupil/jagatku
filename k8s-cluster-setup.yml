@@ -88,6 +88,9 @@
         name: kubelet
         enabled: true
         state: started
+    - name: Initiate kubeadm
+      command: >
+        kubeadm init --node-name={{ node_name }} --pod-network-cidr={{ kubernetes_cidr }}
     - name: Create .kube directory for vagrant user
       file:
         path: /home/vagrant/.kube
