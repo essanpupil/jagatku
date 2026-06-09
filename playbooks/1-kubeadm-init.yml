@@ -67,6 +67,17 @@
         name: containerd
         state: restarted
         enabled: yes
+    - name: Disable swap
+      command: swapoff -a
+    - name: Disbale swap permanently
+      lineinfile:
+        path: /etc/fstab
+        regexp: 'swapoff.*'
+        backup: yes
+        backrefs: yes
+        line: 'swapoff'
+        firstmatch: yes
+        state: present
     - name: Install kubeadm package
       apt:
         pkg:
@@ -88,21 +99,33 @@
         name: kubelet
         enabled: true
         state: started
+
+    - name: Check does kubeadm config files exists
+      ansible.builtin.stat:
+        path: "/etc/kubernetes/admin.conf"
+      register: kubeadm_config
+
+    - name: Reset kubeadm when kubelet run but kubeadm is not running
+      command: kubeadm reset --force
+      when: not kubeadm_config.stat.exists
+
     - name: Initiate kubeadm
       command: >
         kubeadm init --node-name={{ node_name }} --pod-network-cidr={{ kubernetes_cidr }}
+      when: not kubeadm_config.stat.exists
+
     - name: Create .kube directory for vagrant user
       file:
-        path: /home/vagrant/.kube
+        path: "/home/{{ ansible_user }}/.kube"
         state: directory
-        owner: vagrant
-        group: vagrant
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: "0755"
     - name: Copy admin.conf to vagrant user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/vagrant/.kube/config
-        owner: vagrant
-        group: vagrant
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: "0600"
         remote_src: yes
