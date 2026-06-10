@@ -129,3 +129,18 @@
         group: "{{ ansible_user }}"
         mode: "0600"
         remote_src: yes
+
+    - name: Install Helm (Hardcoded v3.21.0)
+      block:
+        - name: Download binary
+          get_url:
+            url: "https://get.helm.sh/helm-v3.21.0-linux-amd64.tar.gz"
+            dest: "/tmp/helm.tar.gz"
+
+        - name: Extract and move
+          shell: |
+            mkdir -p /tmp/helm_out
+            tar -xzf /tmp/helm.tar.gz -C /tmp/helm_out --strip-components=1
+            mv /tmp/helm_out/helm /usr/local/bin/helm
+            chmod +x /usr/local/bin/helm
+          become: true      
