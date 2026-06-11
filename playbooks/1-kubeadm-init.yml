@@ -129,6 +129,12 @@
         group: "{{ ansible_user }}"
         mode: "0600"
         remote_src: yes
+    
+    - name: Install python3 kubernetes
+      apt:
+        pkg: python3-kubernetes
+        state: present
+        update_cache: true
 
     - name: Install Helm (Hardcoded v3.21.0)
       block:
