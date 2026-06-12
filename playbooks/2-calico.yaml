@@ -17,14 +17,14 @@
     - name: Apply calico CRDs
       kubernetes.core.k8s:
         state: present
-        template: ./calico/v1_crd_projectcalico_org.yaml
+        template: ../manifest/calico/v1_crd_projectcalico_org.yaml
     - name: Apply tigera operator
       kubernetes.core.k8s:
         state: present
-        template: ./calico/tigera-operator.yaml
+        template: ../manifest/calico/tigera-operator.yaml
     - name: Configure calico networking
       kubernetes.core.k8s:
-        state: present
+        state: absent
         definition:
           # This section includes base Calico installation configuration.
           # For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.Installation
@@ -45,7 +45,7 @@
                   nodeSelector: all()
     - name: Configure calico API server
       kubernetes.core.k8s:
-        state: present
+        state: absent
         definition:
           # This section configures the Calico API server.
           # For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.APIServer
@@ -57,7 +57,7 @@
           spec: {}
     - name: Configure calico Goldmane flow
       kubernetes.core.k8s:
-        state: present
+        state: absent
         definition:
           # Configures the Calico Goldmane flow aggregator.
           apiVersion: operator.tigera.io/v1
@@ -67,7 +67,7 @@
             namespace: "{{ calico_namespace }}"
     - name: Configure calico whisker observability UI
       kubernetes.core.k8s:
-        state: present
+        state: absent
         definition:
           # Configures the Calico Whisker observability UI.
           apiVersion: operator.tigera.io/v1
