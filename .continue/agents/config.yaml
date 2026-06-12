@@ -14,14 +14,14 @@ models:
     apiBase: http://localhost:11434
     roles:
       - embed
-  - name: qwen2.5-coder
-    model: qwen2.5-coder:3b-instruct-q4_K_M
+  - name: qwen2.5-coder:1.5b-base-q4_K_M
+    model: qwen2.5-coder:1.5b-base-q4_K_M
     provider: ollama
     apiBase: http://localhost:11434
     roles:
       - autocomplete
-  - name: gemma4
-    model: gemma4:12b-mlx
+  - name: gemma4:e4b-mlx
+    model: gemma4:e4b-mlx
     provider: ollama
     apiBase: http://localhost:11434
     roles:
