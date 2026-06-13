@@ -1,77 +1,38 @@
 ---
-- name: Install Calico CNI on Kubernetes Cluster
-  hosts: k8s_nodes
-  vars:
-    tigera_namespace: "tigera-operator"
-    calico_namespace: "calico-system"
+- name: Install calico
+  hosts: node1
 
   tasks:
-    - name: Create namespace for calico resources
+    - name: Copy projectcalico crd to remote host
+      copy:
+        src: ../manifest/calico/v1_crd_projectcalico_org.yaml
+        dest: /tmp/v1_crd_projectcalico_org.yaml
+    - name: Apply projectcalico crd
       kubernetes.core.k8s:
         state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: "{{ calico_namespace }}"
-    - name: Apply calico CRDs
+        src: /tmp/v1_crd_projectcalico_org.yaml
+
+    - name: Copy tigera operator to remote host
+      copy:
+        src: ../manifest/calico/tigera-operator.yaml
+        dest: /tmp/tigera-operator.yaml
+    - name: Apply projectcalico crd
       kubernetes.core.k8s:
         state: present
-        template: ../manifest/calico/v1_crd_projectcalico_org.yaml
-    - name: Apply tigera operator
+        src: /tmp/tigera-operator.yaml
+
+    - name: Copy calico resources to remote host
+      copy:
+        src: ../manifest/calico/calico-resources.yaml
+        dest: /tmp/calico-resources.yaml
+    - name: Apply projectcalico crd
       kubernetes.core.k8s:
         state: present
-        template: ../manifest/calico/tigera-operator.yaml
-    - name: Configure calico networking
+        src: /tmp/calico-resources.yaml
+    
+    - name: Force rotate of tigera operator certs
       kubernetes.core.k8s:
+        name: calico-apiserver-certs
+        kind: Secret
+        namespace: tigera-operator
         state: absent
-        definition:
-          # This section includes base Calico installation configuration.
-          # For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.Installation
-          apiVersion: operator.tigera.io/v1
-          kind: Installation
-          metadata:
-            name: default
-            namespace: "{{ calico_namespace }}"
-          spec:
-            # Configures Calico networking.
-            calicoNetwork:
-              ipPools:
-                - name: default-ipv4-ippool
-                  blockSize: 26
-                  cidr: "{{ kubernetes_cidr }}"
-                  encapsulation: VXLANCrossSubnet
-                  natOutgoing: Enabled
-                  nodeSelector: all()
-    - name: Configure calico API server
-      kubernetes.core.k8s:
-        state: absent
-        definition:
-          # This section configures the Calico API server.
-          # For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.APIServer
-          apiVersion: operator.tigera.io/v1
-          kind: APIServer
-          metadata:
-            name: default
-            namespace: "{{ calico_namespace }}"
-          spec: {}
-    - name: Configure calico Goldmane flow
-      kubernetes.core.k8s:
-        state: absent
-        definition:
-          # Configures the Calico Goldmane flow aggregator.
-          apiVersion: operator.tigera.io/v1
-          kind: Goldmane
-          metadata:
-            name: default
-            namespace: "{{ calico_namespace }}"
-    - name: Configure calico whisker observability UI
-      kubernetes.core.k8s:
-        state: absent
-        definition:
-          # Configures the Calico Whisker observability UI.
-          apiVersion: operator.tigera.io/v1
-          kind: Whisker
-          metadata:
-            name: default
-            namespace: "{{ calico_namespace }}"

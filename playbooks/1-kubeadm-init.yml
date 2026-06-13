@@ -1,6 +1,6 @@
 ---
 - name: Install kubeadm
-  hosts: all
+  hosts: node1
   become: true
   tasks:
     - name: Create keyrings directory

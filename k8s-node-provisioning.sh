@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Disable swap memory permanently
-sudo sed -i '/swap/d' /etc/fstab
+sudo sed -i '/^\/swap.img/s/^/# /' /etc/fstab
 sudo swapoff -a
 
 # Load kubernetes kernel modules
