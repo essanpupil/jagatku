@@ -1,0 +1,36 @@
+---
+- name: Install KVM and Libvirt on Ubuntu
+  hosts: baremetals
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install KVM and Libvirt packages
+      apt:
+        name:
+          - qemu-system
+          - libvirt-daemon-system
+          - libvirt-clients
+          - bridge-utils
+        state: present
+        update_cache: yes
+
+    - name: Ensure libvirtd service is started and enabled
+      systemd:
+        name: libvirtd
+        state: started
+        enabled: yes
+
+    - name: Verify libvirtd is running
+      service:
+        name: libvirtd
+        state: started
+    
+    - name: Add user essan to libvirt group
+      ansible.builtin.user:
+        name: essan
+        groups: libvirt
+        append: yes

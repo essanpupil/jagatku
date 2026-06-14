@@ -11,6 +11,14 @@ all:
     # k3s_config_dir: /etc/rancher/k3s
 
   children:
+    baremetals:
+      hosts:
+        laptop1:
+          ansible_user: essan
+          ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_python_interpreter: /usr/bin/python3
+          ansible_host: 192.168.1.14
+
     k8s_control_nodes:
       children:
         k8s_nodes:
