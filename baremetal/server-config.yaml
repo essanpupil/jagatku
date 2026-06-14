@@ -56,3 +56,8 @@
       command: netplan apply
     - name: Confirm netplan is applied successfully
       command: ip a show br0
+      register: netplan_output
+
+    - name: Display netplan output
+      debug:
+        var: netplan_output.stdout
