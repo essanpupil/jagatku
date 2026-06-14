@@ -57,7 +57,29 @@
     - name: Confirm netplan is applied successfully
       command: ip a show br0
       register: netplan_output
-
     - name: Display netplan output
       debug:
         var: netplan_output.stdout
+
+    - name: Install Cockpit and Cockpit Machines
+      apt:
+        name:
+          - cockpit
+          - cockpit-machines
+        state: present
+        update_cache: yes
+
+    - name: Enable and start cockpit.socket
+      systemd:
+        name: cockpit.socket
+        state: started
+        enabled: yes
+
+    - name: Verify cockpit.socket status
+      command: systemctl status cockpit.socket
+      register: cockpit_status
+      changed_when: false
+
+    - name: Display cockpit.socket status
+      debug:
+        var: cockpit_status.stdout
