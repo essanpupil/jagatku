@@ -42,28 +42,15 @@
           network:
             version: 2
             renderer: networkd
-            wifi:
-              wlp3s0:
-                dhcp4: no
-                ssid: "VL09"
-                key-mgmt: sae
-                psk: "your-wifi-password-here"
             ethernets:
               enp2s0:
                 addresses: [192.168.1.14/24]
                 routes:
                   - to: default
                     via: 192.168.1.1
-                gateway4: 192.168.1.1
                 nameservers:
                   addresses: [8.8.8.8, 8.8.4.4]
-                dhcp4: no
-            bridges:
-              br0:
-                interfaces: [enp2s0]
-                addresses: [10.0.0.10/24]
-                gateway4: 10.0.0.1
-                dhcp4: no
+                dhcp4: false
         owner: root
         group: root
         mode: '0600'
