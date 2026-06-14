@@ -34,3 +34,25 @@
         name: essan
         groups: libvirt
         append: yes
+
+    - name: Write netplan configuration for LAN bridge
+      copy:
+        dest: /etc/netplan/00-lan-brigde.yaml
+        content: |
+          network:
+            version: 2
+            renderer: networkd
+            ethernets:
+              enp2s0:
+                dhcp4: no
+            bridges:
+              br0:
+                interfaces: [enp2s0]
+                dhcp4: yes
+        owner: root
+        group: root
+        mode: '0600'
+    - name: Apply netplan    
+      command: netplan apply
+    - name: Confirm netplan is applied successfully
+      command: ip a show br0
