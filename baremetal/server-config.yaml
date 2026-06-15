@@ -38,28 +38,6 @@
         groups: libvirt
         append: yes
 
-    # 1. Download GPG key and add it
-    - name: Add HashiCorp GPG key
-      ansible.builtin.shell: |
-        wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-      args:
-        creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-    # 2. Add the repository source list
-    - name: Add HashiCorp APT repository to sources list
-      ansible.builtin.shell: |
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
-      # This step is complex because it relies on specific OS configuration, 
-      # but executing the echo command directly translates the user's input.
-
-    # 3. Update apt cache
-    - name: Update apt package list
-      ansible.builtin.shell: apt update -y
-
-    # 4. Install Vagrant
-    - name: Install vagrant package
-      ansible.builtin.shell: apt install -y vagrant
-
     - name: Write netplan configuration
       copy:
         dest: /etc/netplan/00-all-network.yaml
