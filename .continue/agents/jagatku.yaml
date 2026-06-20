@@ -1,0 +1,22 @@
+# This is an example configuration file
+# To learn more, see the full config.yaml reference: https://docs.continue.dev/reference
+
+name: Example Config
+version: 1.0.0
+schema: v1
+
+# Define which models can be used
+# https://docs.continue.dev/customization/models
+models:
+  - name: deepseek-r1:14b-qwen-distill-q4_K_M
+    provider: ollama
+    model: deepseek-r1:14b-qwen-distill-q4_K_M
+    roles:
+      - apply
+      - chat
+      - edit
+  - name: qwen2.5-coder:3b-instruct-q4_K_M
+    provider: ollama
+    model: qwen2.5-coder:3b-instruct-q4_K_M
+    roles:
+      - autocomplete
