@@ -5,6 +5,13 @@
   vars:
     # Removed redundant and recursive ansible_user definition here
   tasks:
+    - name: Install necessary system utilities (curl, etc.)
+      apt:
+        pkg:
+          - curl
+        state: present
+        update_cache: true
+
     - name: Create keyrings directory
       file:
         path: /etc/apt/keyrings
@@ -150,7 +157,7 @@
       block:
         - name: Download binary via curl
           shell: |
-            curl -LO "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+            curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
           args:
             chdir: /tmp
         - name: Extract Helm binary
