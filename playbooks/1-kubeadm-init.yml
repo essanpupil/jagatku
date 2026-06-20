@@ -2,7 +2,7 @@
 - name: Install kubeadm
   hosts: k8s_nodes
   become: true
-  vars:
+  # vars:
     # Removed redundant and recursive ansible_user definition here
   tasks:
     - name: Install necessary system utilities (curl, etc.)
@@ -70,7 +70,7 @@
     - name: Enable cri plugin
       lineinfile:
         path: /etc/containerd/config.toml
-        regexp: '^\s*disabled_plugins'
+        regexp: '^[\s]*disabled_plugins'
         backup: yes
         backrefs: yes
         line: 'disabled_plugins = []'
@@ -90,8 +90,8 @@
     - name: Disable swap permanently
       lineinfile:
         path: /etc/fstab
-        regexp: '^([^#].*?\sswap\s+.*)$'
-        line: '# \1'
+        regexp: '^([^#].*?\\sswap\\s+.*)$'
+        line: '# \\1'
         backrefs: yes
 
     - name: Install kubeadm package
@@ -147,7 +147,12 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: "0600"
-    
+
+    - name: Fetch kubeconfig file to local control machine
+      fetch:
+        src: /home/{{ ansible_user }}/.kube/config
+        dest: "~/.kube/config"
+        flat: yes
     - name: Install python3 kubernetes
       apt:
         name: python3-kubernetes
