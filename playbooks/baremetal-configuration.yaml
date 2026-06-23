@@ -11,19 +11,22 @@
     - name: Install KVM and Libvirt packages
       apt:
         name:
-          - qemu-system
-          - qemu-utils
-          - virt-install
-          - libvirt-daemon-system
-          - libvirt-clients
-          - bridge-utils
-          - curl
-          - gnupg
-          - software-properties-common
-          - python3-lxml
-          - libvirt-dev
-          - python3-dev
-          - pkg-config
+          # - qemu-system
+          # - qemu-utils
+          # - virt-install
+          # - libvirt-daemon-system
+          # - libvirt-clients
+          # - libguestfs-tools
+          # - bridge-utils
+          # - curl
+          # - gnupg
+          # - software-properties-common
+          # - python3-lxml
+          # - libvirt-dev
+          # - python3-dev
+          # - pkg-config
+          - cockpit
+          - cockpit-machines
         state: present
         update_cache: yes
 
