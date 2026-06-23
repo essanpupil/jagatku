@@ -12,6 +12,8 @@
       apt:
         name:
           - qemu-system
+          - qemu-utils
+          - virt-install
           - libvirt-daemon-system
           - libvirt-clients
           - bridge-utils
@@ -19,6 +21,9 @@
           - gnupg
           - software-properties-common
           - python3-lxml
+          - libvirt-dev
+          - python3-dev
+          - pkg-config
         state: present
         update_cache: yes
 
