@@ -1,51 +1,49 @@
 ---
 all:
   vars:
-    # K3s configuration
-    k3s_version: v1.35.3+k3s1
-    k3s_channel: stable
-    k3s_install_dir: /usr/local/bin
-    k3s_config_dir: /etc/rancher/k3s
-
+    ansible_distribution: 'Ubuntu'
+    kubernetes_cidr: "10.244.0.0/16"
+    calico_version: "3.32.0"
+    helm_version: "3.14.3" # Update to a stable, available version
   children:
-    k3s_cluster:
+    kube_nodes:
       children:
-        k3s_servers:
-          vars:
-            k3s_control_node: true
-            k3s_server_options:
-              - "--cluster-init"
-              - "--tls-san={{ ansible_host }}"
-              - "--node-ip={{ ansible_host }}"
-              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
-              # - "--advertise-address={{ ansible_host }}"
+        servers:
+          # vars:
+          #   k3s_control_node: true
+          #   k3s_server_options:
+          #     - "--cluster-init"
+          #     - "--tls-san={{ ansible_host }}"
+          #     - "--node-ip={{ ansible_host }}"
+          #     # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
+          #     # - "--advertise-address={{ ansible_host }}"
           hosts:
-            node1:
+            server1:
               ansible_user: vagrant
-              ansible_ssh_private_key_file: .vagrant/machines/node1/virtualbox/private_key
+              ansible_ssh_private_key_file: .vagrant/private_key_node1
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.11
-              k3s_node_name: node1
-        k3s_agents:
-          vars:
-            k3s_control_node: false
-            k3s_agent_options:
-              - "--node-ip={{ ansible_host }}"
-              # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
-              - "--server=https://192.168.54.11:6443"
+              ansible_host: 192.168.1.12
+              k3s_node_name: server1
+        workers:
+          # vars:
+          #   k3s_control_node: false
+          #   k3s_agent_options:
+          #     - "--node-ip={{ ansible_host }}"
+          #     # - "--node-label=svccontroller.k3s.cattle.io/enablelb=true"
+          #     - "--server=https://192.168.54.11:6443"
           hosts:
-            node2:
+            worker1:
               ansible_user: vagrant
-              ansible_ssh_private_key_file: .vagrant/machines/node2/virtualbox/private_key
+              ansible_ssh_private_key_file: .vagrant/private_key_node2
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.12
-              k3s_node_name: node2
-            node3:
+              ansible_host: 192.168.1.13
+              k3s_node_name: worker1
+            worker2:
               ansible_user: vagrant
-              ansible_ssh_private_key_file: .vagrant/machines/node3/virtualbox/private_key
+              ansible_ssh_private_key_file: .vagrant/private_key_node3
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.13
-              k3s_node_name: node3
+              ansible_host: 192.168.1.14
+              k3s_node_name: worker2

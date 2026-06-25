@@ -1,0 +1,197 @@
+---
+- name: Install kubeadm
+  hosts: k8s_nodes
+  become: true
+  # vars:
+    # Removed redundant and recursive ansible_user definition here
+  tasks:
+    - name: Install necessary system utilities (curl, etc.)
+      apt:
+        pkg:
+          - curl
+          - unzip # Added unzip to ensure file extraction works
+        state: present
+        update_cache: true
+
+    - name: Create keyrings directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Docker GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+        force: true
+
+    - name: Download kubeadm gpg key
+      get_url:
+        url: https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key
+        dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+        mode: "0644"
+        force: true
+
+    - name: De-armor Docker GPG key for APT
+      command: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: De-armor kubeadm gpg key for APT
+      command: gpg --dearmor --yes --output /etc/apt/keyrings/kubernetes-apt-keyring.gpg /etc/apt/keyrings/kubernetes-apt-keyring.asc
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
+        state: present
+        filename: docker
+
+    - name: Add kubeadm repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
+        state: present
+        filename: kubernetes
+    - name: Install Docker Engine
+      apt:
+        pkg:
+          - docker-ce
+          - containerd.io
+        state: latest
+        update_cache: true
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Enable cri plugin
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^[\s]*disabled_plugins'
+        backup: yes
+        backrefs: yes
+        line: 'disabled_plugins = []'
+        firstmatch: yes
+        state: present
+      ignore_errors: yes
+
+    - name: Restart containerd service
+      service:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Disable swap
+      command: swapoff -a
+
+    - name: Disable swap permanently
+      lineinfile:
+        path: /etc/fstab
+        regexp: '^([^#].*?\\sswap\\s+.*)$'
+        line: '# \\1'
+        backrefs: yes
+
+    - name: Install kubeadm package
+      apt:
+        pkg:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+        update_cache: yes
+
+    - name: Hold kubeadm package to prevent updates
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubeadm
+        - kubelet
+        - kubectl
+
+    - name: Check if kubeadm is already initialized
+      ansible.builtin.stat:
+        path: "/etc/kubernetes/admin.conf"
+      register: kubeadm_config
+
+    - name: Enable and start kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: started
+
+    - name: Reset kubeadm when kubelet run but kubeadm is not running
+      command: kubeadm reset --force
+      when: not kubeadm_config.stat.exists
+
+    - name: Initiate kubeadm
+      command: kubeadm init
+      when: not kubeadm_config.stat.exists
+
+    - name: Create .kube directory for user
+      file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0700"
+
+    - name: Copy kubeconfig to user directory
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0600"
+
+    - name: Fetch kubeconfig file to local control machine
+      fetch:
+        src: /home/{{ ansible_user }}/.kube/config
+        dest: "~/.kube/config"
+        flat: yes
+    - name: Install python3 kubernetes
+      apt:
+        name: python3-kubernetes
+        state: present
+        update_cache: true
+
+    - name: Install Helm (Version {{ helm_version }})
+      block:
+        - name: Download binary via curl
+          shell: |
+            curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+          args:
+            chdir: /tmp
+        - name: Extract Helm binary using tar
+          shell: |
+            tar -xzf /tmp/helm.tar.gz -C /usr/local/bin/ --strip-components=2
+          args:
+            creates: /usr/local/bin/helm
+        - name: Ensure helm is executable
+          file:
+            path: /usr/local/bin/helm
+            mode: '0755'
+
+    - name: Workarround coredns empty import
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: coredns-custom
+            namespace: kube-system
+          data:
+            log.override: |
+              #
+            stub.server: |
+              #
+    - name: Install helm-diff plugin
+      kubernetes.core.helm_plugin:
+        plugin_path: "https://github.com/databus23/helm-diff"
+        plugin_version: 3.5.17
+        state: present
