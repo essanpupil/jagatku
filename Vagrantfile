@@ -6,8 +6,11 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node1"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
   end
 
@@ -18,8 +21,11 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node2"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
   end
 
@@ -30,8 +36,11 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node3"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
   end
 end
