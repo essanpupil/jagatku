@@ -25,7 +25,7 @@ all:
               ansible_ssh_private_key_file: .vagrant/machines/node1/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.11
+              ansible_host: 192.168.1.12
               k3s_node_name: node1
         k3s_agents:
           vars:
@@ -40,12 +40,12 @@ all:
               ansible_ssh_private_key_file: .vagrant/machines/node2/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.12
+              ansible_host: 192.168.1.13
               k3s_node_name: node2
             node3:
               ansible_user: vagrant
               ansible_ssh_private_key_file: .vagrant/machines/node3/virtualbox/private_key
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.54.13
+              ansible_host: 192.168.1.14
               k3s_node_name: node3
