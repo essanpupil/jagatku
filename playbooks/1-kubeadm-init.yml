@@ -1,6 +1,6 @@
 ---
 - name: Install kubeadm
-  hosts: k8s_nodes
+  hosts: server1
   become: true
   # vars:
     # Removed redundant and recursive ansible_user definition here
@@ -10,6 +10,7 @@
         pkg:
           - curl
           - unzip # Added unzip to ensure file extraction works
+          - gnupg
         state: present
         update_cache: true
 
