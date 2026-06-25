@@ -1,6 +1,5 @@
 - name: Install Kubernetes Helm
-  hosts: laptop1
-
+  hosts: server1
   tasks:
     - name: Install Cilium using Helm
       kubernetes.core.helm:
