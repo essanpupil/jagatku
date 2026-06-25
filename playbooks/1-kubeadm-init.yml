@@ -1,6 +1,6 @@
 ---
 - name: Install kubeadm
-  hosts: server1
+  hosts: kube_nodes
   become: true
   # vars:
     # Removed redundant and recursive ansible_user definition here
@@ -130,7 +130,20 @@
 
     - name: Initiate kubeadm
       command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }}"
-      when: not kubeadm_config.stat.exists
+      when: not kubeadm_config.stat.exists and inventory_hostname == "server1"
+    
+    - name: Generate join command string
+      command: kubeadm token create --print-join-command
+      register: join_command
+      when: inventory_hostname == "server1"
+    
+    - name: Debug jon command variable
+      ansible.builtin.debug:
+        var: join_command
+    
+    - name: Join kubeadm
+      ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
+      when: inventory_hostname != "server1"
 
     - name: Create .kube directory for user
       file:
@@ -141,6 +154,7 @@
         mode: "0700"
 
     - name: Copy kubeconfig to user directory
+      when: inventory_hostname == "server1"
       copy:
         src: /etc/kubernetes/admin.conf
         dest: "/home/{{ ansible_user }}/.kube/config"
