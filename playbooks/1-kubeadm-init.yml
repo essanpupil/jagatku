@@ -160,25 +160,42 @@
     #     state: present
     #     update_cache: true
 
-    # - name: Install Helm (Version {{ helm_version }})
-    #   block:
-    #     - name: Download binary via curl
-    #       shell: |
-    #         curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
-    #       args:
-    #         chdir: /tmp
-    #     - name: Extract Helm binary using tar
-    #       shell: |
-    #         tar -xzf /tmp/helm.tar.gz -C /usr/local/bin/ --strip-components=2
-    #       args:
-    #         creates: /usr/local/bin/helm
-    #     - name: Ensure helm is executable
-    #       file:
-    #         path: /usr/local/bin/helm
-    #         mode: '0755'
+    - name: Download Helm binary archive
+      ansible.builtin.get_url:
+        url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
+        dest: "/tmp/helm-{{ helm_version }}.tar.gz"
+        mode: '0644'
+
+    - name: Create temporary directory for extraction
+      ansible.builtin.file:
+        path: "/tmp/helm-extracted"
+        state: directory
+        mode: '0755'
+
+    - name: Unarchive Helm package
+      ansible.builtin.unarchive:
+        src: "/tmp/helm-{{ helm_version }}.tar.gz"
+        dest: "/tmp/helm-extracted"
+        remote_src: yes
+
+    - name: Move Helm binary to system bin directory
+      ansible.builtin.copy:
+        src: "/tmp/helm-extracted/linux-{{ helm_arch }}/helm"
+        dest: "/usr/local/bin/helm"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/helm-{{ helm_version }}.tar.gz"
+        - "/tmp/helm-extracted"
 
     - name: Workarround coredns empty import
       kubernetes.core.k8s:
+        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         state: absent
         definition:
           apiVersion: v1
@@ -193,6 +210,7 @@
               #
     - name: Install helm-diff plugin
       kubernetes.core.helm_plugin:
+        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         plugin_path: "https://github.com/databus23/helm-diff"
-        plugin_version: 3.5.17
+        plugin_version: 3.15.10
         state: present
