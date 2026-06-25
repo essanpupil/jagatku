@@ -12,6 +12,8 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
   config.vm.define "node2" do |node|
@@ -27,6 +29,8 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
   config.vm.define "node3" do |node|
@@ -42,5 +46,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 end
