@@ -1,0 +1,37 @@
+# This is an example configuration file
+# To learn more, see the full config.yaml reference: https://docs.continue.dev/reference
+
+name: Example Config
+version: 1.0.0
+schema: v1
+
+# Define which models can be used
+# https://docs.continue.dev/customization/models
+models:
+  - name: google/gemma-4-e4b
+    provider: lmstudio
+    model: google/gemma-4-e4b
+    roles:
+      - apply
+      - chat
+      - edit
+  # - name: Kortix/fastapply-1.5b-v1.0_gguf
+  #   provider: lmstudio
+  #   model: Kortix/fastapply-1.5b-v1.0_gguf
+  #   roles:
+  #     - apply
+  - name: qwen/qwen3-1.7b
+    provider: lmstudio
+    model: qwen/qwen3-1.7b
+    roles:
+      - autocomplete
+  - name: text-embedding-mxbai-embed-large-v1
+    provider: lmstudio
+    model: text-embedding-mxbai-embed-large-v1
+    roles:
+      - embed
+  - name: qwen3-reranker-0.6b
+    provider: lmstudio
+    model: qwen3-reranker-0.6b
+    roles:
+      - rerank
