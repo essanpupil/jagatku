@@ -129,7 +129,7 @@
       when: not kubeadm_config.stat.exists
 
     - name: Initiate kubeadm
-      command: kubeadm init
+      command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }}"
       when: not kubeadm_config.stat.exists
 
     - name: Create .kube directory for user
@@ -154,28 +154,28 @@
         src: /home/{{ ansible_user }}/.kube/config
         dest: "~/.kube/config"
         flat: yes
-    - name: Install python3 kubernetes
-      apt:
-        name: python3-kubernetes
-        state: present
-        update_cache: true
+    # - name: Install python3 kubernetes
+    #   apt:
+    #     name: python3-kubernetes
+    #     state: present
+    #     update_cache: true
 
-    - name: Install Helm (Version {{ helm_version }})
-      block:
-        - name: Download binary via curl
-          shell: |
-            curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
-          args:
-            chdir: /tmp
-        - name: Extract Helm binary using tar
-          shell: |
-            tar -xzf /tmp/helm.tar.gz -C /usr/local/bin/ --strip-components=2
-          args:
-            creates: /usr/local/bin/helm
-        - name: Ensure helm is executable
-          file:
-            path: /usr/local/bin/helm
-            mode: '0755'
+    # - name: Install Helm (Version {{ helm_version }})
+    #   block:
+    #     - name: Download binary via curl
+    #       shell: |
+    #         curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    #       args:
+    #         chdir: /tmp
+    #     - name: Extract Helm binary using tar
+    #       shell: |
+    #         tar -xzf /tmp/helm.tar.gz -C /usr/local/bin/ --strip-components=2
+    #       args:
+    #         creates: /usr/local/bin/helm
+    #     - name: Ensure helm is executable
+    #       file:
+    #         path: /usr/local/bin/helm
+    #         mode: '0755'
 
     - name: Workarround coredns empty import
       kubernetes.core.k8s:
