@@ -4,7 +4,8 @@ all:
     ansible_distribution: 'Ubuntu'
     kubernetes_cidr: "10.244.0.0/16"
     calico_version: "3.32.0"
-    helm_version: "3.14.3" # Update to a stable, available version
+    helm_version: "3.21.2" # Update to a stable, available version
+    helm_arch: "amd64"
   children:
     kube_nodes:
       children:
