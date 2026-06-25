@@ -15,6 +15,11 @@ models:
       - apply
       - chat
       - edit
+  # - name: Kortix/fastapply-1.5b-v1.0_gguf
+  #   provider: lmstudio
+  #   model: Kortix/fastapply-1.5b-v1.0_gguf
+  #   roles:
+  #     - apply
   - name: qwen/qwen3-1.7b
     provider: lmstudio
     model: qwen/qwen3-1.7b
