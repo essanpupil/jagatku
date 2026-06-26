@@ -164,6 +164,7 @@
         mode: "0600"
 
     - name: Fetch kubeconfig file to local control machine
+      when: inventory_hostname == "server1"
       fetch:
         src: /home/{{ ansible_user }}/.kube/config
         dest: "~/.kube/config"
