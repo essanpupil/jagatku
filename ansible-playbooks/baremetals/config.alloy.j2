@@ -22,8 +22,8 @@ loki.write "loki_endpoint" {
 
 loki.source.journal "grafana_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=grafana.service"
-  labels     = {service = "grafana"}
+  matches    = "_SYSTEMD_UNIT=grafana-server.service"
+  labels     = {service = "grafana-server"}
 }
 
 loki.source.journal "sudo_logs" {
