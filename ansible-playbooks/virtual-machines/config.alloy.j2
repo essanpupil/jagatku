@@ -20,6 +20,12 @@ loki.write "loki_endpoint" {
   }
 }
 
+loki.source.journal "kubelet_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=kubelet.service"
+  labels     = {service = "kubelet"}
+}
+
 loki.source.journal "sudo_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
   matches    = "_SYSTEMD_UNIT=sudo.service"
