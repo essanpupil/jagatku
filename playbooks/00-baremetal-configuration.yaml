@@ -30,3 +30,18 @@
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
         state: present
         filename: grafana
+      
+    - name: Download Hashicorp vault GPG key
+      get_url:
+        url: https://apt.releases.hashicorp.com/gpg
+        dest: /etc/apt/keyrings/hashicorp.key
+        mode: "0644"
+    - name: De-armor Hashicorp GPG key
+      command: gpg --dearmor --yes -o /etc/apt/keyrings/hashicorp.gpg /etc/apt/keyrings/hashicorp.key
+      args:
+        creates: /etc/apt/keyrings/hashicorp.gpg
+    - name: Add Hashicorp repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com trixie main"
+        state: present
+        filename: hashicorp
