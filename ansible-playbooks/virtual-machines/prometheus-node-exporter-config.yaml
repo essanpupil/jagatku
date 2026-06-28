@@ -1,0 +1,14 @@
+---
+- name: Install and configure prometheus in laptop
+  hosts: kube_nodes
+  become: True
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install Prometheus
+      apt:
+        name:
+          - prometheus-node-exporter
+        state: present
