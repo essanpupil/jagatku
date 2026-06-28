@@ -26,6 +26,42 @@ loki.write "loki_endpoint" {
   }
 }
 
+loki.source.journal "prometheus_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=prometheus.service"
+  labels     = {service = "prometheus"}
+}
+
+loki.source.journal "alloy_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=alloy.service"
+  labels     = {service = "alloy"}
+}
+
+loki.source.journal "loki_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=loki.service"
+  labels     = {service = "alloy"}
+}
+
+loki.source.journal "ssh_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=sshd.service"
+  labels     = {service = "sshd"}
+}
+
+loki.source.journal "hashicorp_vault_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=hashicorp-vault.service"
+  labels     = {service = "hashicorp-vault"}
+}
+
+loki.source.journal "action_runer_houseone_logs" {
+  forward_to = [loki.write.endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=actions.runner.essanpupil-jagatku.houseone.service"
+  labels     = {service = "action-runner-houseone"}
+}
+
 // Scrape local system metrics (Node Exporter)
 prometheus.scrape "default" {
   targets = [{

@@ -1,0 +1,16 @@
+name: Baremetal Ansible Deployment
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ansible-playbooks/baremetals/*'
+
+jobs:
+  ansible-ci:
+    runs-on: laptop1
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Run ansible check diff 
+        run: ansible-playbook ansible-playbooks/baremetals/*.yaml --diff --check

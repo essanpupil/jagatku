@@ -1,0 +1,19 @@
+name: Baremetal Ansible Deployment
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ansible-playbooks/baremetals/*'
+    types:
+      - closed
+
+jobs:
+  ansible-cd:
+    if: github.event.pull_request.merged == true
+    runs-on: laptop1
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Run ansible check diff 
+        run: ansible-playbook ansible-playbooks/baremetals/*.yaml
