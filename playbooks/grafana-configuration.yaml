@@ -1,0 +1,27 @@
+---
+- name: Install and configure Grafana in laptop
+  hosts: baremetals
+  become: True
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+    - name: Start Grafana service
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+    - name: Configure prometheus as grafana datasource
+      ansible.builtin.template:
+        src: "templates/datasource.yml.j2"
+        dest: "/etc/grafana/provisioning/datasources/prometheus.yml"
+        owner: "root"
+        group: "grafana"
+        mode: "0640"
+      notify: restart grafana
+      
