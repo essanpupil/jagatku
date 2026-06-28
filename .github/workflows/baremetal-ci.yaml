@@ -36,8 +36,10 @@ jobs:
     steps:
       - name: Run ansible check diff 
         run: ansible-playbook ${{ matrix.playbooks }} --diff --check | tee ansible_diff.txt
+      - name: Add playbook path for identification
+        run: echo "\n${{ matrix.playbooks }}\n" >> ansible_diff.txt
       - name: Post comment of ansible check diff result
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-path: 'ansible_diff.txt'
