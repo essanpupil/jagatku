@@ -1,0 +1,18 @@
+---
+- name: Install and configure Grafana Loki
+  hosts: laptop1
+  become: true
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Update apt cache and install Loki
+      ansible.builtin.apt:
+        name: loki
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Loki service
+      ansible.builtin.systemd:
+        name: loki
+        state: started
+        enabled: yes
