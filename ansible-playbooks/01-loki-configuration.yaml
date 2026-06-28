@@ -11,8 +11,23 @@
         state: present
         update_cache: yes
 
+    - name: Deploy Loki configuration
+      ansible.builtin.template:
+        src: config.loki.j2
+        dest: /etc/loki/config.yml
+        owner: loki
+        # group: loki
+        mode: '0640'
+      notify: Restart loki
+
     - name: Start and enable Loki service
       ansible.builtin.systemd:
         name: loki
         state: started
         enabled: yes
+
+  handlers:
+    - name: Restart loki
+      ansible.builtin.systemd:
+        name: loki
+        state: restarted
