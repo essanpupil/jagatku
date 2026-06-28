@@ -13,17 +13,17 @@ loki.source.file "local_files" {
   forward_to = [loki.write.loki_endpoint.receiver]
 }
 
-// 2. Scraping Systemd Journal Logs
-loki.source.journal "systemd_journal" {
-  max_age    = "12h"
-  forward_to = [loki.write.loki_endpoint.receiver]
-}
-
 // 3. Export Data Pipeline to Loki Instance
 loki.write "loki_endpoint" {
   endpoint {
     url = "{{ loki_url }}"
   }
+}
+
+loki.source.journal "sudo_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=sudo.service"
+  labels     = {service = "sudo"}
 }
 
 loki.source.journal "prometheus_logs" {
