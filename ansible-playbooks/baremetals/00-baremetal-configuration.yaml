@@ -13,6 +13,7 @@
           - apt-transport-https
           - wget
           - gnupg
+          - ansible-lint
         state: present
         update_cache: yes
       
