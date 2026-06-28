@@ -21,6 +21,14 @@
         group: root
         mode: '0644'
       notify: Restart prometheus
+    - name: Deploy Prometheus configurations
+      ansible.builtin.template:
+        src: config.prometheus.j2
+        dest: /etc/prometheus/prometheus.yml
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart prometheus
 
     - name: Start Prometheus service
       service:
