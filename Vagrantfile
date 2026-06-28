@@ -10,6 +10,8 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--ioapic", "on"]
       v.customize ["modifyvm", :id, "--pae", "on"]
       v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+      v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
     ssh_pub_key = File.readlines("macbook_key.pub").first.strip
@@ -27,6 +29,8 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--ioapic", "on"]
       v.customize ["modifyvm", :id, "--pae", "on"]
       v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+      v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
     ssh_pub_key = File.readlines("macbook_key.pub").first.strip
@@ -44,6 +48,8 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--ioapic", "on"]
       v.customize ["modifyvm", :id, "--pae", "on"]
       v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+      v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
     ssh_pub_key = File.readlines("macbook_key.pub").first.strip

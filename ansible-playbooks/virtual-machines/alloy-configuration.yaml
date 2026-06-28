@@ -1,0 +1,46 @@
+---
+- name: Install and configure alloy for baremetals servers
+  hosts: kube_nodes
+  become: true
+  vars_files:
+    - ../vault.yaml
+  vars:
+    loki_url: "http://192.168.1.2:3100/loki/api/v1/push"
+
+  tasks:
+    - name: Install Grafana Alloy
+      ansible.builtin.apt:
+        name: alloy
+        state: present
+        update_cache: true
+
+    - name: Ensure alloy user belongs to system groups for log access
+      ansible.builtin.user:
+        name: alloy
+        groups: "adm,systemd-journal"
+        append: true
+      notify: Restart alloy
+
+    - name: Deploy Alloy pipeline configuration
+      ansible.builtin.template:
+        src: config.alloy.j2
+        dest: /etc/alloy/config.alloy
+        owner: alloy
+        group: alloy
+        mode: '0640'
+      notify: Restart alloy
+
+    - name: Validate Alloy configuration
+      command: alloy validate /etc/alloy/config.alloy
+
+    - name: Ensure Alloy service is enabled and running
+      ansible.builtin.systemd:
+        name: alloy
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart alloy
+      ansible.builtin.systemd:
+        name: alloy
+        state: restarted

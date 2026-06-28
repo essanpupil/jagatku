@@ -1,0 +1,32 @@
+---
+- name: Install and configure various observability agents
+  hosts: kube_nodes
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install core packages
+      apt:
+        name:
+          - apt-transport-https
+          - wget
+          - gnupg
+        state: present
+        update_cache: yes
+      
+    - name: Download Grafana GPG key
+      get_url:
+        url: https://packages.grafana.com/gpg.key
+        dest: /etc/apt/keyrings/grafana.key
+        mode: "0644"
+    - name: De-armor Grafana GPG key
+      command: gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg /etc/apt/keyrings/grafana.key
+      args:
+        creates: /etc/apt/keyrings/grafana.gpg
+    - name: Add Grafana repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
+        state: present
+        filename: grafana
