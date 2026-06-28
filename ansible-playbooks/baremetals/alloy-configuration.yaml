@@ -30,6 +30,9 @@
         mode: '0640'
       notify: Restart alloy
 
+    - name: Validate Alloy configuration
+      command: alloy validate /etc/alloy/config.alloy
+
     - name: Ensure Alloy service is enabled and running
       ansible.builtin.systemd:
         name: alloy
