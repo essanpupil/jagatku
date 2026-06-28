@@ -1,0 +1,26 @@
+// 1. Scraping Local Debian Log Files
+local.file_match "debian_logs" {
+  path_targets = [
+    { "__address__" = "localhost", "filename" = "/var/log/*.log" },
+    { "__address__" = "localhost", "filename" = "/var/log/auth.log" },
+    { "__address__" = "localhost", "filename" = "/var/log/syslog" }
+  ]
+}
+
+loki.source.file "local_files" {
+  targets    = local.file_match.debian_logs.targets
+  forward_to = [loki.write.loki_endpoint.receiver]
+}
+
+// 2. Scraping Systemd Journal Logs
+loki.source.journal "systemd_journal" {
+  max_age    = "12h"
+  forward_to = [loki.write.loki_endpoint.receiver]
+}
+
+// 3. Export Data Pipeline to Loki Instance
+loki.write "loki_endpoint" {
+  endpoint {
+    url = "{{ loki_url }}"
+  }
+}
