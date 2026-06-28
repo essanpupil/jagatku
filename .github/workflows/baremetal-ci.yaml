@@ -12,6 +12,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history for accurate diffing
+      - name: Get Changed Files via Git
+        run: |
+          # Compare the PR head branch against the target branch base
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          
+          echo "Changed files:"
+          cat changed_files.txt
+
       - name: Run ansible lint
         run: ansible-lint playbooks/baremetals
       - name: Run syntax check
