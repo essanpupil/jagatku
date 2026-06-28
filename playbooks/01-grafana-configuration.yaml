@@ -2,6 +2,8 @@
 - name: Install and configure Grafana in laptop
   hosts: baremetals
   become: True
+  vars:
+    grafana_url: "http://192.168.1.2:3000"
   vars_files:
     - vault.yaml
   tasks:
@@ -23,6 +25,6 @@
         name: "Prometheus-Local"
         ds_type: "prometheus"
         ds_url: "http://localhost:9090"
-        grafana_url: "http://192.168.1.2:3000"
+        grafana_url: "{{ grafana_url }}"
         grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
         state: present
