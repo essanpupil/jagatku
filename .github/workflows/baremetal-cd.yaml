@@ -7,6 +7,8 @@ on:
       - 'ansible-playbooks/baremetals/*'
     types:
       - closed
+permissions:
+  pull-requests: write
 
 jobs:
   ansible-cd:
