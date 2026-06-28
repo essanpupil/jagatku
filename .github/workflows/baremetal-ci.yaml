@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - 'ansible-playbooks/baremetals/*'
+permissions:
+  pull-requests: write
 
 jobs:
   list-ansible-playbooks:
@@ -35,7 +37,7 @@ jobs:
       - name: Run ansible check diff 
         run: ansible-playbook ${{ matrix.playbooks }} --diff --check | tee ansible_diff.txt
       - name: Post comment of ansible check diff result
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body-file ansible_diff.txt
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'ansible_diff.txt'
