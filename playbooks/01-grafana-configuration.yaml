@@ -2,6 +2,8 @@
 - name: Install and configure Grafana in laptop
   hosts: baremetals
   become: True
+  vars_files:
+    - vault.yaml
   tasks:
     - name: Update apt cache
       apt:
@@ -16,12 +18,11 @@
         name: grafana-server
         state: started
         enabled: yes
-    - name: Configure prometheus as grafana datasource
-      ansible.builtin.template:
-        src: "templates/datasource.yml.j2"
-        dest: "/etc/grafana/provisioning/datasources/prometheus.yml"
-        owner: "root"
-        group: "grafana"
-        mode: "0640"
-      notify: restart grafana
-      
+    - name: Create Prometheus-local Datasource in self-hosted Grafana
+      community.grafana.grafana_datasource:
+        name: "Prometheus-Local"
+        ds_type: "prometheus"
+        ds_url: "http://localhost:9090"
+        grafana_url: "http://192.168.1.2:3000"
+        grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
+        state: present
