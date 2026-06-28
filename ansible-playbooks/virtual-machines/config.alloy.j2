@@ -1,0 +1,39 @@
+// 1. Scraping Local Debian Log Files
+local.file_match "debian_logs" {
+  path_targets = [
+    { "__path__" = "/var/log/*.log" },
+    { "__path__" = "/var/log/auth.log" },
+    { "__path__" = "/var/log/syslog" },
+  ]
+  sync_period = "10s"
+}
+
+loki.source.file "local_files" {
+  targets    = local.file_match.debian_logs.targets
+  forward_to = [loki.write.loki_endpoint.receiver]
+}
+
+// 3. Export Data Pipeline to Loki Instance
+loki.write "loki_endpoint" {
+  endpoint {
+    url = "{{ loki_url }}"
+  }
+}
+
+loki.source.journal "sudo_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=sudo.service"
+  labels     = {service = "sudo"}
+}
+
+loki.source.journal "alloy_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=alloy.service"
+  labels     = {service = "alloy"}
+}
+
+loki.source.journal "sshd_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=sshd.service"
+  labels     = {service = "sshd"}
+}
