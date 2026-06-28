@@ -1,9 +1,9 @@
 // 1. Scraping Local Debian Log Files
 local.file_match "debian_logs" {
   path_targets = [
-    { "__address__" = "localhost", "filename" = "/var/log/*.log" },
-    { "__address__" = "localhost", "filename" = "/var/log/auth.log" },
-    { "__address__" = "localhost", "filename" = "/var/log/syslog" },
+    { "__path__" = "/var/log/*.log" },
+    { "__path__" = "/var/log/auth.log" },
+    { "__path__" = "/var/log/syslog" },
   ]
   sync_period = "10s"
 }
