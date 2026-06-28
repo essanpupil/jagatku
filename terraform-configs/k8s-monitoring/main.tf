@@ -43,7 +43,7 @@ resource "helm_release" "k8s_monitoring" {
 
       hostedLogs:
         type: loki
-        url: https://192.168.1.2/loki/api/v1/push
+        url: https://192.168.1.2:3100/loki/api/v1/push
         auth:
           # type: basic
           # username: "my-username"
