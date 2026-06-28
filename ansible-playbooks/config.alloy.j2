@@ -38,7 +38,7 @@ prometheus.scrape "default" {
 // Send metrics to your Grafana instance
 prometheus.remote_write "default" {
   endpoint {
-    url = "http://192.168.1.2:9100"
+    url = "http://192.168.1.2:9090/api/v1/write"
     
 //    basic_auth {
 //      username = "your_instance_username"

@@ -13,8 +13,23 @@
           - prometheus
           - prometheus-node-exporter
         state: present
+    - name: Deploy Prometheus default arguments
+      ansible.builtin.template:
+        src: args.prometheus.j2
+        dest: /etc/default/prometheus
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart prometheus
+
     - name: Start Prometheus service
       service:
         name: prometheus
         state: started
         enabled: yes
+
+  handlers:
+    - name: Restart prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        state: restarted
