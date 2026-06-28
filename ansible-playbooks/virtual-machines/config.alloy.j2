@@ -20,6 +20,12 @@ loki.write "loki_endpoint" {
   }
 }
 
+loki.source.journal "docker_logs" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  matches    = "_SYSTEMD_UNIT=docker.service"
+  labels     = {service = "docker"}
+}
+
 loki.source.journal "containerd_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
   matches    = "_SYSTEMD_UNIT=containerd.service"
