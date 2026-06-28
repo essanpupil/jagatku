@@ -30,12 +30,3 @@
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
         state: present
         filename: grafana
-    - name: Install Grafana
-      apt:
-        name: grafana
-        state: present
-    - name: Start Grafana service
-      service:
-        name: grafana-server
-        state: started
-        enabled: yes
