@@ -1,0 +1,43 @@
+---
+- name: Install and configure Grafana in laptop
+  hosts: baremetals
+  become: True
+  vars:
+    grafana_url: "http://192.168.1.2:3000"
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+    - name: Start Grafana service
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+    - name: Create Prometheus-local Datasource in self-hosted Grafana
+      community.grafana.grafana_datasource:
+        name: "Prometheus-Local"
+        ds_type: "prometheus"
+        ds_url: "http://localhost:9090"
+        grafana_url: "{{ grafana_url }}"
+        grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
+        state: present
+    - name: Create Loki-local Datasource in self-hosted Grafana
+      community.grafana.grafana_datasource:
+        name: "Loki-Local"
+        ds_type: "loki"
+        ds_url: "http://localhost:3100"
+        grafana_url: "{{ grafana_url }}"
+        grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
+        state: present
+        additional_json_data:
+          httpHeaderName1: "Authorization"
+        additional_secure_json_data:
+          httpHeaderValue1: "Bearer ihavenogroot"
+

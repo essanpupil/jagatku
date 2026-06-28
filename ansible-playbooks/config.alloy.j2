@@ -1,0 +1,48 @@
+// 1. Scraping Local Debian Log Files
+local.file_match "debian_logs" {
+  path_targets = [
+    { "__path__" = "/var/log/*.log" },
+    { "__path__" = "/var/log/auth.log" },
+    { "__path__" = "/var/log/syslog" },
+  ]
+  sync_period = "10s"
+}
+
+loki.source.file "local_files" {
+  targets    = local.file_match.debian_logs.targets
+  forward_to = [loki.write.loki_endpoint.receiver]
+}
+
+// 2. Scraping Systemd Journal Logs
+loki.source.journal "systemd_journal" {
+  max_age    = "12h"
+  forward_to = [loki.write.loki_endpoint.receiver]
+}
+
+// 3. Export Data Pipeline to Loki Instance
+loki.write "loki_endpoint" {
+  endpoint {
+    url = "{{ loki_url }}"
+  }
+}
+
+// Scrape local system metrics (Node Exporter)
+prometheus.scrape "default" {
+  targets = [{
+    job  = "integrations/node_exporter",
+    __address__ = "192.168.1.2:12345",
+  }]
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+// Send metrics to your Grafana instance
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://192.168.1.2:9090/api/v1/write"
+    
+//    basic_auth {
+//      username = "your_instance_username"
+ //     password = "your_api_key_or_password"
+ //   }
+  }
+}

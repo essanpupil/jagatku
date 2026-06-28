@@ -6,9 +6,14 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node1"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
   config.vm.define "node2" do |node|
@@ -18,9 +23,14 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node2"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
   config.vm.define "node3" do |node|
@@ -30,8 +40,13 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node3"
     node.vm.disk :disk, size: "30GB", primary: true
     node.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--pae", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
       v.memory = 2048
-      v.cpus = 2
     end
+    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 end
