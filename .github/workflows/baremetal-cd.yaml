@@ -15,5 +15,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Run ansible check diff 
-        run: ansible-playbook ansible-playbooks/baremetals/*.yaml
+      - name: Apply ansible changes
+        run: ansible-playbook ansible-playbooks/baremetals/*.yaml | tee ansible_apply.txt
+      - name: Post comment of ansible apply result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'ansible_apply.txt'

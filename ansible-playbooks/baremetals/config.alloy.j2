@@ -41,7 +41,7 @@ loki.source.journal "alloy_logs" {
 loki.source.journal "loki_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
   matches    = "_SYSTEMD_UNIT=loki.service"
-  labels     = {service = "alloy"}
+  labels     = {service = "loki"}
 }
 
 loki.source.journal "ssh_logs" {
