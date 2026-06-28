@@ -8,7 +8,7 @@ on:
 
 jobs:
   ansible-ci:
-    runs-on: [laptop1]
+    runs-on: laptop1
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
