@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
     node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
     node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 
@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("macbook_key.pub").first.strip
+    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
     node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
   end
 end
