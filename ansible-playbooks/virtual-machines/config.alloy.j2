@@ -18,6 +18,12 @@ loki.write "loki_endpoint" {
   endpoint {
     url = "{{ loki_url }}"
   }
+  stage.static_labels {
+    values = {
+      ip_address  = "{{ ansible_host }}",
+      host_group  = "{{ {{ group_names[0] }}",
+    }
+  }
 }
 
 loki.source.journal "docker_logs" {
