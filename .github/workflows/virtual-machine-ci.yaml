@@ -1,0 +1,45 @@
+name: Virtual Machines Ansible Deployment
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ansible-playbooks/virtual-machines/*'
+permissions:
+  pull-requests: write
+
+jobs:
+  list-ansible-playbooks:
+    runs-on: laptop1
+    outputs:
+      baremetals_playbooks: ${{ steps.set-list.outputs.string_array }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: List ansible playbooks for baremetals
+        run: ls ansible-playbooks/virtual-machines/*.yaml > playbooks.txt
+      - name: Set playbooks as list
+        id: set-list
+        run: |
+          # Read lines, strip whitespace, and format as a compact JSON array
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' playbooks.txt)
+          
+          # Save the array to step outputs
+          echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+  
+  ansible_check_diff:
+    needs: list-ansible-playbooks
+    runs-on: laptop1
+    strategy:
+      matrix:
+        playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
+    steps:
+      - name: Run ansible check diff 
+        run: ansible-playbook ${{ matrix.playbooks }} --diff --check | tee ansible_diff.txt
+      - name: Add playbook path for identification
+        run: echo "${{ matrix.playbooks }}" >> ansible_diff.txt
+      - name: Post comment of ansible check diff result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'ansible_diff.txt'
