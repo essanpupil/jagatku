@@ -10,15 +10,18 @@ local.file_match "debian_logs" {
 
 loki.source.file "local_files" {
   targets    = local.file_match.debian_logs.targets
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
 }
 
-// 3. Export Data Pipeline to Loki Instance
 loki.write "loki_endpoint" {
   endpoint {
     url = "{{ loki_url }}"
   }
-  stage.static_labels {
+}
+
+loki.process "vm_labeling" {
+  forward_to = [loki.write.loki_endpoint.receiver]
+  stage.static_labels "host_labeling" {
     values = {
       ip_address  = "{{ ansible_host }}",
       host_group  = "{{ {{ group_names[0] }}",
@@ -27,37 +30,37 @@ loki.write "loki_endpoint" {
 }
 
 loki.source.journal "docker_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=docker.service"
   labels     = {service = "docker"}
 }
 
 loki.source.journal "containerd_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=containerd.service"
   labels     = {service = "containerd"}
 }
 
 loki.source.journal "kubelet_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=kubelet.service"
   labels     = {service = "kubelet"}
 }
 
 loki.source.journal "sudo_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=sudo.service"
   labels     = {service = "sudo"}
 }
 
 loki.source.journal "alloy_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=alloy.service"
   labels     = {service = "alloy"}
 }
 
 loki.source.journal "sshd_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+  forward_to = [loki.process.vm_labeling.receiver]
   matches    = "_SYSTEMD_UNIT=sshd.service"
   labels     = {service = "sshd"}
 }
