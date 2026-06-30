@@ -1,4 +1,4 @@
-name: Baremetal Ansible Deployment
+name: Virtual Machines Ansible Deployment
 on:
   pull_request:
     branches:
