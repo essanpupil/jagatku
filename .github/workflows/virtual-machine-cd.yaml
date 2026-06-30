@@ -1,0 +1,26 @@
+name: Virtual Machines Ansible Deployment
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ansible-playbooks/virtual-machines/*'
+    types:
+      - closed
+permissions:
+  pull-requests: write
+
+jobs:
+  ansible-cd:
+    if: github.event.pull_request.merged == true
+    runs-on: laptop1
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Apply ansible changes
+        run: ansible-playbook ansible-playbooks/virtual-machines/*.yaml | tee ansible_apply.txt
+      - name: Post comment of ansible apply result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'ansible_apply.txt'
