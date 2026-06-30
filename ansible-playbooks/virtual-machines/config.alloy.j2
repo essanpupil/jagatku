@@ -1,4 +1,3 @@
-// 1. Scraping Local Debian Log Files
 local.file_match "debian_logs" {
   path_targets = [
     { "__path__" = "/var/log/*.log" },
@@ -24,7 +23,7 @@ loki.process "vm_labeling" {
   stage.static_labels "host_labeling" {
     values = {
       ip_address  = "{{ ansible_host }}",
-      host_group  = "{{ {{ group_names[0] }}",
+      host_group  = "{{ group_names[0] }}",
     }
   }
 }
