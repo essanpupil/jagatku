@@ -158,6 +158,7 @@
       become: yes
       become_user: essan
       when: inventory_hostname in groups['servers']
+      check_mode: false
       kubernetes.core.k8s_info:
         kind: Node
       register: node_list
