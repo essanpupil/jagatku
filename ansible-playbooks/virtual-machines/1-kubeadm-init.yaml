@@ -123,11 +123,11 @@
         path: "/etc/kubernetes/admin.conf"
       register: kubeadm_config
 
-    - name: Enable and start kubelet service
-      ansible.builtin.systemd_service:
-        name: kubelet
-        enabled: true
-        state: started
+    # - name: Enable and start kubelet service
+    #   ansible.builtin.systemd_service:
+    #     name: kubelet
+    #     enabled: true
+    #     state: started
 
     - name: Update kubelet kubeadm arguments
       when: inventory_hostname in groups['workers']
@@ -224,7 +224,20 @@
         state: absent
       loop:
         - "/tmp/helm-{{ helm_version }}.tar.gz"
-        - "/tmp/helm-extracted"
+
+    - name: Find all contents inside the directory
+      ansible.builtin.find:
+        path: "/tmp/helm-extracted"
+        recurse: false
+        file_type: any
+        hidden: true
+      register: folder_contents
+
+    - name: Purge found files and subfolders
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ folder_contents.files }}"
 
     # - name: Workarround coredns empty import
     #   kubernetes.core.k8s:
@@ -242,6 +255,7 @@
     #         stub.server: |
     #           #
     - name: Install helm-diff plugin
+      when: inventory_hostname in groups['servers']
       kubernetes.core.helm_plugin:
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         plugin_path: "https://github.com/databus23/helm-diff"
