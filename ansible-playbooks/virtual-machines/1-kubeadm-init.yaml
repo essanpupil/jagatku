@@ -165,12 +165,13 @@
       register: node_list
 
     - name: Output node names
+      when: inventory_hostname in groups['servers']
       ansible.builtin.debug:
         msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
-      when: inventory_hostname in groups['workers'] and inventory_hostname not in node_list.resources
+      when: inventory_hostname in groups['workers'] and inventory_hostname not in node_list.resources | map(attribute='metadata.name') | list
 
     - name: Create .kube directory for user
       file:
