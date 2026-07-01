@@ -242,6 +242,7 @@
     #         stub.server: |
     #           #
     - name: Install helm-diff plugin
+      when: inventory_hostname in groups['servers']
       kubernetes.core.helm_plugin:
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         plugin_path: "https://github.com/databus23/helm-diff"
