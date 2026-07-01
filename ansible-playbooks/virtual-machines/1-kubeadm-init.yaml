@@ -167,6 +167,11 @@
       ansible.builtin.debug:
         msg: "{{ node_names.msg }}"
 
+    - name: Debug node names
+      check_mode: false
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}"
+
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
       when:
