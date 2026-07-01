@@ -155,6 +155,8 @@
         var: join_command
 
     - name: Gather information about all cluster nodes
+      become: yes
+      become_user: essan
       when: inventory_hostname in groups['servers']
       kubernetes.core.k8s_info:
         kind: Node
