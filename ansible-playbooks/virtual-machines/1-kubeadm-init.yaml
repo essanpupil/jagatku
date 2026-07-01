@@ -156,7 +156,7 @@
       register: node_list
 
     - name: Extract node name list
-      when: inventory_hostname in groups['servers']
+      # when: inventory_hostname in groups['servers']
       register: node_names
       ansible.builtin.debug:
         msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
