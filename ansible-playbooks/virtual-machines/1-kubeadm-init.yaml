@@ -155,8 +155,8 @@
         var: join_command
 
     - name: Gather information about all cluster nodes
-      become: yes
-      become_user: essan
+      # become: yes
+      # become_user: vagrant
       when: inventory_hostname in groups['servers']
       check_mode: false
       kubernetes.core.k8s_info:
