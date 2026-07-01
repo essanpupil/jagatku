@@ -160,6 +160,7 @@
       when: inventory_hostname in groups['servers']
       check_mode: false
       kubernetes.core.k8s_info:
+        kubeconfig: /home/vagrant/,kube/config
         kind: Node
       register: node_list
 
