@@ -170,7 +170,7 @@
       ansible.builtin.debug:
         msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
     - name: Debug node names
-      anisble.builtin.debug:
+      ansible.builtin.debug:
         msg: node_names
 
     - name: Join kubeadm
