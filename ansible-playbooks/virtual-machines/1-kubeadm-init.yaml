@@ -129,14 +129,6 @@
     #     enabled: true
     #     state: started
 
-    - name: Update kubelet kubeadm arguments
-      when: inventory_hostname in groups['workers']
-      ansible.builtin.copy:
-        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }}\"\n"
-        dest: /var/lib/kubelet/kubeadm-flags.env
-        mode: '0644'
-      notify: Restart kubelet
-
     - name: Reset kubeadm when kubelet run but kubeadm is not running
       command: kubeadm reset --force
       when: not kubeadm_config.stat.exists
@@ -149,14 +141,13 @@
       command: kubeadm token create --print-join-command
       register: join_command
       when: inventory_hostname in groups['servers']
+      no_log: true
     
-    - name: Debug jon command variable
-      ansible.builtin.debug:
-        var: join_command
+    # - name: Debug jon command variable
+    #   ansible.builtin.debug:
+    #     var: join_command
 
     - name: Gather information about all cluster nodes
-      # become: yes
-      # become_user: vagrant
       when: inventory_hostname in groups['servers']
       check_mode: false
       kubernetes.core.k8s_info:
@@ -166,9 +157,9 @@
 
     - name: Extract node name list
       when: inventory_hostname in groups['servers']
-      register: node_names
       ansible.builtin.debug:
-        msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
+        node_names: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
+
     - name: Debug node names
       ansible.builtin.debug:
         msg: "{{ node_names }}"
@@ -176,6 +167,14 @@
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
       when: inventory_hostname in groups['workers'] and inventory_hostname not in node_names
+
+    - name: Update kubelet kubeadm arguments
+      when: inventory_hostname in groups['workers']
+      ansible.builtin.copy:
+        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }}\"\n"
+        dest: /var/lib/kubelet/kubeadm-flags.env
+        mode: '0644'
+      notify: Restart kubelet
 
     - name: Create .kube directory for user
       file:
