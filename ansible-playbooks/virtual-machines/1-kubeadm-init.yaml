@@ -167,7 +167,8 @@
     - name: Output node names
       when: inventory_hostname in groups['servers']
       ansible.builtin.debug:
-        msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
+        # msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
+        msg: "{{ node_list }}"
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
