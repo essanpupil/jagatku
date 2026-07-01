@@ -170,13 +170,13 @@
     - name: Debug node names
       check_mode: false
       ansible.builtin.debug:
-        msg: "{{ inventory_hostname }}"
+        msg: "{{ node_name }}"
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
       when:
         - inventory_hostname in groups['workers']
-        - inventory_hostname not in node_names.msg
+        - node_name not in node_names.msg
 
     - name: Update kubelet kubeadm arguments
       when: inventory_hostname in groups['workers']
