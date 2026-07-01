@@ -157,8 +157,9 @@
 
     - name: Extract node name list
       when: inventory_hostname in groups['servers']
+      register: node_names
       ansible.builtin.debug:
-        node_names: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
+        msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
 
     - name: Debug node names
       ansible.builtin.debug:
