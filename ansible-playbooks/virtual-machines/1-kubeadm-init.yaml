@@ -148,7 +148,7 @@
     #     var: join_command
 
     - name: Gather information about all cluster nodes
-      # when: inventory_hostname in groups['servers']
+      when: inventory_hostname in groups['servers']
       check_mode: false
       kubernetes.core.k8s_info:
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
