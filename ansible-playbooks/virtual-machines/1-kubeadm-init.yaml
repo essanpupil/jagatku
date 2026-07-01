@@ -199,7 +199,7 @@
       when: inventory_hostname in groups['servers']
       ansible.builtin.file:
         path: "/tmp/helm-extracted"
-        state: directory
+        state: present
         mode: '0755'
 
     - name: Unarchive Helm package
