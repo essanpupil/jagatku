@@ -158,16 +158,20 @@
     - name: Extract node name list
       # when: inventory_hostname in groups['servers']
       register: node_names
+      check_mode: false
       ansible.builtin.debug:
         msg: "{{ hostvars['server1']['node_list'].resources | map(attribute='metadata.name') | list }}"
 
     - name: Debug node names
+      check_mode: false
       ansible.builtin.debug:
-        msg: "{{ node_names }}"
+        msg: "{{ node_names.msg }}"
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
-      when: inventory_hostname in groups['workers'] and inventory_hostname not in node_names
+      when:
+        - inventory_hostname in groups['workers']
+        - inventory_hostname not in node_names.msg
 
     - name: Update kubelet kubeadm arguments
       when: inventory_hostname in groups['workers']
