@@ -166,7 +166,7 @@
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
-      when: inventory_hostname in groups['workers']
+      when: inventory_hostname in groups['workers'] and inventory_hostname not in node_list.resources
 
     - name: Create .kube directory for user
       file:
