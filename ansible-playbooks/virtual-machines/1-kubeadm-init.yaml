@@ -123,11 +123,11 @@
         path: "/etc/kubernetes/admin.conf"
       register: kubeadm_config
 
-    - name: Enable and start kubelet service
-      ansible.builtin.systemd_service:
-        name: kubelet
-        enabled: true
-        state: started
+    # - name: Enable and start kubelet service
+    #   ansible.builtin.systemd_service:
+    #     name: kubelet
+    #     enabled: true
+    #     state: started
 
     - name: Update kubelet kubeadm arguments
       when: inventory_hostname in groups['workers']
