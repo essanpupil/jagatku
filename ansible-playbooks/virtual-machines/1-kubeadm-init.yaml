@@ -171,7 +171,7 @@
         msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
     - name: Debug node names
       ansible.builtin.debug:
-        msg: node_names
+        msg: "{{ node_names }}"
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
