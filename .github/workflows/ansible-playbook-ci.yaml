@@ -29,8 +29,8 @@ jobs:
       - name: Set playbooks as list
         id: set-list
         run: |
-          # Read lines, strip whitespace, and format as a compact JSON array
-          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' playbooks.txt)
+          awk '{print $1}' ${ALL_CHANGED_FILES} | grep '^ansible-playbooks' | xargs -n1 dirname | sort -u
+          JSON_ARRAY=$(awk '{print $1}' ${ALL_CHANGED_FILES} | grep '^ansible-playbooks' | xargs -n1 dirname | sort -u)
           
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
