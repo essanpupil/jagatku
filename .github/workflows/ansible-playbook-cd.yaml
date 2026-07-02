@@ -1,4 +1,4 @@
-name: Baremetal Ansible Deployment
+name: Apply ansible playbook
 on:
   pull_request:
     branches:
@@ -11,14 +11,57 @@ permissions:
   pull-requests: write
 
 jobs:
+  list-ansible-playbooks:
+    runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+    outputs:
+      baremetals_playbooks: ${{ steps.set-list.outputs.string_array }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Step 1: Checkout the repo with full history so Git can find the commits
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Fetch the target branch explicitly
+      - name: Fetch Target Branch
+        run: git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      # Step 3: Fetch the source branch explicitly 
+      - name: Fetch Source Branch
+        run: git fetch origin ${{ github.event.pull_request.head.ref }}
+
+      # Step 4: Run standard Git Diff
+      - name: Get Git Diff
+        run: |
+          echo "=== Files Changed ==="
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...origin/${{ github.event.pull_request.head.ref }}
+      - name: Set playbooks as list
+        id: set-list
+        run: |
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("ansible-playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
+          # Save the array to step outputs
+          echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          echo "$JSON_ARRAY"
+
   ansible-cd:
     if: github.event.pull_request.merged == true
+    needs: list-ansible-playbooks
     runs-on: laptop1
+    strategy:
+      matrix:
+        playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Apply ansible changes
-        run: ansible-playbook ansible-playbooks/baremetals/*.yaml | tee ansible_apply.txt
+        run: ansible-playbook ${{ matrix.playbooks }}/*.yaml | tee ansible_apply.txt
       - name: Post comment of ansible apply result
         uses: peter-evans/create-or-update-comment@v5
         with:

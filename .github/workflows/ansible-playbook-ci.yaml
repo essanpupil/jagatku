@@ -1,4 +1,4 @@
-name: Baremetal Ansible Deployment
+name: Check ansible playbook
 on:
   pull_request:
     branches:
