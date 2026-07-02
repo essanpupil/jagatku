@@ -225,6 +225,7 @@
 
     - name: Create temporary directory for extraction
       when: inventory_hostname in groups['servers']
+      check_mode: false
       ansible.builtin.file:
         path: "/tmp/helm-extracted"
         state: directory
