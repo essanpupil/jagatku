@@ -39,5 +39,5 @@
         additional_json_data:
           httpHeaderName1: "Authorization"
         additional_secure_json_data:
-          httpHeaderValue1: "Bearer ihavenogroot"
+          httpHeaderValue1: "Bearer ihavenoroot"
 
