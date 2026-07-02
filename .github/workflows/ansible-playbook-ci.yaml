@@ -40,6 +40,9 @@ jobs:
   ansible_check_diff:
     needs: list-ansible-playbooks
     runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
     strategy:
       matrix:
         playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
