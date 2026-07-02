@@ -1,45 +1,54 @@
-name: Virtual Machines Ansible Deployment
+name: Apply ansible playbook
 on:
   pull_request:
     branches:
       - main
     paths:
-      - 'ansible-playbooks/virtual-machines/*'
+      - 'ansible-playbooks/**'
+    types:
+      - closed
 permissions:
   pull-requests: write
 
 jobs:
   list-ansible-playbooks:
     runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
     outputs:
       baremetals_playbooks: ${{ steps.set-list.outputs.string_array }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: List ansible playbooks for baremetals
-        run: ls ansible-playbooks/virtual-machines/*.yaml > playbooks.txt
+        with:
+          fetch-depth: 2
+      - name: Get Git Diff
+        run: |
+          echo "=== Files Changed ==="
+          git diff --name-only HEAD^1 HEAD >> playbooks.txt
       - name: Set playbooks as list
         id: set-list
         run: |
-          # Read lines, strip whitespace, and format as a compact JSON array
-          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' playbooks.txt)
-          
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("ansible-playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
-  
-  ansible_check_diff:
+          echo "$JSON_ARRAY"
+
+  ansible-cd:
+    if: github.event.pull_request.merged == true
     needs: list-ansible-playbooks
     runs-on: laptop1
     strategy:
       matrix:
         playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
     steps:
-      - name: Run ansible check diff 
-        run: ansible-playbook ${{ matrix.playbooks }} --diff --check | tee ansible_diff.txt
+      - name: Apply ansible changes
+        run: ansible-playbook ${{ matrix.playbooks }}/*.yaml | tee ansible_apply.txt
       - name: Add playbook path for identification
         run: echo "${{ matrix.playbooks }}" >> ansible_diff.txt
-      - name: Post comment of ansible check diff result
+      - name: Post comment of ansible apply result
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'ansible_diff.txt'
+          body-path: 'ansible_apply.txt'
