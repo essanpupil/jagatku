@@ -22,26 +22,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      # Step 1: Checkout the repo with full history so Git can find the commits
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Step 2: Fetch the target branch explicitly
-      - name: Fetch Target Branch
-        run: git fetch origin ${{ github.event.pull_request.base.ref }}
-
-      # Step 3: Fetch the source branch explicitly 
-      - name: Fetch Source Branch
-        run: git fetch origin ${{ github.event.pull_request.head.ref }}
-
-      # Step 4: Run standard Git Diff
+          fetch-depth: 2
       - name: Get Git Diff
         run: |
           echo "=== Files Changed ==="
-          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...origin/${{ github.event.pull_request.head.ref }}
+          git diff --name-only HEAD^1 HEAD >> playbooks.txt
       - name: Set playbooks as list
         id: set-list
         run: |
@@ -58,10 +43,10 @@ jobs:
       matrix:
         playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
       - name: Apply ansible changes
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml | tee ansible_apply.txt
+      - name: Add playbook path for identification
+        run: echo "${{ matrix.playbooks }}" >> ansible_diff.txt
       - name: Post comment of ansible apply result
         uses: peter-evans/create-or-update-comment@v5
         with:
