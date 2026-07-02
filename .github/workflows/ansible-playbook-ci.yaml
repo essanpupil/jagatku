@@ -28,6 +28,8 @@ jobs:
           done
       - name: Set playbooks as list
         id: set-list
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           JSON_ARRAY=$(echo ${{ALL_CHANGED_FILES}} | grep '^ansible-playbooks' | xargs -n1 dirname )
           
