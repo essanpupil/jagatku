@@ -16,8 +16,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: List ansible playbooks for baremetals
-        run: ls ansible-playbooks/baremetals/*.yaml > playbooks.txt
+      - name: Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v47.0.6
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - name: Set playbooks as list
         id: set-list
         run: |
