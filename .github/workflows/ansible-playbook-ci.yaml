@@ -31,7 +31,7 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          JSON_ARRAY=$(echo $ALL_CHANGED_FILES | grep '^ansible-playbooks' | xargs -n1 dirname )
+          JSON_ARRAY=$(echo "$ALL_CHANGED_FILES" | grep '^ansible-playbooks' | xargs -n1 dirname )
           
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
