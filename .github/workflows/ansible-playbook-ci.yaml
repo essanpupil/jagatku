@@ -24,15 +24,12 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
-            echo "$file"
+            echo "$file" >> playbooks.txt
           done
       - name: Set playbooks as list
         id: set-list
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          JSON_ARRAY=$(echo "$ALL_CHANGED_FILES" | grep '^ansible-playbooks' | xargs -n1 dirname )
-          
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("ansible-playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
