@@ -1,0 +1,19 @@
+[Unit]
+Description="HashiCorp Consul"
+Documentation="https://developer.hashicorp.com/consul/docs"
+ConditionFileNotEmpty="/etc/consul.d/consul.hcl"
+
+[Service]
+User=consul
+Group=consul
+SecureBits=keep-caps
+AmbientCapabilities=CAP_IPC_LOCK
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+NoNewPrivileges=yes
+ExecStart=/usr/bin/consul server -config=/etc/consul.d/consul.hcl
+ExecReload=/bin/kill --signal HUP
+KillMode=process
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
