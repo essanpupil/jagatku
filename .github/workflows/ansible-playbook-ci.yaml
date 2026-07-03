@@ -53,9 +53,9 @@ jobs:
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml --diff --check | tee ansible_diff.txt
       - name: Prepare PR comment format
         run: |
-          echo "```diff" >> playbook_diff.md
+          echo "\`\`\`diff" >> playbook_diff.md
           cat ansible_diff.txt >> playbook_diff.md
-          echo "```" >> playbook_diff.md
+          echo "\`\`\`" >> playbook_diff.md
       - name: Add playbook path for identification
         run: echo "${{ matrix.playbooks }}" >> playbook_diff.md
       - name: Post comment of ansible check diff result
