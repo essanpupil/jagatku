@@ -2,10 +2,8 @@
 local.file_match "debian_logs" {
   path_targets = [
     { "__path__" = "/var/log/*.log" },
-    { "__path__" = "/var/log/auth.log" },
     { "__path__" = "/var/log/syslog" },
   ]
-  sync_period = "10s"
 }
 
 loki.source.file "local_files" {
@@ -13,59 +11,14 @@ loki.source.file "local_files" {
   forward_to = [loki.write.loki_endpoint.receiver]
 }
 
-// 3. Export Data Pipeline to Loki Instance
 loki.write "loki_endpoint" {
   endpoint {
     url = "{{ loki_url }}"
   }
 }
 
-loki.source.journal "grafana_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=grafana-server.service"
-  labels     = {service = "grafana-server"}
-}
-
-loki.source.journal "sudo_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=sudo.service"
-  labels     = {service = "sudo"}
-}
-
-loki.source.journal "prometheus_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=prometheus.service"
-  labels     = {service = "prometheus"}
-}
-
-loki.source.journal "alloy_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=alloy.service"
-  labels     = {service = "alloy"}
-}
-
-loki.source.journal "loki_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=loki.service"
-  labels     = {service = "loki"}
-}
-
-loki.source.journal "ssh_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=sshd.service"
-  labels     = {service = "sshd"}
-}
-
-loki.source.journal "hashicorp_vault_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=hashicorp-vault.service"
-  labels     = {service = "hashicorp-vault"}
-}
-
-loki.source.journal "action_runer_houseone_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  matches    = "_SYSTEMD_UNIT=actions.runner.essanpupil-jagatku.houseone.service"
-  labels     = {service = "action-runner-houseone"}
+loki.source.journal "system" {
+  forward_to = [loki.write.loki_receiver.receiver]
 }
 
 // Scrape local system metrics (Node Exporter)
