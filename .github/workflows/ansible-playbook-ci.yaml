@@ -47,7 +47,9 @@ jobs:
       matrix:
         playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
     steps:
-      - name: Run ansible check diff 
+      - name: Run ansible check diff
+        env:
+          ANSIBLE_NOCOLOR: 1
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml --diff --check | tee ansible_diff.txt
       - name: Add playbook path for identification
         run: echo "${{ matrix.playbooks }}" >> ansible_diff.txt
