@@ -18,7 +18,7 @@ loki.write "loki_endpoint" {
 }
 
 loki.source.journal "system" {
-  forward_to = [loki.write.loki_receiver.receiver]
+  forward_to = [loki.write.loki_endpoint.receiver]
 }
 
 // Scrape local system metrics (Node Exporter)
