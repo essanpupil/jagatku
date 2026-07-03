@@ -2,6 +2,11 @@
 - name: Install and manage consul server
   hosts: laptop1
   become: true
+  handlers:
+    - name: Restart consul
+      ansible.builtin.systemd:
+        name: hashicorp-consul
+        state: restarted
   tasks:
     - name: Update apt cache
       apt:
@@ -11,3 +16,30 @@
       apt:
         name: consul
         state: present
+    - name: Prepare consul config
+      ansible.builtin.template:
+        src: consul.hcl.j2
+        dest: /etc/consul.d/consul.hcl
+        owner: consul
+        group: consul
+        mode: '0644'
+      notify: Restart consul
+    - name: Write the systemd service file for consul
+      ansible.builtin.template:
+        src: hashicorp-consul.service.j2
+        dest: /etc/systemd/system/hashicorp-consul.service
+        mode: '0644'
+        owner: root
+        group: root
+      register: systemd_file_status
+
+    - name: Reload systemd manager configuration
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+      when: systemd_file_status.changed
+
+    - name: Enable and start the systemd service
+      ansible.builtin.systemd_service:
+        name: hashicorp-consul.service
+        state: started
+        enabled: true
