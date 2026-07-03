@@ -36,8 +36,3 @@
         grafana_url: "{{ grafana_url }}"
         grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
         state: present
-        additional_json_data:
-          httpHeaderName1: "Authorization"
-        additional_secure_json_data:
-          httpHeaderValue1: "Bearer ihavenoroot"
-
