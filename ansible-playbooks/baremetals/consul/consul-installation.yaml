@@ -36,13 +36,13 @@
 
     - name: Safe reload Consul service
       ansible.builtin.systemd_service:
-        name: consul
+        name: consul.service
         state: reloaded
       when: consul_validation.rc == 0      
     - name: Write the systemd service file for consul
       ansible.builtin.template:
         src: hashicorp-consul.service.j2
-        dest: /etc/systemd/system/hashicorp-consul.service
+        dest: /etc/systemd/system/consul.service
         mode: '0644'
         owner: root
         group: root
@@ -55,6 +55,6 @@
 
     - name: Enable and start the systemd service
       ansible.builtin.systemd_service:
-        name: hashicorp-consul.service
+        name: consul.service
         state: started
         enabled: true
