@@ -47,12 +47,19 @@ jobs:
       matrix:
         playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
     steps:
-      - name: Run ansible check diff 
+      - name: Run ansible check diff
+        env:
+          ANSIBLE_NOCOLOR: 1
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml --diff --check | tee ansible_diff.txt
+      - name: Prepare PR comment format
+        run: |
+          echo "\`\`\`diff" >> playbook_diff.md
+          cat ansible_diff.txt >> playbook_diff.md
+          echo "\`\`\`" >> playbook_diff.md
       - name: Add playbook path for identification
-        run: echo "${{ matrix.playbooks }}" >> ansible_diff.txt
+        run: echo "${{ matrix.playbooks }}" >> playbook_diff.md
       - name: Post comment of ansible check diff result
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'ansible_diff.txt'
+          body-path: 'playbook_diff.md'
