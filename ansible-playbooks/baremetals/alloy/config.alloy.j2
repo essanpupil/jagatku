@@ -19,25 +19,5 @@ loki.write "loki_endpoint" {
 
 loki.source.journal "system" {
   forward_to = [loki.write.loki_endpoint.receiver]
-}
-
-// Scrape local system metrics (Node Exporter)
-prometheus.scrape "default" {
-  targets = [{
-    job  = "integrations/node_exporter",
-    __address__ = "192.168.1.2:12345",
-  }]
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-// Send metrics to your Grafana instance
-prometheus.remote_write "default" {
-  endpoint {
-    url = "http://192.168.1.2:9090/api/v1/write"
-    
-//    basic_auth {
-//      username = "your_instance_username"
- //     password = "your_api_key_or_password"
- //   }
-  }
+  format_as_json = true
 }
