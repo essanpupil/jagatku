@@ -4,8 +4,8 @@
   become: true
   handlers:
     - name: Restart consul
-      ansible.builtin.systemd:
-        name: hashicorp-consul
+      ansible.builtin.systemd_service:
+        name: consul
         state: restarted
   tasks:
     - name: Update apt cache
@@ -36,7 +36,7 @@
 
     - name: Safe reload Consul service
       ansible.builtin.systemd_service:
-        name: consul.service
+        name: consul
         state: reloaded
       when: consul_validation.rc == 0      
     - name: Write the systemd service file for consul
@@ -55,6 +55,6 @@
 
     - name: Enable and start the systemd service
       ansible.builtin.systemd_service:
-        name: consul.service
+        name: consul
         state: started
         enabled: true
