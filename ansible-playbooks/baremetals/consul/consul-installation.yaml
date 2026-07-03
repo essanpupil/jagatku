@@ -23,7 +23,22 @@
         owner: consul
         group: consul
         mode: '0644'
-      notify: Restart consul
+    - name: Validate the collective Consul configuration directory
+      ansible.builtin.command:
+        cmd: consul validate /etc/consul.d/
+      changed_when: false
+      register: consul_validation
+
+    - name: Print validation output if it fails
+      ansible.builtin.debug:
+        var: consul_validation.stderr
+      when: consul_validation.rc != 0
+
+    - name: Safe reload Consul service
+      ansible.builtin.systemd_service:
+        name: consul
+        state: reloaded
+      when: consul_validation.rc == 0      
     - name: Write the systemd service file for consul
       ansible.builtin.template:
         src: hashicorp-consul.service.j2

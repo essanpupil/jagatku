@@ -10,7 +10,7 @@ SecureBits=keep-caps
 AmbientCapabilities=CAP_IPC_LOCK
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/bin/consul server -config=/etc/consul.d/consul.hcl
+ExecStart=/usr/bin/consul -config=/etc/consul.d/consul.hcl
 ExecReload=/bin/kill --signal HUP
 KillMode=process
 KillSignal=SIGINT
