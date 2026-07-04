@@ -49,9 +49,13 @@ jobs:
     steps:
       - name: Terraform init
         working-directory: ./${{ matrix.terraforms }}
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
         run: terraform init
       - name: Terraform plan
         working-directory: ./${{ matrix.terraforms }}
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
         run: terraform plan
       # - name: Prepare PR comment format
       #   run: |
