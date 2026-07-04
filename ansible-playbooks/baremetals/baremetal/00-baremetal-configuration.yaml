@@ -50,4 +50,4 @@
       apt:
         name:
           - terraform
-      state: present
+        state: present
