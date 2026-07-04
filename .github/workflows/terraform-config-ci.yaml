@@ -57,15 +57,17 @@ jobs:
         env:
             TF_VAR_token: ${{ github.token }}
         run: terraform plan | tee plan.txt
-      # - name: Prepare PR comment format
-      #   run: |
-      #     echo "\`\`\`diff" >> playbook_diff.md
-      #     cat ansible_diff.txt >> playbook_diff.md
-      #     echo "\`\`\`" >> playbook_diff.md
-      # - name: Add playbook path for identification
-      #   run: echo "${{ matrix.playbooks }}" >> playbook_diff.md
-      # - name: Post comment of ansible check diff result
-      #   uses: peter-evans/create-or-update-comment@v5
-      #   with:
-      #     issue-number: ${{ github.event.pull_request.number }}
-      #     body-path: 'playbook_diff.md'
+      - name: Prepend playbook path for identification
+        run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
+      - name: Prepare PR comment format
+        run: |
+          echo "\`\`\`diff" >> terraform_plan.md
+          cat plan.txt >> terraform_plan.md
+          echo "\`\`\`" >> terraform_plan.md
+      - name: Append playbook path for identification
+        run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
+      - name: Post comment of ansible check diff result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'terraform_plan.md'
