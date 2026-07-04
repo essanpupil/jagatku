@@ -1,0 +1,67 @@
+name: Check terraform config
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform-configs/**'
+permissions:
+  pull-requests: write
+
+jobs:
+  list-terraform-changes:
+    runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+    outputs:
+      terraform_changes: ${{ steps.set-list.outputs.string_array }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v47.0.6
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file" >> terraform.txt
+          done
+      - name: Set playbooks as list
+        id: set-list
+        run: |
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("terraform-configs"))) | map(split("/")[:-1] | join("/")) | unique' terraform.txt)
+          # Save the array to step outputs
+          echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          echo "$JSON_ARRAY"
+  
+  terraform_check_plan:
+    needs: list-terraform-changes
+    runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+    strategy:
+      matrix:
+        terraforms: ${{ fromJson(needs.list-terraform-changes.outputs.terraform_changes) }}
+    steps:
+      - name: Terraform init
+        working-directory: ./${{ matrix.terraforms }}
+        run: terraform init
+      - name: Terraform plan
+        working-directory: ./${{ matrix.terraforms }}
+        run: terraform plan
+      # - name: Prepare PR comment format
+      #   run: |
+      #     echo "\`\`\`diff" >> playbook_diff.md
+      #     cat ansible_diff.txt >> playbook_diff.md
+      #     echo "\`\`\`" >> playbook_diff.md
+      # - name: Add playbook path for identification
+      #   run: echo "${{ matrix.playbooks }}" >> playbook_diff.md
+      # - name: Post comment of ansible check diff result
+      #   uses: peter-evans/create-or-update-comment@v5
+      #   with:
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body-path: 'playbook_diff.md'
