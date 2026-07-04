@@ -7,6 +7,10 @@
       ansible.builtin.systemd_service:
         name: consul
         state: restarted
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
   tasks:
     - name: Update apt cache
       apt:
@@ -16,29 +20,6 @@
       apt:
         name: consul
         state: present
-    - name: Prepare consul config
-      ansible.builtin.template:
-        src: consul.hcl.j2
-        dest: /etc/consul.d/consul.hcl
-        owner: consul
-        group: consul
-        mode: '0644'
-    - name: Validate the collective Consul configuration directory
-      ansible.builtin.command:
-        cmd: consul validate /etc/consul.d/
-      changed_when: false
-      register: consul_validation
-
-    - name: Print validation output if it fails
-      ansible.builtin.debug:
-        var: consul_validation.stderr
-      when: consul_validation.rc != 0
-
-    # - name: Safe reload Consul service
-    #   ansible.builtin.systemd_service:
-    #     name: consul
-    #     state: reloaded
-    #   when: consul_validation.rc == 0      
     - name: Write the systemd service file for consul
       ansible.builtin.template:
         src: hashicorp-consul.service.j2
@@ -46,13 +27,23 @@
         mode: '0644'
         owner: root
         group: root
-      register: systemd_file_status
-
-    - name: Reload systemd manager configuration
-      ansible.builtin.systemd_service:
-        daemon_reload: true
-      when: systemd_file_status.changed
-
+      notify: Reload systemd
+    - name: Prepare consul config
+      ansible.builtin.template:
+        src: consul.hcl.j2
+        dest: /etc/consul.d/consul.hcl
+        owner: consul
+        group: consul
+        mode: '0644'
+    - name: Validate consul config
+      register: consul_validation
+      ansible.builtin.command:
+        cmd: consul validate /etc/consul.d/
+      notify: Restart consul
+    - name: Print validation output if it fails
+      ansible.builtin.debug:
+        var: consul_validation.stderr
+      when: consul_validation.rc != 0
     - name: Enable and start the systemd service
       ansible.builtin.systemd_service:
         name: consul
