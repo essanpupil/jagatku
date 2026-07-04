@@ -1,4 +1,5 @@
 resource "github_repository" "jagatku" {
+  name = "jagatku"
 }
 
 import {
