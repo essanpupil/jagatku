@@ -72,8 +72,7 @@ jobs:
         working-directory: ./${{ matrix.terraforms }}
         run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
       - name: Post comment of ansible check diff result
-        # working-directory: ./${{ matrix.terraforms }}
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'terraform_plan.md'
+          body-path: './${{ matrix.terraforms }}/terraform_plan.md'
