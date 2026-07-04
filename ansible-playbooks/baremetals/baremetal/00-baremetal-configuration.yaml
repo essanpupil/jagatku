@@ -54,7 +54,7 @@
       
     - name: Download github GPG key
       get_url:
-        url: https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o 
+        url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
         dest: /etc/apt/keyrings/github.key
         mode: "0644"
     - name: De-armor github GPG key
