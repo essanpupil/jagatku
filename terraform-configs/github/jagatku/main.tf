@@ -8,6 +8,7 @@ resource "github_repository" "jagatku" {
   has_wiki           = true
 }
 
+
 import {
   to = github_repository.jagatku
   id = "jagatku"
