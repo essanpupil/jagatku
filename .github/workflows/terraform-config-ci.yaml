@@ -56,11 +56,13 @@ jobs:
         working-directory: ./${{ matrix.terraforms }}
         env:
             TF_VAR_token: ${{ github.token }}
+            TF_CLI_ARGS: "-no-color"
         run: terraform plan | tee plan.txt
       - name: Prepend playbook path for identification
         run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
       - name: Prepare PR comment format
         run: |
+          ls
           echo "\`\`\`diff" >> terraform_plan.md
           cat plan.txt >> terraform_plan.md
           echo "\`\`\`" >> terraform_plan.md
