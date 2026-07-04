@@ -59,16 +59,20 @@ jobs:
             TF_CLI_ARGS: "-no-color"
         run: terraform plan | tee plan.txt
       - name: Prepend playbook path for identification
+        working-directory: ./${{ matrix.terraforms }}
         run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
       - name: Prepare PR comment format
+        working-directory: ./${{ matrix.terraforms }}
         run: |
           ls
           echo "\`\`\`diff" >> terraform_plan.md
           cat plan.txt >> terraform_plan.md
           echo "\`\`\`" >> terraform_plan.md
       - name: Append playbook path for identification
+        working-directory: ./${{ matrix.terraforms }}
         run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
       - name: Post comment of ansible check diff result
+        # working-directory: ./${{ matrix.terraforms }}
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
