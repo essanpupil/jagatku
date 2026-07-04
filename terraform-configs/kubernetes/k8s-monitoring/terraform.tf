@@ -1,8 +1,8 @@
 terraform {
   backend "consul" {
     address = "192.168.1.2:8500"
-    scheme = "http"
-    path = "terraform-configs/kubernetes/k8s-monitoring"
+    scheme  = "http"
+    path    = "terraform-configs/kubernetes/k8s-monitoring"
   }
 
   required_providers {

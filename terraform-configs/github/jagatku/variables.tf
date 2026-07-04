@@ -1,5 +1,5 @@
 variable "token" {
-    type = string
-    default = ""
-    sensitive = true
+  type      = string
+  default   = ""
+  sensitive = true
 }
