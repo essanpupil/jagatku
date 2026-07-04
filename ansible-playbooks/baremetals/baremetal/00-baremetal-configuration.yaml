@@ -46,3 +46,7 @@
         repo: "deb [signed-by=/etc/apt/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com trixie main"
         state: present
         filename: hashicorp
+    - name: Install terraform
+      apt:
+        name: terraform
+      state: present
