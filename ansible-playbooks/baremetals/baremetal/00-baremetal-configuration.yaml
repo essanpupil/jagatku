@@ -55,7 +55,7 @@
         dest: /etc/apt/keyrings/github.key
         mode: "0644"
     - name: De-armor github GPG key
-      command: gpg --dearmor --yes -o /usr/share/keyrings/githubcli-archive-keyring.gpg /etc/apt/keyrings/github.key
+      command: gpg --dearmor --yes -o /etc/apt/keyrings/github.gpg /etc/apt/keyrings/github.key
       args:
         creates: /etc/apt/keyrings/github.gpg
     - name: Add github repository
