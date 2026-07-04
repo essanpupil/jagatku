@@ -63,7 +63,7 @@
         creates: /etc/apt/keyrings/github.gpg
     - name: Add github repository
       apt_repository:
-        repo: "deb amd64 [signed-by=/etc/apt/keyrings/github.gpg] https://cli.github.com/packages stable main"
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/github.gpg] https://cli.github.com/packages stable main"
         state: present
         filename: github
     - name: Install gh cli
