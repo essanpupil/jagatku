@@ -48,5 +48,6 @@
         filename: hashicorp
     - name: Install terraform
       apt:
-        name: terraform
+        name:
+          - terraform
       state: present
