@@ -55,8 +55,8 @@ jobs:
       - name: Terraform plan
         working-directory: ./${{ matrix.terraforms }}
         env:
-            GITHUB_TOKEN: ${{ github.token }}
-        run: terraform plan
+            TF_VAR_token: ${{ github.token }}
+        run: terraform plan | tee plan.txt
       # - name: Prepare PR comment format
       #   run: |
       #     echo "\`\`\`diff" >> playbook_diff.md
