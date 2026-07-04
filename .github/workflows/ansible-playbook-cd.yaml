@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   list-ansible-playbooks:
+    if: github.event.pull_request.merged == true
     runs-on: laptop1
     defaults:
       run:
