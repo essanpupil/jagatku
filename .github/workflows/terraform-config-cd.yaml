@@ -59,7 +59,7 @@ jobs:
       - name: Terraform apply
         working-directory: ./${{ matrix.terraforms }}
         env:
-            TF_VAR_token: ${{ github.token }}
+            TF_VAR_token: ${{ secrets.GH_PAT }}
             TF_CLI_ARGS: "-no-color"
         run: terraform apply -auto-approve | tee apply.txt
       - name: Prepend playbook path for identification
