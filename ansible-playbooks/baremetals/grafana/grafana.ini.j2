@@ -1160,17 +1160,17 @@
 ;mode = console file
 
 # Either "debug", "info", "warn", "error". Default is "info"
-;level = info
+level = info
 
 # optional settings to set different levels for specific loggers. Ex filters = sqlstore:debug
-;filters =
+filters = routing:warn sqlstore:warn tsdb:warn
 
 # Set the default error message shown to users. This message is displayed instead of sensitive backend errors which should be obfuscated. Default is the same as the sample value.
 ;user_facing_default_error = "please inspect Grafana server log for details"
 
 # For "console" mode only
 [log.console]
-;level =
+level = info
 
 # log line format, valid options are text, console and json
 ;format = console
