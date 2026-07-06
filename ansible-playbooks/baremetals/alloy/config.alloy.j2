@@ -32,11 +32,25 @@ loki.process "filter_noisy_logs" {
   }
 }
 
-// Scrape Vault metrics
+discovery.relabel "vault" {
+	targets = [{
+		__address__ = "{{ ansible_host }}:8200",
+	}]
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+}
+
 prometheus.scrape "vault" {
   forward_to = [prometheus.remote_write.default.receiver]
-  targets = [{ __address__ = "192.168.1.2:8200" }]
+  targets = discovery.relabel.vault.output
   scheme = "http"
+  job_name = "vault"
+  params = {
+    format = ["prometheus"]
+  }
   metrics_path = "/v1/sys/metrics"
   
   // Vault metrics require authentication via a token
