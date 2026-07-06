@@ -28,9 +28,13 @@
         owner: alloy
         group: alloy
         mode: '0640'
+        validate: alloy validate %s
+      register: config_output
       notify: Restart alloy
 
     - name: Validate Alloy configuration
+      check_mode: no
+      when: config_output.changed
       command: alloy validate /etc/alloy/config.alloy
 
     - name: Ensure Alloy service is enabled and running
