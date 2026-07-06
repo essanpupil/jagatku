@@ -28,22 +28,22 @@
         group: grafana
         mode: '0640'
       notify: Restart grafana server
-    - name: Create Prometheus-local Datasource in self-hosted Grafana
-      community.grafana.grafana_datasource:
-        name: "Prometheus-Local"
-        ds_type: "prometheus"
-        ds_url: "http://localhost:9090"
-        grafana_url: "{{ grafana_url }}"
-        grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
-        state: present
-    - name: Create Loki-local Datasource in self-hosted Grafana
-      community.grafana.grafana_datasource:
-        name: "Loki-Local"
-        ds_type: "loki"
-        ds_url: "http://localhost:3100"
-        grafana_url: "{{ grafana_url }}"
-        grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
-        state: present
+    # - name: Create Prometheus-local Datasource in self-hosted Grafana
+    #   community.grafana.grafana_datasource:
+    #     name: "Prometheus-Local"
+    #     ds_type: "prometheus"
+    #     ds_url: "http://localhost:9090"
+    #     grafana_url: "{{ grafana_url }}"
+    #     grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
+    #     state: present
+    # - name: Create Loki-local Datasource in self-hosted Grafana
+    #   community.grafana.grafana_datasource:
+    #     name: "Loki-Local"
+    #     ds_type: "loki"
+    #     ds_url: "http://localhost:3100"
+    #     grafana_url: "{{ grafana_url }}"
+    #     grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
+    #     state: present
     - name: Start Grafana service
       service:
         name: grafana-server
