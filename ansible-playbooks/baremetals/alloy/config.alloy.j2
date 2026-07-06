@@ -49,7 +49,7 @@ prometheus.scrape "vault" {
   scheme = "http"
   job_name = "vault"
   params = {
-    format = ["prometheus"]
+    format = ["prometheus"],
   }
   metrics_path = "/v1/sys/metrics"
   
