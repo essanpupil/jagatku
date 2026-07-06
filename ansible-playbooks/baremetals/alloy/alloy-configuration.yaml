@@ -31,6 +31,7 @@
       notify: Restart alloy
 
     - name: Validate Alloy configuration
+      check_mode: false
       command: alloy validate /etc/alloy/config.alloy
 
     - name: Ensure Alloy service is enabled and running
