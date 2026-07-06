@@ -31,3 +31,25 @@ loki.process "filter_noisy_logs" {
     drop_counter_reason = "ansible_ssh_logout_noise"
   }
 }
+
+// Scrape Vault metrics
+prometheus.scrape "vault" {
+  targets    = [{ __address__ = "192.168.1.2:8200" }]
+  forward_to = [prometheus.remote_write.default.receiver]
+  metrics_path = "/v1/sys/metrics"
+  
+  // Vault metrics require authentication via a token
+  // with the prometheus-metrics ACL policy
+  // bearer_token = "YOUR_VAULT_TOKEN_HERE" 
+}
+
+// Send metrics to your remote storage (e.g., Grafana Cloud, Mimir, or Prometheus)
+prometheus.remote_write "default" {
+  endpoint {
+    url = "https://192.168.1.2:9090/api/v1/write"
+    # basic_auth {
+    #   username = "your-username"
+    #   password = "your-password"
+    # }
+  }
+}
