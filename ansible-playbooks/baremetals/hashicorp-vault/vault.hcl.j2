@@ -22,7 +22,6 @@ storage "file" {
 listener "tcp" {
   address = "{{ ansible_host }}:8200"
   tls_disable = 1
-  unauthenticated_metrics_access = true
 }
 
 # HTTPS listener

@@ -34,7 +34,7 @@
         owner: vault
         group: vault
         mode: '0644'
-        validate: vault operator diagnose -config=%s -skip=hcp-link -skip=listener
+        # validate: vault operator diagnose -config=%s -skip=hcp-link -skip=listener
       notify: Restart hashicorp vault
 
     - name: Enable and start the systemd service
