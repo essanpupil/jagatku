@@ -26,7 +26,7 @@
         dest: /etc/grafana/grafana.ini
         owner: root
         group: grafana
-        mode: '0644'
+        mode: '0640'
       notify: Restart grafana server
     - name: Create Prometheus-local Datasource in self-hosted Grafana
       community.grafana.grafana_datasource:
