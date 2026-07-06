@@ -2,48 +2,39 @@
 - name: Install and configure Hashicorp vault
   hosts: laptop1
   become: true
+  handlers:
+    - name: Restart hashicorp vault
+      ansible.builtin.systemd_service:
+        name: hashicorp-vault
+        state: restarted
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
   tasks:
     - name: Update apt cache
       apt:
         update_cache: yes
         cache_valid_time: 3600
-    - name: Install Hashicorp
+    - name: Install Hashicorp vault
       apt:
         name: vault
         state: present
-
-    - name: Write the systemd service file
-      ansible.builtin.copy:
-        dest: /etc/systemd/system/hashicorp-vault.service
+    - name: Write the systemd service file for hashicorp vault
+      ansible.builtin.template:
+        src: vault.service.j2
+        dest: /etc/systemd/system/vault.service
         mode: '0644'
         owner: root
         group: root
-        content: |
-          [Unit]
-          Description="HashiCorp Vault"
-          Documentation="https://developer.hashicorp.com/vault/docs"
-          ConditionFileNotEmpty="/etc/vault.d/vault.hcl"
-
-          [Service]
-          User=vault
-          Group=vault
-          SecureBits=keep-caps
-          AmbientCapabilities=CAP_IPC_LOCK
-          CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
-          NoNewPrivileges=yes
-          ExecStart=/usr/bin/vault server -config=/etc/vault.d/vault.hcl
-          ExecReload=/bin/kill --signal HUP
-          KillMode=process
-          KillSignal=SIGINT
-
-          [Install]
-          WantedBy=multi-user.target
-      register: systemd_file_status
-
-    - name: Reload systemd manager configuration
-      ansible.builtin.systemd_service:
-        daemon_reload: true
-      when: systemd_file_status.changed
+      notify: Reload systemd
+    - name: Prepare consul config
+      ansible.builtin.template:
+        src: vault.hcl.j2
+        dest: /etc/vault.d/vault.hcl
+        owner: vault
+        group: vault
+        mode: '0644'
+      notify: Restart hashicorp vault
 
     - name: Enable and start the systemd service
       ansible.builtin.systemd_service:
