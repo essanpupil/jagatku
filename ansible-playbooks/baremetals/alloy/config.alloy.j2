@@ -47,7 +47,8 @@ prometheus.scrape "vault" {
   targets = discovery.relabel.vault.output
   scheme = "http"
   job_name = "vault"
-  scrape_interval = "5s"
+  scrape_interval = "10s"
+  scrape_timeout = "5s"
   params = {
     format = ["prometheus"],
   }
