@@ -6,6 +6,11 @@
     grafana_url: "http://192.168.1.2:3000"
   vars_files:
     - ../../vault.yaml
+  handlers:
+    - name: Restart grafana server
+      ansible.builtin.systemd_service:
+        name: grafana-server
+        state: restarted
   tasks:
     - name: Update apt cache
       apt:
@@ -15,11 +20,14 @@
       apt:
         name: grafana
         state: present
-    - name: Start Grafana service
-      service:
-        name: grafana-server
-        state: started
-        enabled: yes
+    - name: Prepare grafana config
+      ansible.builtin.template:
+        src: grafana.ini.j2
+        dest: /etc/grafana/grafana.ini
+        owner: root
+        group: grafana
+        mode: '0640'
+      notify: Restart grafana server
     - name: Create Prometheus-local Datasource in self-hosted Grafana
       community.grafana.grafana_datasource:
         name: "Prometheus-Local"
@@ -36,3 +44,8 @@
         grafana_url: "{{ grafana_url }}"
         grafana_api_key: "{{ grafana_api_key }}"  # Expire 2026-06-29
         state: present
+    - name: Start Grafana service
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
