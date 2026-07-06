@@ -34,8 +34,9 @@ loki.process "filter_noisy_logs" {
 
 // Scrape Vault metrics
 prometheus.scrape "vault" {
-  targets    = [{ __address__ = "192.168.1.2:8200" }]
   forward_to = [prometheus.remote_write.default.receiver]
+  targets = [{ __address__ = "192.168.1.2:8200" }]
+  scheme = "https"
   metrics_path = "/v1/sys/metrics"
   
   // Vault metrics require authentication via a token
