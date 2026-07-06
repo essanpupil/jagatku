@@ -48,3 +48,9 @@ listener "tcp" {
 #  key_label      = "vault-hsm-key"
 #  hmac_key_label = "vault-hsm-hmac-key"
 #}
+
+# Monitoring
+telemetry {
+  disable_hostname          = true
+  prometheus_retention_time = "12h"
+}
