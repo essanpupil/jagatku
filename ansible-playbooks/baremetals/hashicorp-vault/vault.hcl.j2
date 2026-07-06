@@ -22,6 +22,7 @@ storage "file" {
 listener "tcp" {
   address = "{{ ansible_host }}:8200"
   tls_disable = 1
+  unauthenticated_metrics_access = true
 }
 
 # HTTPS listener
@@ -53,5 +54,7 @@ listener "tcp" {
 # Monitoring
 telemetry {
   disable_hostname          = true
-  prometheus_retention_time = "12h"
+  prometheus_retention_time = "30s"
+  stackdriver_project_id = "skipped"
+  stackdriver_location   = "skipped"
 }
