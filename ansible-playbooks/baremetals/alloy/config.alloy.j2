@@ -82,7 +82,7 @@ discovery.consul "consul" {
 }
 
 prometheus.scrape "consul" {
-  targets    = discovery.consul.example.targets
+  targets    = discovery.consul.consul.targets
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
