@@ -84,6 +84,13 @@ discovery.consul "consul" {
 prometheus.scrape "consul" {
   targets    = discovery.consul.consul.targets
   forward_to = [prometheus.remote_write.default.receiver]
+
+  // Drop targets trying to scrape port 8300 directly
+  rule {
+    source_labels = ["__address__"]
+    regex         = ".*:8300"
+    action        = "drop"
+  }
 }
 
 discovery.consulagent "consulagent" {
@@ -93,6 +100,12 @@ discovery.consulagent "consulagent" {
 prometheus.scrape "consulagent" {
   targets    = discovery.consulagent.consulagent.targets
   forward_to = [prometheus.remote_write.default.receiver]
+  // Drop targets trying to scrape port 8300 directly
+  rule {
+    source_labels = ["__address__"]
+    regex         = ".*:8300"
+    action        = "drop"
+  }
 }
 
 // discovery.process "all_process" {
