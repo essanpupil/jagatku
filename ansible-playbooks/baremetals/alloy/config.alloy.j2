@@ -118,7 +118,7 @@ prometheus.scrape "consulagent" {
 // }
 
 prometheus.exporter.consul "consul_health" {
-  server = "{{ ansible_host }}:8500"
+  server = "http://{{ ansible_host }}:8500"
 }
 
 prometheus.scrape "scrape_consul_cluster" {
