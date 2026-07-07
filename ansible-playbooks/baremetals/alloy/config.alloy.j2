@@ -95,23 +95,23 @@ prometheus.scrape "consulagent" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-discovery.process "all_process" {
-  refresh_interval = "60s"
-  discover_config {
-    cwd = true
-    exe = true
-    commandline = true
-    username = true
-    uid = true
-    cgroup_path = true
-    container_id = true
-  }
-}
+// discovery.process "all_process" {
+//   refresh_interval = "60s"
+//   discover_config {
+//     cwd = true
+//     exe = true
+//     commandline = true
+//     username = true
+//     uid = true
+//     cgroup_path = true
+//     container_id = true
+//   }
+// }
 
-prometheus.scrape "all_process" {
-  targets    = discovery.process.all_process.targets
-  forward_to = [prometheus.remote_write.default.receiver]
-}
+// prometheus.scrape "all_process" {
+//   targets    = discovery.process.all_process.targets
+//   forward_to = [prometheus.remote_write.default.receiver]
+// }
 
 // loki.source.syslog "syslog" {
 //   forward_to = [prometheus.remote_write.default.receiver]
