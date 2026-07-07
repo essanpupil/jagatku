@@ -1,7 +1,6 @@
 local.file_match "debian_logs" {
   path_targets = [
-    { "__path__" = "/var/log/*.log" },
-    { "__path__" = "/var/log/syslog" },
+    { "__path__" = "/var/log/**.log" },
   ]
 }
 
