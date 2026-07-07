@@ -76,3 +76,43 @@ prometheus.scrape "linux_metrics" {
   targets    = prometheus.exporter.unix.default.targets
   forward_to = [prometheus.remote_write.default.receiver]
 }
+
+discovery.consul "consul" {
+  server = "{{ ansible_host }}:8500"
+}
+
+prometheus.scrape "consul" {
+  targets    = discovery.consul.example.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.consulagent "consulagent" {
+  server = "{{ ansible_host }}:8500"
+}
+
+prometheus.scrape "consulagent" {
+  targets    = discovery.consulagent.consulagent.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.process "all_process" {
+  refresh_interval = "60s"
+  discover_config {
+    cwd = true
+    exe = true
+    commandline = true
+    username = true
+    uid = true
+    cgroup_path = true
+    container_id = true
+  }
+}
+
+prometheus.scrape "all_process" {
+  targets    = discovery.process.all_process.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+loki.source.syslog "syslog" {
+  forward_to = [prometheus.remote_write.default.receiver]
+}
