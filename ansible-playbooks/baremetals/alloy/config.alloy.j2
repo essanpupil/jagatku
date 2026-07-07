@@ -73,7 +73,7 @@ prometheus.exporter.unix "local_system" { }
 
 // Collect and label the metrics
 prometheus.scrape "linux_metrics" {
-  targets    = prometheus.exporter.unix.default.targets
+  targets    = prometheus.exporter.unix.local_system.targets
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
@@ -113,6 +113,6 @@ prometheus.scrape "all_process" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-loki.source.syslog "syslog" {
-  forward_to = [prometheus.remote_write.default.receiver]
-}
+// loki.source.syslog "syslog" {
+//   forward_to = [prometheus.remote_write.default.receiver]
+// }
