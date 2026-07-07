@@ -69,7 +69,7 @@ prometheus.scrape "kubelet" {
   forward_to = [prometheus.remote_write.default.receiver]
   scheme = "https"
   tls_config {
-    // ca_file            = "/var/lib/kubelet/pki/kubelet-client-2026-06-25-18-27-48.pem"
+    ca_file            = "/etc/kubernetes/pki/ca.crt"
     cert_file          = "/etc/kubernetes/pki/apiserver.crt"
     key_file           = "/etc/kubernetes/pki/apiserver.key"
     // server_name        = "kubernetes"                  // Override if SANs do not match node IPs
