@@ -14,7 +14,7 @@
       apt:
         pkg:
           - curl
-          - unzip # Added unzip to ensure file extraction works
+          - unzip
           - gnupg
         state: present
         update_cache: true
