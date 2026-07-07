@@ -61,7 +61,7 @@ loki.source.docker "default" {
 }
 
 discovery.kubelet "k8s_pods" {
-  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  url = "https://{{ ansible_host }}:10250"
 }
 
 prometheus.scrape "kubelet" {
