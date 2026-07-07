@@ -68,3 +68,12 @@ prometheus.remote_write "default" {
     // }
   }
 }
+
+// Scrape local Linux system metrics
+prometheus.exporter.unix "local_system" { }
+
+// Collect and label the metrics
+prometheus.scrape "linux_metrics" {
+  targets    = prometheus.exporter.unix.default.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
