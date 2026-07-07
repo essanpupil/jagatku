@@ -17,7 +17,7 @@
     - name: Ensure alloy user belongs to system groups for log access
       ansible.builtin.user:
         name: alloy
-        groups: "adm,systemd-journal"
+        groups: "adm,systemd-journal,docker"
         append: true
       notify: Restart alloy
 
