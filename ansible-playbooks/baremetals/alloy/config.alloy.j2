@@ -77,69 +77,6 @@ prometheus.scrape "linux_metrics" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-discovery.consul "consul" {
-  server = "{{ ansible_host }}:8500"
-}
-
-prometheus.relabel "filter_consul_rpc" {
-  forward_to = [prometheus.scrape.consul.receiver]
-
-  // Drop targets trying to scrape port 8300
-  rule {
-    source_labels = ["__address__"]
-    regex         = ".*:8300"
-    action        = "drop"
-  }
-}
-
-prometheus.scrape "consul" {
-  targets    = prometheus.relabel.filter_consul_rpc.output
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-discovery.consulagent "consulagent" {
-  server = "{{ ansible_host }}:8500"
-}
-
-
-prometheus.relabel "filter_consulagent_rpc" {
-  forward_to = [prometheus.scrape.consulagent.receiver]
-
-  // Drop targets trying to scrape port 8300
-  rule {
-    source_labels = ["__address__"]
-    regex         = ".*:8300"
-    action        = "drop"
-  }
-}
-
-prometheus.scrape "consulagent" {
-  targets    = prometheus.relabel.filter_consulagent_rpc.output
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-// discovery.process "all_process" {
-//   refresh_interval = "60s"
-//   discover_config {
-//     cwd = true
-//     exe = true
-//     commandline = true
-//     username = true
-//     uid = true
-//     cgroup_path = true
-//     container_id = true
-//   }
-// }
-
-// prometheus.scrape "all_process" {
-//   targets    = discovery.process.all_process.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-
-// loki.source.syslog "syslog" {
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-
 prometheus.exporter.consul "consul_health" {
   server = "http://{{ ansible_host }}:8500"
 }
