@@ -1,15 +1,12 @@
 local.file_match "debian_logs" {
   path_targets = [
-    { "__path__" = "/var/log/*.log" },
-    { "__path__" = "/var/log/auth.log" },
-    { "__path__" = "/var/log/syslog" },
+    { "__path__" = "/var/log/**.log" },
   ]
-  sync_period = "10s"
 }
 
 loki.source.file "local_files" {
   targets    = local.file_match.debian_logs.targets
-  forward_to = [loki.process.vm_labeling.receiver]
+  forward_to = [loki.write.loki_endpoint.receiver]
 }
 
 loki.write "loki_endpoint" {
@@ -18,48 +15,56 @@ loki.write "loki_endpoint" {
   }
 }
 
-loki.process "vm_labeling" {
+loki.source.journal "system" {
+  forward_to = [loki.process.filter_noisy_logs.receiver]
+  format_as_json = true
+
+}
+
+loki.process "filter_noisy_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
-  stage.static_labels "host_labeling" {
-    values = {
-      ip_address  = "{{ ansible_host }}",
-      host_group  = "{{ group_names[0] }}",
-    }
+  stage.drop {
+    source = "MESSAGE"
+    value = "syslogin_perform_logout: logout() returned an error"
+    drop_counter_reason = "ansible_ssh_logout_noise"
   }
 }
 
-loki.source.journal "docker_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=docker.service"
-  labels     = {service = "docker"}
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://192.168.1.2:9090/api/v1/write"
+    // basic_auth {
+    //   username = "your-username"
+    //   password = "your-password"
+    // }
+  }
 }
 
-loki.source.journal "containerd_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=containerd.service"
-  labels     = {service = "containerd"}
+// Scrape local Linux system metrics
+prometheus.exporter.unix "local_system" { }
+
+// Collect and label the metrics
+prometheus.scrape "linux_metrics" {
+  targets    = prometheus.exporter.unix.local_system.targets
+  forward_to = [prometheus.remote_write.default.receiver]
 }
 
-loki.source.journal "kubelet_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=kubelet.service"
-  labels     = {service = "kubelet"}
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
 }
 
-loki.source.journal "sudo_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=sudo.service"
-  labels     = {service = "sudo"}
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.linux.targets
+  labels     = {"app" = "docker"}
+  forward_to = [loki.write.loki_endpoint.receiver]
 }
 
-loki.source.journal "alloy_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=alloy.service"
-  labels     = {service = "alloy"}
+discovery.kubelet "k8s_pods" {
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 }
 
-loki.source.journal "sshd_logs" {
-  forward_to = [loki.process.vm_labeling.receiver]
-  matches    = "_SYSTEMD_UNIT=sshd.service"
-  labels     = {service = "sshd"}
+prometheus.scrape "kubelet" {
+  targets    = discovery.kubelet.k8s_pods.targets
+  forward_to = [prometheus.remote_write.default.receiver]
 }
