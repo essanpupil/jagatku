@@ -40,6 +40,9 @@ jobs:
   terraform_check_plan:
     needs: list-terraform-changes
     runs-on: laptop1
+    env:
+      TERRAFORM_VAULT_USERNAME: ${{ secret.VAULT_USERNAME }}
+      TERRAFORM_VAULT_PASSWORD: ${{ secret.VAULT_PASSWORD }}
     defaults:
       run:
         shell: bash -eo pipefail {0}
