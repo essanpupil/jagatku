@@ -1,6 +1,6 @@
 resource "grafana_data_source" "this" {
   type                = "loki"
-  name                = "loki-local"
+  name                = "Loki-Local"
 }
 
 import {
