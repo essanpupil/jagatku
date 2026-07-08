@@ -127,6 +127,12 @@
       ansible.builtin.debug:
         msg: "{{ node_name }}"
 
+    - name: Reset kubeadm in worker node
+      command: kubeadm reset --force
+      when:
+        - inventory_hostname in groups['workers']
+        - node_name not in node_names.msg
+
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
       when:
