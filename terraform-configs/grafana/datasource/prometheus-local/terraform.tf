@@ -24,10 +24,10 @@ provider "vault" {
 
 provider "grafana" {
   url  = "http://192.168.1.2:3000/"
-  auth = data.vault_kv_secret_v2.grafana_secrets.data["grafana_api_key"]
+  auth = tostring(ephemeral.vault_kv_secret_v2.grafana_secrets.data.grafana_api_key)
 }
 
-data "vault_kv_secret_v2" "grafana_secrets" {
+ephemeral "vault_kv_secret_v2" "grafana_secrets" {
   mount = "grafana-token"
   name  = "grafana_api_key"
 }
