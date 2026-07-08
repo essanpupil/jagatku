@@ -23,7 +23,7 @@ provider "vault" {
 
 provider "grafana" {
   url  = "http://192.168.1.2:3000/"
-  auth = data.vault_kv_secret_v2.grafana_secrets.data["token"]
+  auth = data.vault_kv_secret_v2.grafana_secrets.data["grafana_api_key"]
 }
 
 data "vault_kv_secret_v2" "grafana_secrets" {
