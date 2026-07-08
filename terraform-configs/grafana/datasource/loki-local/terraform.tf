@@ -18,6 +18,7 @@ terraform {
 
 provider "vault" {
   address = "http://192.168.1.2:8200"
+  skip_child_token = true
   auth_login_userpass {}
 }
 
