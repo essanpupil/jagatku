@@ -1,5 +1,5 @@
 resource "grafana_data_source" "this" {
-  type                = "loki"
+  type                = "prometheus"
   name                = "Prometheus-Local"
 }
 
