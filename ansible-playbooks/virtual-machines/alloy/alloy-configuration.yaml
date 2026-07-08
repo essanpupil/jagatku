@@ -2,8 +2,6 @@
 - name: Install and configure alloy for baremetals servers
   hosts: kube_nodes
   become: true
-  # vars_files:
-  #   - ../../vault.yaml
   vars:
     loki_url: "http://192.168.1.2:3100/loki/api/v1/push"
 
