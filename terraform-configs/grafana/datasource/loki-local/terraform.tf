@@ -27,6 +27,6 @@ provider "grafana" {
 }
 
 data "vault_kv_secret_v2" "grafana_secrets" {
-  mount = "secret"
-  name  = "devops/grafana/creds"
+  mount = "grafana-token"
+  name  = "grafana_api_key"
 }
