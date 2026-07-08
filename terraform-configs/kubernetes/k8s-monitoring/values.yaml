@@ -2,13 +2,22 @@ collectors:
   alloy-metrics:
     enabled: true
     presets: [medium, clustered, statefulset]
+    alloy:
+      extraArgs:
+        - "--disable-reporting"
 
   alloy-logs:
     enabled: true
     presets: [small, filesystem-log-reader, daemonset]
+    alloy:
+      extraArgs:
+        - "--disable-reporting"
 
   alloy-singleton:
     presets: [small, deployment]
+    alloy:
+      extraArgs:
+        - "--disable-reporting"
 
 clusterEvents:
   enabled: true
