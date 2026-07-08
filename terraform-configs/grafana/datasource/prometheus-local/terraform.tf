@@ -2,7 +2,7 @@ terraform {
   backend "consul" {
     address = "192.168.1.2:8500"
     scheme  = "http"
-    path    = "terraform-configs/grafana/datasource/loki-local"
+    path    = "terraform-configs/grafana/datasource/prometheus-local"
   }
   required_providers {
     vault = {
