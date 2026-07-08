@@ -5,14 +5,12 @@ collectors:
     alloy:
       extraArgs:
         - "--disable-reporting"
-
   alloy-logs:
     enabled: true
     presets: [small, filesystem-log-reader, daemonset]
     alloy:
       extraArgs:
         - "--disable-reporting"
-
   alloy-singleton:
     presets: [small, deployment]
     alloy:
