@@ -117,15 +117,21 @@
       ansible.builtin.debug:
         msg: "{{ hostvars['server1']['node_list'].resources | map(attribute='metadata.name') | list }}"
 
-    - name: Debug node names
+    - name: Debug node names already registered
       check_mode: false
       ansible.builtin.debug:
         msg: "{{ node_names.msg }}"
 
-    - name: Debug node names
+    - name: Debug current node name
       check_mode: false
       ansible.builtin.debug:
         msg: "{{ node_name }}"
+
+    - name: Reset kubeadm in worker node
+      command: kubeadm reset --force
+      when:
+        - inventory_hostname in groups['workers']
+        - node_name not in node_names.msg
 
     - name: Join kubeadm
       ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
