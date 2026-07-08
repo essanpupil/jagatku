@@ -14,8 +14,12 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
-    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
+    node.vm.provision "shell", inline: <<-SHELL
+      pub_key="#{File.read(File.expand_path('~/.ssh/id_ed25519.pub')).strip}"
+      echo "$pub_key" >> /home/vagrant/.ssh/authorized_keys
+      chmod 600 /home/vagrant/.ssh/authorized_keys
+      chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+    SHELL
   end
 
   config.vm.define "node2" do |node|
@@ -33,8 +37,12 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
-    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
+    node.vm.provision "shell", inline: <<-SHELL
+      pub_key="#{File.read(File.expand_path('~/.ssh/id_ed25519.pub')).strip}"
+      echo "$pub_key" >> /home/vagrant/.ssh/authorized_keys
+      chmod 600 /home/vagrant/.ssh/authorized_keys
+      chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+    SHELL
   end
 
   config.vm.define "node3" do |node|
@@ -52,7 +60,11 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
       v.memory = 2048
     end
-    ssh_pub_key = File.readlines("/home/essan/.ssh/id_ed25519.pub").first.strip
-    node.vm.provision 'shell', inline: "echo '#{ssh_pub_key}' >> /home/vagrant/.ssh/authorized_keys", privileged: false
+    node.vm.provision "shell", inline: <<-SHELL
+      pub_key="#{File.read(File.expand_path('~/.ssh/id_ed25519.pub')).strip}"
+      echo "$pub_key" >> /home/vagrant/.ssh/authorized_keys
+      chmod 600 /home/vagrant/.ssh/authorized_keys
+      chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+    SHELL
   end
 end

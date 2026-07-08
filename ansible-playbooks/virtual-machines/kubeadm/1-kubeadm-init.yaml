@@ -10,55 +10,6 @@
         name: kubelet
         state: restarted
   tasks:
-    - name: Install necessary system utilities (curl, etc.)
-      apt:
-        pkg:
-          - curl
-          - unzip
-          - gnupg
-        state: present
-        update_cache: true
-
-    - name: Create keyrings directory
-      file:
-        path: /etc/apt/keyrings
-        state: directory
-        mode: "0755"
-
-    - name: Download Docker GPG key
-      get_url:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /etc/apt/keyrings/docker.asc
-        mode: "0644"
-        force: true
-
-    - name: Download kubeadm gpg key
-      get_url:
-        url: https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key
-        dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
-        mode: "0644"
-        force: true
-
-    - name: De-armor Docker GPG key for APT
-      command: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/docker.asc
-      args:
-        creates: /etc/apt/keyrings/docker.gpg
-
-    - name: De-armor kubeadm gpg key for APT
-      command: gpg --dearmor --yes --output /etc/apt/keyrings/kubernetes-apt-keyring.gpg /etc/apt/keyrings/kubernetes-apt-keyring.asc
-      args:
-        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-    - name: Add Docker repository
-      apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
-        state: present
-        filename: docker
-
-    - name: Add kubeadm repository
-      apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
-        state: present
-        filename: kubernetes
     - name: Install Docker Engine
       apt:
         pkg:
@@ -123,15 +74,19 @@
         path: "/etc/kubernetes/admin.conf"
       register: kubeadm_config
 
-    # - name: Enable and start kubelet service
-    #   ansible.builtin.systemd_service:
-    #     name: kubelet
-    #     enabled: true
-    #     state: started
+    - name: Enable and start kubelet service
+      register: kubelet_service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: started
+
+    - name: Check kubelet service
+      ansible.builtin.service_facts:
 
     - name: Reset kubeadm when kubelet run but kubeadm is not running
       command: kubeadm reset --force
-      when: not kubeadm_config.stat.exists
+      when: not kubeadm_config.stat.exists and ansible_facts.services['kubelet.service']['state'] == 'running'
 
     - name: Initiate kubeadm
       command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }}"
@@ -215,78 +170,3 @@
     #     name: python3-kubernetes
     #     state: present
     #     update_cache: true
-
-    - name: Download Helm binary archive
-      when: inventory_hostname in groups['servers']
-      ansible.builtin.get_url:
-        url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-{{ helm_arch }}.tar.gz"
-        dest: "/tmp/helm-{{ helm_version }}.tar.gz"
-        mode: '0644'
-
-    - name: Create temporary directory for extraction
-      when: inventory_hostname in groups['servers']
-      check_mode: false
-      ansible.builtin.file:
-        path: "/tmp/helm-extracted"
-        state: directory
-        mode: '0755'
-
-    - name: Unarchive Helm package
-      when: inventory_hostname in groups['servers']
-      ansible.builtin.unarchive:
-        src: "/tmp/helm-{{ helm_version }}.tar.gz"
-        dest: "/tmp/helm-extracted"
-        remote_src: yes
-
-    - name: Move Helm binary to system bin directory
-      when: inventory_hostname in groups['servers']
-      ansible.builtin.copy:
-        src: "/tmp/helm-extracted/linux-{{ helm_arch }}/helm"
-        dest: "/usr/local/bin/helm"
-        mode: '0755'
-        remote_src: yes
-
-    - name: Clean up temporary files
-      when: inventory_hostname in groups['servers']
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "/tmp/helm-{{ helm_version }}.tar.gz"
-
-    - name: Find all contents inside the directory
-      ansible.builtin.find:
-        path: "/tmp/helm-extracted"
-        recurse: false
-        file_type: any
-        hidden: true
-      register: folder_contents
-
-    - name: Purge found files and subfolders
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      loop: "{{ folder_contents.files }}"
-
-    # - name: Workarround coredns empty import
-    #   kubernetes.core.k8s:
-    #     kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-    #     state: absent
-    #     definition:
-    #       apiVersion: v1
-    #       kind: ConfigMap
-    #       metadata:
-    #         name: coredns-custom
-    #         namespace: kube-system
-    #       data:
-    #         log.override: |
-    #           #
-    #         stub.server: |
-    #           #
-    - name: Install helm-diff plugin
-      when: inventory_hostname in groups['servers']
-      kubernetes.core.helm_plugin:
-        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-        plugin_path: "https://github.com/databus23/helm-diff"
-        plugin_version: 3.15.10
-        state: present
