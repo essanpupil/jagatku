@@ -117,12 +117,12 @@
       ansible.builtin.debug:
         msg: "{{ hostvars['server1']['node_list'].resources | map(attribute='metadata.name') | list }}"
 
-    - name: Debug node names
+    - name: Debug node names already registered
       check_mode: false
       ansible.builtin.debug:
         msg: "{{ node_names.msg }}"
 
-    - name: Debug node names
+    - name: Debug current node name
       check_mode: false
       ansible.builtin.debug:
         msg: "{{ node_name }}"
