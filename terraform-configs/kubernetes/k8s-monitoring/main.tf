@@ -10,6 +10,8 @@ resource "helm_release" "k8s_monitoring" {
   chart      = "k8s-monitoring"
   namespace  = kubernetes_namespace_v1.observability.metadata[0].name
   version    = "4.1.6"
+  atomic     = true
+  wait       = true
   values = [
     file("${path.module}/values.yaml")
   ]
