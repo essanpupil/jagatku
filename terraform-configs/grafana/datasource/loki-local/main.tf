@@ -5,5 +5,5 @@ resource "grafana_data_source" "this" {
 
 import {
     to = grafana_data_source.this
-    id = "Loki-Local"
+    id = "afqh58e2dhm9sc"
 }

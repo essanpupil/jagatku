@@ -5,5 +5,5 @@ resource "grafana_data_source" "this" {
 
 import {
     to = grafana_data_source.this
-    id = "Prometheus-Local"
+    id = "dfqgw3rsao6bkf"
 }
