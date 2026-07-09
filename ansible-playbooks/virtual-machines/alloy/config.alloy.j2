@@ -21,14 +21,14 @@ loki.source.journal "system" {
 
 }
 
-loki.process "filter_noisy_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  stage.drop {
-    source = "MESSAGE"
-    value = "syslogin_perform_logout: logout() returned an error"
-    drop_counter_reason = "ansible_ssh_logout_noise"
-  }
-}
+# loki.process "filter_noisy_logs" {
+#   forward_to = [loki.write.loki_endpoint.receiver]
+#   stage.drop {
+#     source = "MESSAGE"
+#     value = "syslogin_perform_logout: logout() returned an error"
+#     drop_counter_reason = "ansible_ssh_logout_noise"
+#   }
+# }
 
 prometheus.remote_write "default" {
   endpoint {
