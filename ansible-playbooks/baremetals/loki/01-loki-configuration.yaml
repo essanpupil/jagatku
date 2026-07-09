@@ -9,19 +9,28 @@
         state: present
         update_cache: yes
 
-    - name: Deploy Loki configuration
+    - name: Render loki config for validation
+      check_mode: false
       ansible.builtin.template:
         src: config.loki.j2
+        dest: /tmp/loki_config.yml
+        owner: loki
+        mode: '0640'
+
+    - name: Validate loki config
+      check_mode: false
+      ansible.builtin.command:
+        cmd: loki -config.file=/tmp/loki_config.yml -verify-config
+
+    - name: Deploy Loki configuration
+      ansible.builtin.copy:
+        remote_src: true
+        src: /tmp/loki_config.yml
         dest: /etc/loki/config.yml
         owner: loki
-        # group: loki
         mode: '0640'
         validate: loki -config.file=%s -verify-config
       notify: Restart loki
-    
-    - name: Validate loki config
-      ansible.builtin.command:
-        cmd: loki -config.file=/etc/loki/config.yml -verify-config
 
     - name: Start and enable Loki service
       ansible.builtin.systemd:
