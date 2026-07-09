@@ -4,8 +4,6 @@
   become: True
   vars:
     grafana_url: "http://192.168.1.2:3000"
-  vars_files:
-    - ../../vault.yaml
   handlers:
     - name: Restart grafana server
       ansible.builtin.systemd_service:
