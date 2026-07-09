@@ -20,7 +20,7 @@
       notify: Restart loki
     
     - name: Validate loki config
-      ansible.built.command:
+      ansible.builtin.command:
         cmd: loki -config.file=/etc/loki/config.yml -verify-config
 
     - name: Start and enable Loki service
