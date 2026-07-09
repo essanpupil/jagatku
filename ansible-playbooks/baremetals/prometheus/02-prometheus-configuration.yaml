@@ -25,22 +25,22 @@
       ansible.builtin.command:
         cmd: promtool check config /tmp/prometheus_config.yml
     - name: Deploy Prometheus default arguments
-      ansible.builtin.copy:
-        remote_src: true
+      ansible.builtin.template:
         src: args.prometheus.j2
         dest: /etc/default/prometheus
         owner: root
         group: root
         mode: '0644'
-        validate: promtool check config %s
       notify: Restart prometheus
     - name: Deploy Prometheus configurations
-      ansible.builtin.template:
+      ansible.builtin.copy:
+        remote_src: true
         src: config.prometheus.j2
         dest: /etc/prometheus/prometheus.yml
         owner: root
         group: root
         mode: '0644'
+        validate: promtool check config %s
       notify: Restart prometheus
 
     - name: Start Prometheus service
