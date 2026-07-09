@@ -13,13 +13,26 @@
           - prometheus
           - prometheus-node-exporter
         state: present
-    - name: Deploy Prometheus default arguments
+    - name: Render prometheus config for validation
+      check_mode: false
       ansible.builtin.template:
+        src: config.prometheus.j2
+        dest: /tmp/prometheus_config.yml
+        owner: root
+        mode: '0640'
+    - name: Validate prometheus config
+      check_mode: false
+      ansible.builtin.command:
+        cmd: promtool check config /tmp/prometheus_config.yml
+    - name: Deploy Prometheus default arguments
+      ansible.builtin.copy:
+        remote_src: true
         src: args.prometheus.j2
         dest: /etc/default/prometheus
         owner: root
         group: root
         mode: '0644'
+        validate: promtool check config %s
       notify: Restart prometheus
     - name: Deploy Prometheus configurations
       ansible.builtin.template:
