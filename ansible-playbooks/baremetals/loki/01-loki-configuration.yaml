@@ -16,7 +16,7 @@
         owner: loki
         # group: loki
         mode: '0640'
-      validate: loki -config.file=%s -verify-config
+        validate: loki -config.file=%s -verify-config
       notify: Restart loki
     
     - name: Validate loki config
