@@ -50,3 +50,8 @@ ruler:
 
 frontend:
   encoding: protobuf
+  max_outstanding_requests_per_tenant: 200 
+
+querier:
+  engine:
+    timeout: 5m # Increase from default (usually 1m or 2m)

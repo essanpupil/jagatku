@@ -4,6 +4,7 @@ resource "grafana_data_source" "this" {
   url  = "http://localhost:3100"
   http_headers = {
     "X-Scope-OrgID" = "fake"
+    timeout         = 180
   }
 
   json_data_encoded = jsonencode(
