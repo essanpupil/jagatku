@@ -16,7 +16,12 @@
         owner: loki
         # group: loki
         mode: '0640'
+      validate: loki -config.file=%s -verify-config
       notify: Restart loki
+    
+    - name: Validate loki config
+      ansible.built.command:
+        cmd: loki -config.file=/etc/loki/config.yml -verify-config
 
     - name: Start and enable Loki service
       ansible.builtin.systemd:
