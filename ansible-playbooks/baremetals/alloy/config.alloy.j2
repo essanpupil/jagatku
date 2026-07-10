@@ -16,7 +16,7 @@ loki.write "loki_endpoint" {
 }
 
 loki.source.journal "system" {
-  forward_to = [loki.process.filter_noisy_logs.receiver]
+  forward_to = [loki.write.loki_endpoint.receiver]
   format_as_json = true
   relabel_rules = loki.relabel.journal.rules
   labels        = { job = "log_collection" }
