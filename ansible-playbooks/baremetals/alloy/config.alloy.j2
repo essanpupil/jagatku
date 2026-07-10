@@ -30,6 +30,12 @@ loki.process "filter_noisy_logs" {
   }
 }
 
+local.file "auth_vault_metrics" {
+  filename  = "/home/essan/.auth_vault_metrics"
+  is_secret = true
+}
+
+
 discovery.relabel "vault" {
 	targets = [{
 		__address__ = "{{ ansible_host }}:8200",
@@ -52,10 +58,9 @@ prometheus.scrape "vault" {
     format = ["prometheus"],
   }
   metrics_path = "/v1/sys/metrics"
-  
-  // Vault metrics require authentication via a token
-  // with the prometheus-metrics ACL policy
-  // bearer_token = "YOUR_VAULT_TOKEN_HERE" 
+  basic_auth {
+    password_file = local.file.auth_vault_metrics.content
+  }
 }
 
 prometheus.remote_write "default" {
