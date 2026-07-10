@@ -18,16 +18,31 @@ loki.write "loki_endpoint" {
 loki.source.journal "system" {
   forward_to = [loki.process.filter_noisy_logs.receiver]
   format_as_json = true
+  relabel_rules = loki.relabel.journal.rules
+  labels        = { job = "log_collection" }
 }
 
-loki.process "filter_noisy_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+loki.relabel "journal" {
+  forward_to = []
 
-  stage.drop {
-    // lowercase "message" targets the correct payload field
-    source              = "message"
-    value               = "syslogin_perform_logout: logout() returned an error"
-    drop_counter_reason = "ansible_ssh_logout_noise"
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "service_name"
+  }
+
+  rule {
+    source_labels = ["__journal__transport"]
+    target_label  = "transport"
+  }
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "host_name"
   }
 }
 
