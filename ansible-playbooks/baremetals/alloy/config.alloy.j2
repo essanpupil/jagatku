@@ -28,6 +28,10 @@ loki.process "filter_noisy_logs" {
     value = "syslogin_perform_logout: logout() returned an error"
     drop_counter_reason = "ansible_ssh_logout_noise"
   }
+
+  stage.label_drop {
+    values = ["service_name", "job", "_SYSTEMD_UNIT"]
+  }
 }
 
 local.file "auth_vault_metrics" {
