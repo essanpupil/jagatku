@@ -30,7 +30,7 @@ loki.process "filter_noisy_logs" {
   }
 
   stage.label_drop {
-    values = ["service_name", "job", "_SYSTEMD_UNIT"]
+    values = ["_SYSTEMD_UNIT"]
   }
 }
 
