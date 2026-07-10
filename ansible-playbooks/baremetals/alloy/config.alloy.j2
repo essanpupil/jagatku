@@ -31,7 +31,7 @@ loki.process "filter_noisy_logs" {
 }
 
 local.file "auth_vault_metrics" {
-  filename  = "/home/essan/.auth_vault_metrics"
+  filename  = "/etc/alloy/.auth_vault_metrics"
   is_secret = true
 }
 
