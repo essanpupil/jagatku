@@ -18,7 +18,6 @@ loki.write "loki_endpoint" {
 loki.source.journal "system" {
   forward_to = [loki.process.filter_noisy_logs.receiver]
   format_as_json = true
-
 }
 
 loki.process "filter_noisy_logs" {
@@ -27,40 +26,6 @@ loki.process "filter_noisy_logs" {
     source = "message"
     value = "syslogin_perform_logout: logout() returned an error"
     drop_counter_reason = "ansible_ssh_logout_noise"
-  }
-}
-
-local.file "auth_vault_metrics" {
-  filename  = "/etc/alloy/.auth_vault_metrics"
-  is_secret = true
-}
-
-
-discovery.relabel "vault" {
-	targets = [{
-		__address__ = "{{ ansible_host }}:8200",
-	}]
-
-	rule {
-		target_label = "instance"
-		replacement  = constants.hostname
-	}
-}
-
-prometheus.scrape "vault" {
-  forward_to = [prometheus.remote_write.default.receiver]
-  targets = discovery.relabel.vault.output
-  scheme = "http"
-  job_name = "vault"
-  scrape_interval = "10s"
-  scrape_timeout = "5s"
-  params = {
-    format = ["prometheus"],
-  }
-  metrics_path = "/v1/sys/metrics"
-  basic_auth {
-    username = "vault_metrics"
-    password = local.file.auth_vault_metrics.content
   }
 }
 
@@ -74,13 +39,33 @@ prometheus.remote_write "default" {
   }
 }
 
-// Scrape local Linux system metrics
 prometheus.exporter.unix "local_system" { }
 
-// Collect and label the metrics
 prometheus.scrape "linux_metrics" {
   targets    = prometheus.exporter.unix.local_system.targets
   forward_to = [prometheus.remote_write.default.receiver]
+}
+
+local.file "auth_vault_metrics" {
+  filename  = "/etc/alloy/.auth_vault_metrics"
+  is_secret = true
+}
+
+prometheus.scrape "vault" {
+  forward_to = [prometheus.remote_write.default.receiver]
+  targets = "{{ ansible_host }}:8200"
+  scheme = "http"
+  job_name = "vault"
+  scrape_interval = "10s"
+  scrape_timeout = "5s"
+  params = {
+    format = ["prometheus"],
+  }
+  metrics_path = "/v1/sys/metrics"
+  basic_auth {
+    username = "vault_metrics"
+    password = local.file.auth_vault_metrics.content
+  }
 }
 
 prometheus.exporter.consul "consul_health" {
