@@ -16,51 +16,33 @@ loki.write "loki_endpoint" {
 }
 
 loki.source.journal "system" {
-  forward_to = [loki.process.filter_noisy_logs.receiver]
-  format_as_json = true
-
-}
-
-loki.process "filter_noisy_logs" {
   forward_to = [loki.write.loki_endpoint.receiver]
-  stage.drop {
-    source = "message"
-    value = "syslogin_perform_logout: logout() returned an error"
-    drop_counter_reason = "ansible_ssh_logout_noise"
+  format_as_json = true
+  relabel_rules = loki.relabel.journal.rules
+  labels        = { job = "log_collection" }
+}
+
+loki.relabel "journal" {
+  forward_to = []
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "service_name"
   }
-}
 
-local.file "auth_vault_metrics" {
-  filename  = "/etc/alloy/.auth_vault_metrics"
-  is_secret = true
-}
-
-
-discovery.relabel "vault" {
-	targets = [{
-		__address__ = "{{ ansible_host }}:8200",
-	}]
-
-	rule {
-		target_label = "instance"
-		replacement  = constants.hostname
-	}
-}
-
-prometheus.scrape "vault" {
-  forward_to = [prometheus.remote_write.default.receiver]
-  targets = discovery.relabel.vault.output
-  scheme = "http"
-  job_name = "vault"
-  scrape_interval = "10s"
-  scrape_timeout = "5s"
-  params = {
-    format = ["prometheus"],
+  rule {
+    source_labels = ["__journal__transport"]
+    target_label  = "transport"
   }
-  metrics_path = "/v1/sys/metrics"
-  basic_auth {
-    username = "vault_metrics"
-    password = local.file.auth_vault_metrics.content
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "host_name"
   }
 }
 
@@ -74,13 +56,35 @@ prometheus.remote_write "default" {
   }
 }
 
-// Scrape local Linux system metrics
 prometheus.exporter.unix "local_system" { }
 
-// Collect and label the metrics
 prometheus.scrape "linux_metrics" {
   targets    = prometheus.exporter.unix.local_system.targets
   forward_to = [prometheus.remote_write.default.receiver]
+}
+
+local.file "auth_vault_metrics" {
+  filename  = "/etc/alloy/.auth_vault_metrics"
+  is_secret = true
+}
+
+prometheus.scrape "vault" {
+  forward_to = [prometheus.remote_write.default.receiver]
+  targets = [
+    {"__address__" = "{{ ansible_host }}:8200"},
+  ]
+  scheme = "http"
+  job_name = "vault"
+  scrape_interval = "10s"
+  scrape_timeout = "5s"
+  params = {
+    format = ["prometheus"],
+  }
+  metrics_path = "/v1/sys/metrics"
+  basic_auth {
+    username = "vault_metrics"
+    password = local.file.auth_vault_metrics.content
+  }
 }
 
 prometheus.exporter.consul "consul_health" {

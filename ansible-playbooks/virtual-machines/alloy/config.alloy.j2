@@ -16,19 +16,33 @@ loki.write "loki_endpoint" {
 }
 
 loki.source.journal "system" {
-  forward_to = [loki.process.filter_noisy_logs.receiver]
+  forward_to = [loki.write.loki_endpoint.receiver]
   format_as_json = true
-
+  relabel_rules = loki.relabel.journal.rules
+  labels        = { job = "log_collection" }
 }
 
-loki.process "filter_noisy_logs" {
-  forward_to = [loki.write.loki_endpoint.receiver]
+loki.relabel "journal" {
+  forward_to = []
 
-  stage.drop {
-    // lowercase "message" targets the correct payload field
-    source              = "message"
-    value               = "syslogin_perform_logout: logout() returned an error"
-    drop_counter_reason = "ansible_ssh_logout_noise"
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "service_name"
+  }
+
+  rule {
+    source_labels = ["__journal__transport"]
+    target_label  = "transport"
+  }
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "host_name"
   }
 }
 
@@ -42,10 +56,8 @@ prometheus.remote_write "default" {
   }
 }
 
-// Scrape local Linux system metrics
 prometheus.exporter.unix "local_system" { }
 
-// Collect and label the metrics
 prometheus.scrape "linux_metrics" {
   targets    = prometheus.exporter.unix.local_system.targets
   forward_to = [prometheus.remote_write.default.receiver]
@@ -61,21 +73,3 @@ loki.source.docker "default" {
   labels     = {"app" = "docker"}
   forward_to = [loki.write.loki_endpoint.receiver]
 }
-
-// discovery.kubelet "k8s_pods" {
-//   url = "https://{{ ansible_host }}:10250"
-// }
-
-// prometheus.scrape "kubelet" {
-//   targets    = discovery.kubelet.k8s_pods.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-//   scheme = "https"
-//   tls_config {
-//     ca_file            = "/etc/kubernetes/pki/ca.crt"
-//     cert_file          = "/etc/kubernetes/pki/apiserver.crt"
-//     key_file           = "/etc/kubernetes/pki/apiserver.key"
-//     // server_name        = "kubernetes"                  // Override if SANs do not match node IPs
-//     insecure_skip_verify = true
-//   }
-//   // bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-// }
