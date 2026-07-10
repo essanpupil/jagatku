@@ -60,7 +60,7 @@ prometheus.scrape "vault" {
   metrics_path = "/v1/sys/metrics"
   basic_auth {
     username = "vault_metrics"
-    password = local.file.auth_vault_metrics.
+    password = local.file.auth_vault_metrics.content
   }
 }
 
