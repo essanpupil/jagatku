@@ -70,7 +70,9 @@ local.file "auth_vault_metrics" {
 
 prometheus.scrape "vault" {
   forward_to = [prometheus.remote_write.default.receiver]
-  targets = "{{ ansible_host }}:8200"
+  targets = [
+    {"__address__" = "{{ ansible_host }}:8200"},
+  ]
   scheme = "http"
   job_name = "vault"
   scrape_interval = "10s"
