@@ -12,6 +12,19 @@
         state: present
         update_cache: true
 
+    - name: Render alloy config for validation
+      check_mode: false
+      ansible.builtin.template:
+        src: config.alloy.j2
+        dest: /tmp/alloy_config.yml
+        owner: alloy
+        mode: '0640'
+
+    - name: Validate alloy config
+      check_mode: false
+      ansible.builtin.command:
+        cmd: alloy validate /tmp/alloy_config.yml
+
     - name: Ensure alloy user belongs to system groups for log access
       ansible.builtin.user:
         name: alloy
@@ -20,8 +33,9 @@
       notify: Restart alloy
 
     - name: Deploy Alloy pipeline configuration
-      ansible.builtin.template:
-        src: config.alloy.j2
+      ansible.builtin.copy:
+        remote_src: true
+        src: /tmp/alloy_config.yml
         dest: /etc/alloy/config.alloy
         owner: alloy
         group: alloy
