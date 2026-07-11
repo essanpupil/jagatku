@@ -1,0 +1,9 @@
+prometheus:
+  enabled: true
+  agentMode: false
+  prometheusSpec:
+    remoteWrite:
+      - name: "localPrometheus"
+        url: "http://192.168.1.2:9090/api/v1/write"
+grafana:
+  enabled: false
