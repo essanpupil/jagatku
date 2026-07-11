@@ -12,7 +12,7 @@ resource "helm_release" "this" {
   name       = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
-  namespace  = data.terraform_remote_state.observability_namespace.namespace
+  namespace  = data.terraform_remote_state.observability_namespace.outputs.namespace
   version    = "87.15.1"
   # atomic     = true
   # wait       = true
