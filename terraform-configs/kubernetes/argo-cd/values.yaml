@@ -32,3 +32,9 @@ applicationSet:
     enabled: true
     serviceMonitor:
       enabled: true
+
+dex:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
