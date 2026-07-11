@@ -29,21 +29,6 @@ loki.relabel "journal" {
     source_labels = ["__journal__systemd_unit"]
     target_label  = "service_name"
   }
-
-  rule {
-    source_labels = ["__journal__transport"]
-    target_label  = "transport"
-  }
-
-  rule {
-    source_labels = ["__journal__priority_keyword"]
-    target_label  = "level"
-  }
-
-  rule {
-    source_labels = ["__journal__hostname"]
-    target_label  = "host_name"
-  }
 }
 
 prometheus.remote_write "default" {
