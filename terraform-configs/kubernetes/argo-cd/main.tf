@@ -6,10 +6,10 @@ resource "kubernetes_namespace_v1" "this" {
 
 resource "helm_release" "this" {
   name       = "argo-cd"
-  repository = "https://argoproj.github.io/argo-helm"
+  repository = "oci://ghcr.io/argoproj/argo-helm/argo-cd"
   chart      = "argo-cd"
   namespace  = kubernetes_namespace_v1.this.metadata[0].name
-  version    = "0.29.0"
+  version    = "10.1.3"
   # atomic     = true
   # wait       = true
   values = [
