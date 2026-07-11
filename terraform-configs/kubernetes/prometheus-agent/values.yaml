@@ -5,5 +5,11 @@ prometheus:
     remoteWrite:
       - name: "localPrometheus"
         url: "http://192.168.1.2:9090/api/v1/write"
+    serviceMonitorSelector:
+      matchLabels:
+        release: prometheus
+    serviceMonitorNamespaceSelector:
+      matchNames:
+        - gitops
 grafana:
   enabled: false
