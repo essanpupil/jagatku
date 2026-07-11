@@ -16,3 +16,7 @@ resource "helm_release" "this" {
     file("${path.module}/values.yaml")
   ]
 }
+
+resource "kubernetes_manifest" "service_monitor" {
+  manifest = yamldecode(file("${path.module}/service-monitor.yaml"))
+}
