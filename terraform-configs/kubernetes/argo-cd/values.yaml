@@ -1,14 +1,40 @@
 redis-ha:
   enabled: false
+redis:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 controller:
   replicas: 1
-
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 server:
   replicas: 1
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 repoServer:
   replicas: 1
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 applicationSet:
   replicas: 1
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+dex:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
