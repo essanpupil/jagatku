@@ -2,7 +2,7 @@ terraform {
   backend "consul" {
     address = "192.168.1.2:8500"
     scheme  = "http"
-    path    = "terraform-configs/kubernetes/cloudnative-pg"
+    path    = "terraform-configs/kubernetes/argo-cd"
   }
 
   required_providers {
