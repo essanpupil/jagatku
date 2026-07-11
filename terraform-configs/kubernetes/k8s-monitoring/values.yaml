@@ -25,6 +25,7 @@ nodeLogs:
   collector: alloy-logs
 podLogsViaLoki:
   enabled: true
+  collector: alloy-logs
 hostMetrics:
   enabled: true
   collector: alloy-metrics
