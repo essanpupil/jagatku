@@ -1,5 +1,5 @@
 global:
-  defaultStorageClass: "local-storage"
+  defaultStorageClass: "nfs"
 metrics:
   serviceMonitor:
     enabled: true
