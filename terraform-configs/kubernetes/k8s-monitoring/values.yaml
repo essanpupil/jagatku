@@ -23,6 +23,8 @@ clusterEvents:
 nodeLogs:
   enabled: true
   collector: alloy-logs
+podLogsViaLoki:
+  enabled: true
 hostMetrics:
   enabled: true
   collector: alloy-metrics
