@@ -20,7 +20,7 @@ resource "helm_release" "this" {
   ]
 }
 
-resource "kubernetes_storage_class" "local" {
+resource "kubernetes_storage_class_v1" "local" {
   metadata {
     name = "local-storage"
   }
