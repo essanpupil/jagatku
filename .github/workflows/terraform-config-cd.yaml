@@ -60,11 +60,13 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
         run: terraform init
       - name: Terraform apply
+        id: tfapply
         working-directory: ./${{ matrix.terraforms }}
         env:
             TF_VAR_token: ${{ secrets.GH_PAT }}
             TF_CLI_ARGS: "-no-color"
         run: terraform apply -auto-approve | tee apply.txt
+        continue-on-error: true
       - name: Prepend playbook path for identification
         working-directory: ./${{ matrix.terraforms }}
         run: echo "${{ matrix.terraforms }}" >> terraform_apply.md
@@ -83,3 +85,8 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-path: './${{ matrix.terraforms }}/terraform_apply.md'
+      - name: State workflow to fail
+        if: steps.tfapply.outcome == 'failure'
+        run: |
+          echo "Terraform apply failed"
+          exit 1

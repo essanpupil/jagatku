@@ -56,11 +56,13 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
         run: terraform init
       - name: Terraform plan
+        id: tfplan
         working-directory: ./${{ matrix.terraforms }}
         env:
             TF_VAR_token: ${{ github.token }}
             TF_CLI_ARGS: "-no-color"
         run: terraform plan | tee plan.txt
+        continue-on-error: true
       - name: Prepend playbook path for identification
         working-directory: ./${{ matrix.terraforms }}
         run: echo "${{ matrix.terraforms }}" >> terraform_plan.md
@@ -79,3 +81,8 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-path: './${{ matrix.terraforms }}/terraform_plan.md'
+      - name: State workflow to fail
+        if: steps.tfplan.outcome == 'failure'
+        run: |
+          echo "Terraform plan failed"
+          exit 1
