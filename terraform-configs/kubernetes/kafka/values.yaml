@@ -1,3 +1,5 @@
+global:
+  defaultStorageClass: "local-storage"
 metrics:
   serviceMonitor:
     enabled: true
