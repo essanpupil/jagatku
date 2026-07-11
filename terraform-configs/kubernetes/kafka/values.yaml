@@ -1,3 +1,6 @@
 metrics:
   serviceMonitor:
     enabled: true
+defaultInitContainers:
+  volumePermissions:
+    enabled: true
