@@ -20,9 +20,9 @@ collectors:
 clusterEvents:
   enabled: true
   collector: alloy-singleton
-nodeLogs:
-  enabled: true
-  collector: alloy-logs
+# nodeLogs:
+#   enabled: true
+#   collector: alloy-logs
 podLogsViaLoki:
   enabled: true
 hostMetrics:
