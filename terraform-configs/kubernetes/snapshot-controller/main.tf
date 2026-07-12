@@ -4,8 +4,8 @@ resource "helm_release" "this" {
   chart           = "snapshot-controller"
   namespace       = "kube-system"
   version         = "5.1.1"
-  cleanup_on_fail = true
-  atomic          = true
+  # cleanup_on_fail = true
+  # atomic          = true
 
   # Prevents Terraform timeouts if a chart has complex post-install jobs
   wait = false
