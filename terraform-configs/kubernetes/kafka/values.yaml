@@ -1,8 +1,2 @@
 global:
   defaultStorageClass: "longhorn"
-metrics:
-  serviceMonitor:
-    enabled: true
-defaultInitContainers:
-  volumePermissions:
-    enabled: true
