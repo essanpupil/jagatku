@@ -16,7 +16,6 @@
           - curl
           - unzip
           - bash
-          - findmnt
           - grep
           - awk
           - blkid
