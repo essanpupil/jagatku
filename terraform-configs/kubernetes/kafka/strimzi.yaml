@@ -1,3 +1,4 @@
+
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -5,7 +6,7 @@ metadata:
   name: strimzi-cluster-operator
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 data:
   log4j2.properties: >
     name = COConfig
@@ -77,7 +78,7 @@ rules:
       - patch
       - update
   - apiGroups:
-      - ""
+      - ''
     resources:
       - pods
       - serviceaccounts
@@ -95,7 +96,7 @@ rules:
       - patch
       - update
   - apiGroups:
-      - ""
+      - ''
     resources:
       - pods/resize
     verbs:
@@ -206,7 +207,7 @@ metadata:
   name: kafkaconnectors.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -426,7 +427,7 @@ metadata:
   name: kafkas.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -516,7 +517,7 @@ spec:
                         versions in the Cluster Operator configuration. Changing
                         the Kafka image version does not automatically update
                         the image versions for other components, such as Kafka
-                        Exporter.
+                        Exporter. 
                     listeners:
                       type: array
                       minItems: 1
@@ -525,7 +526,7 @@ spec:
                         properties:
                           name:
                             type: string
-                            pattern: "^[a-z0-9]{1,11}$"
+                            pattern: '^[a-z0-9]{1,11}$'
                             description: >-
                               Name of the listener. The name will be used to
                               identify the listener and the related Kubernetes
@@ -1334,19 +1335,19 @@ spec:
                     jvmOptions:
                       type: object
                       properties:
-                        "-XX":
+                        '-XX':
                           additionalProperties:
                             type: string
                           type: object
                           description: A map of -XX options to the JVM.
-                        "-Xmx":
+                        '-Xmx':
                           type: string
-                          pattern: "^[0-9]+[mMgG]?$"
-                          description: "-Xmx option to to the JVM."
-                        "-Xms":
+                          pattern: '^[0-9]+[mMgG]?$'
+                          description: '-Xmx option to to the JVM.'
+                        '-Xms':
                           type: string
-                          pattern: "^[0-9]+[mMgG]?$"
-                          description: "-Xms option to to the JVM."
+                          pattern: '^[0-9]+[mMgG]?$'
+                          description: '-Xms option to to the JVM.'
                         gcLoggingEnabled:
                           type: boolean
                           description: >-
@@ -1458,7 +1459,7 @@ spec:
                           enum:
                             - inline
                             - external
-                          description: "Logging type, must be either 'inline' or 'external'."
+                          description: 'Logging type, must be either ''inline'' or ''external''.'
                         valueFrom:
                           type: object
                           properties:
@@ -1476,7 +1477,7 @@ spec:
                                 the configuration.
                           description: >-
                             `ConfigMap` entry where the logging configuration is
-                            stored.
+                            stored. 
                       required:
                         - type
                       description: Logging configuration for Kafka.
@@ -1996,7 +1997,7 @@ spec:
                               type: string
                               description: >-
                                 The name of the priority class used to assign
-                                priority to the pods.
+                                priority to the pods. 
                             schedulerName:
                               type: string
                               description: >-
@@ -2061,7 +2062,7 @@ spec:
                                 variables.
                             tmpDirSizeLimit:
                               type: string
-                              pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                              pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                               description: >-
                                 Defines the total amount of pod memory allocated
                                 for the temporary `EmptyDir` volume `/tmp`.
@@ -2098,7 +2099,7 @@ spec:
                                         type: boolean
                                       secretName:
                                         type: string
-                                    description: "`Secret` to use to populate the volume."
+                                    description: '`Secret` to use to populate the volume.'
                                   configMap:
                                     type: object
                                     properties:
@@ -2119,7 +2120,7 @@ spec:
                                         type: string
                                       optional:
                                         type: boolean
-                                    description: "`ConfigMap` to use to populate the volume."
+                                    description: '`ConfigMap` to use to populate the volume.'
                                   emptyDir:
                                     type: object
                                     properties:
@@ -2135,12 +2136,12 @@ spec:
                                           medium.
                                       sizeLimit:
                                         type: string
-                                        pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                        pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                         description: >-
                                           The total amount of local storage
                                           required for this EmptyDir volume (for
                                           example 1Gi).
-                                    description: "`EmptyDir` to use to populate the volume."
+                                    description: '`EmptyDir` to use to populate the volume.'
                                   persistentVolumeClaim:
                                     type: object
                                     properties:
@@ -3219,26 +3220,26 @@ spec:
                                     containing the configuration.
                               description: >-
                                 `ConfigMap` entry where the logging
-                                configuration is stored.
+                                configuration is stored. 
                           required:
                             - type
                           description: Logging configuration.
                         jvmOptions:
                           type: object
                           properties:
-                            "-XX":
+                            '-XX':
                               additionalProperties:
                                 type: string
                               type: object
                               description: A map of -XX options to the JVM.
-                            "-Xmx":
+                            '-Xmx':
                               type: string
-                              pattern: "^[0-9]+[mMgG]?$"
-                              description: "-Xmx option to to the JVM."
-                            "-Xms":
+                              pattern: '^[0-9]+[mMgG]?$'
+                              description: '-Xmx option to to the JVM.'
+                            '-Xms':
                               type: string
-                              pattern: "^[0-9]+[mMgG]?$"
-                              description: "-Xms option to to the JVM."
+                              pattern: '^[0-9]+[mMgG]?$'
+                              description: '-Xms option to to the JVM.'
                             gcLoggingEnabled:
                               type: boolean
                               description: >-
@@ -3420,26 +3421,26 @@ spec:
                                     containing the configuration.
                               description: >-
                                 `ConfigMap` entry where the logging
-                                configuration is stored.
+                                configuration is stored. 
                           required:
                             - type
                           description: Logging configuration.
                         jvmOptions:
                           type: object
                           properties:
-                            "-XX":
+                            '-XX':
                               additionalProperties:
                                 type: string
                               type: object
                               description: A map of -XX options to the JVM.
-                            "-Xmx":
+                            '-Xmx':
                               type: string
-                              pattern: "^[0-9]+[mMgG]?$"
-                              description: "-Xmx option to to the JVM."
-                            "-Xms":
+                              pattern: '^[0-9]+[mMgG]?$'
+                              description: '-Xmx option to to the JVM.'
+                            '-Xms':
                               type: string
-                              pattern: "^[0-9]+[mMgG]?$"
-                              description: "-Xms option to to the JVM."
+                              pattern: '^[0-9]+[mMgG]?$'
+                              description: '-Xms option to to the JVM.'
                             gcLoggingEnabled:
                               type: boolean
                               description: >-
@@ -4007,7 +4008,7 @@ spec:
                               type: string
                               description: >-
                                 The name of the priority class used to assign
-                                priority to the pods.
+                                priority to the pods. 
                             schedulerName:
                               type: string
                               description: >-
@@ -4072,7 +4073,7 @@ spec:
                                 variables.
                             tmpDirSizeLimit:
                               type: string
-                              pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                              pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                               description: >-
                                 Defines the total amount of pod memory allocated
                                 for the temporary `EmptyDir` volume `/tmp`.
@@ -4109,7 +4110,7 @@ spec:
                                         type: boolean
                                       secretName:
                                         type: string
-                                    description: "`Secret` to use to populate the volume."
+                                    description: '`Secret` to use to populate the volume.'
                                   configMap:
                                     type: object
                                     properties:
@@ -4130,7 +4131,7 @@ spec:
                                         type: string
                                       optional:
                                         type: boolean
-                                    description: "`ConfigMap` to use to populate the volume."
+                                    description: '`ConfigMap` to use to populate the volume.'
                                   emptyDir:
                                     type: object
                                     properties:
@@ -4146,12 +4147,12 @@ spec:
                                           medium.
                                       sizeLimit:
                                         type: string
-                                        pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                        pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                         description: >-
                                           The total amount of local storage
                                           required for this EmptyDir volume (for
                                           example 1Gi).
-                                    description: "`EmptyDir` to use to populate the volume."
+                                    description: '`EmptyDir` to use to populate the volume.'
                                   persistentVolumeClaim:
                                     type: object
                                     properties:
@@ -4860,19 +4861,19 @@ spec:
                     jvmOptions:
                       type: object
                       properties:
-                        "-XX":
+                        '-XX':
                           additionalProperties:
                             type: string
                           type: object
                           description: A map of -XX options to the JVM.
-                        "-Xmx":
+                        '-Xmx':
                           type: string
-                          pattern: "^[0-9]+[mMgG]?$"
-                          description: "-Xmx option to to the JVM."
-                        "-Xms":
+                          pattern: '^[0-9]+[mMgG]?$'
+                          description: '-Xmx option to to the JVM.'
+                        '-Xms':
                           type: string
-                          pattern: "^[0-9]+[mMgG]?$"
-                          description: "-Xms option to to the JVM."
+                          pattern: '^[0-9]+[mMgG]?$'
+                          description: '-Xms option to to the JVM.'
                         gcLoggingEnabled:
                           type: boolean
                           description: >-
@@ -4906,7 +4907,7 @@ spec:
                           enum:
                             - inline
                             - external
-                          description: "Logging type, must be either 'inline' or 'external'."
+                          description: 'Logging type, must be either ''inline'' or ''external''.'
                         valueFrom:
                           type: object
                           properties:
@@ -4924,7 +4925,7 @@ spec:
                                 the configuration.
                           description: >-
                             `ConfigMap` entry where the logging configuration is
-                            stored.
+                            stored. 
                       required:
                         - type
                       description: Logging configuration (Log4j 2) for Cruise Control.
@@ -5474,7 +5475,7 @@ spec:
                               type: string
                               description: >-
                                 The name of the priority class used to assign
-                                priority to the pods.
+                                priority to the pods. 
                             schedulerName:
                               type: string
                               description: >-
@@ -5539,7 +5540,7 @@ spec:
                                 variables.
                             tmpDirSizeLimit:
                               type: string
-                              pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                              pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                               description: >-
                                 Defines the total amount of pod memory allocated
                                 for the temporary `EmptyDir` volume `/tmp`.
@@ -5576,7 +5577,7 @@ spec:
                                         type: boolean
                                       secretName:
                                         type: string
-                                    description: "`Secret` to use to populate the volume."
+                                    description: '`Secret` to use to populate the volume.'
                                   configMap:
                                     type: object
                                     properties:
@@ -5597,7 +5598,7 @@ spec:
                                         type: string
                                       optional:
                                         type: boolean
-                                    description: "`ConfigMap` to use to populate the volume."
+                                    description: '`ConfigMap` to use to populate the volume.'
                                   emptyDir:
                                     type: object
                                     properties:
@@ -5613,12 +5614,12 @@ spec:
                                           medium.
                                       sizeLimit:
                                         type: string
-                                        pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                        pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                         description: >-
                                           The total amount of local storage
                                           required for this EmptyDir volume (for
                                           example 1Gi).
-                                    description: "`EmptyDir` to use to populate the volume."
+                                    description: '`EmptyDir` to use to populate the volume.'
                                   persistentVolumeClaim:
                                     type: object
                                     properties:
@@ -5950,7 +5951,7 @@ spec:
                       properties:
                         cpu:
                           type: string
-                          pattern: "^[0-9]+([.][0-9]{0,3}|[m]?)$"
+                          pattern: '^[0-9]+([.][0-9]{0,3}|[m]?)$'
                           description: >-
                             Broker capacity for CPU resource in cores or
                             millicores. For example, 1, 1.500, 1500m. For more
@@ -5958,7 +5959,7 @@ spec:
                             https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu.
                         inboundNetwork:
                           type: string
-                          pattern: "^[0-9]+([KMG]i?)?B/s$"
+                          pattern: '^[0-9]+([KMG]i?)?B/s$'
                           description: >-
                             Broker capacity for inbound network throughput in
                             bytes per second. Use an integer value with standard
@@ -5967,7 +5968,7 @@ spec:
                             For example, 10000KiB/s.
                         outboundNetwork:
                           type: string
-                          pattern: "^[0-9]+([KMG]i?)?B/s$"
+                          pattern: '^[0-9]+([KMG]i?)?B/s$'
                           description: >-
                             Broker capacity for outbound network throughput in
                             bytes per second. Use an integer value with standard
@@ -5986,7 +5987,7 @@ spec:
                                 description: List of Kafka brokers (broker identifiers).
                               cpu:
                                 type: string
-                                pattern: "^[0-9]+([.][0-9]{0,3}|[m]?)$"
+                                pattern: '^[0-9]+([.][0-9]{0,3}|[m]?)$'
                                 description: >-
                                   Broker capacity for CPU resource in cores or
                                   millicores. For example, 1, 1.500, 1500m. For
@@ -5995,7 +5996,7 @@ spec:
                                   https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu.
                               inboundNetwork:
                                 type: string
-                                pattern: "^[0-9]+([KMG]i?)?B/s$"
+                                pattern: '^[0-9]+([KMG]i?)?B/s$'
                                 description: >-
                                   Broker capacity for inbound network throughput
                                   in bytes per second. Use an integer value with
@@ -6004,7 +6005,7 @@ spec:
                                   Mi, Gi) per second. For example, 10000KiB/s.
                               outboundNetwork:
                                 type: string
-                                pattern: "^[0-9]+([KMG]i?)?B/s$"
+                                pattern: '^[0-9]+([KMG]i?)?B/s$'
                                 description: >-
                                   Broker capacity for outbound network
                                   throughput in bytes per second. Use an integer
@@ -6148,7 +6149,7 @@ spec:
                             description: >
                               Specifies the mode for automatically rebalancing
                               when brokers are added or removed. Supported modes
-                              are `add-brokers` and `remove-brokers`.
+                              are `add-brokers` and `remove-brokers`. 
                           template:
                             type: object
                             properties:
@@ -6865,7 +6866,7 @@ spec:
                               type: string
                               description: >-
                                 The name of the priority class used to assign
-                                priority to the pods.
+                                priority to the pods. 
                             schedulerName:
                               type: string
                               description: >-
@@ -6930,7 +6931,7 @@ spec:
                                 variables.
                             tmpDirSizeLimit:
                               type: string
-                              pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                              pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                               description: >-
                                 Defines the total amount of pod memory allocated
                                 for the temporary `EmptyDir` volume `/tmp`.
@@ -6967,7 +6968,7 @@ spec:
                                         type: boolean
                                       secretName:
                                         type: string
-                                    description: "`Secret` to use to populate the volume."
+                                    description: '`Secret` to use to populate the volume.'
                                   configMap:
                                     type: object
                                     properties:
@@ -6988,7 +6989,7 @@ spec:
                                         type: string
                                       optional:
                                         type: boolean
-                                    description: "`ConfigMap` to use to populate the volume."
+                                    description: '`ConfigMap` to use to populate the volume.'
                                   emptyDir:
                                     type: object
                                     properties:
@@ -7004,12 +7005,12 @@ spec:
                                           medium.
                                       sizeLimit:
                                         type: string
-                                        pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                        pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                         description: >-
                                           The total amount of local storage
                                           required for this EmptyDir volume (for
                                           example 1Gi).
-                                    description: "`EmptyDir` to use to populate the volume."
+                                    description: '`EmptyDir` to use to populate the volume.'
                                   persistentVolumeClaim:
                                     type: object
                                     properties:
@@ -7462,7 +7463,7 @@ spec:
                               * Broker IDs for a current auto-rebalance. 
 
                               * Broker IDs for a queued auto-rebalance (if a
-                              previous auto-rebalance is still in progress).
+                              previous auto-rebalance is still in progress). 
                       description: >-
                         List of modes where an auto-rebalancing operation is
                         either running or queued. 
@@ -7489,7 +7490,7 @@ metadata:
   name: kafkatopics.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -7677,7 +7678,7 @@ metadata:
     app: strimzi
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - nodes
     verbs:
@@ -7710,7 +7711,7 @@ rules:
     verbs:
       - get
   - apiGroups:
-      - ""
+      - ''
     resources:
       - nodes
     verbs:
@@ -7723,11 +7724,11 @@ metadata:
   name: strimzi-cluster-operator-entity-operator-delegation
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-entity-operator
@@ -7740,7 +7741,7 @@ metadata:
   name: kafkausers.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -7895,7 +7896,7 @@ spec:
                         self.type != 'tls' || !has(self.renewalDays) ||
                         !has(self.validityDays) || self.renewalDays <
                         self.validityDays
-                      message: "'renewalDays' must be less than 'validityDays'."
+                      message: '''renewalDays'' must be less than ''validityDays''.'
                 authorization:
                   type: object
                   properties:
@@ -8118,11 +8119,11 @@ metadata:
   name: strimzi-cluster-operator-leader-election
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-leader-election
@@ -8138,7 +8139,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-kafka-broker
@@ -8151,7 +8152,7 @@ metadata:
   name: strimzi-cluster-operator
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -8162,7 +8163,7 @@ metadata:
     app: strimzi
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - pods
     verbs:
@@ -8279,7 +8280,7 @@ metadata:
   name: kafkamirrormaker2s.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -9010,19 +9011,19 @@ spec:
                 jvmOptions:
                   type: object
                   properties:
-                    "-XX":
+                    '-XX':
                       additionalProperties:
                         type: string
                       type: object
                       description: A map of -XX options to the JVM.
-                    "-Xmx":
+                    '-Xmx':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xmx option to to the JVM."
-                    "-Xms":
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xmx option to to the JVM.'
+                    '-Xms':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xms option to to the JVM."
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xms option to to the JVM.'
                     gcLoggingEnabled:
                       type: boolean
                       description: >-
@@ -9076,7 +9077,7 @@ spec:
                       enum:
                         - inline
                         - external
-                      description: "Logging type, must be either 'inline' or 'external'."
+                      description: 'Logging type, must be either ''inline'' or ''external''.'
                     valueFrom:
                       type: object
                       properties:
@@ -9094,7 +9095,7 @@ spec:
                             configuration.
                       description: >-
                         `ConfigMap` entry where the logging configuration is
-                        stored.
+                        stored. 
                   required:
                     - type
                   description: Logging configuration for Kafka Connect.
@@ -9744,7 +9745,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -9808,7 +9809,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -9845,7 +9846,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -9866,7 +9867,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -9882,12 +9883,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -10920,7 +10921,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -10984,7 +10985,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -11021,7 +11022,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -11042,7 +11043,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -11058,12 +11059,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -11470,7 +11471,7 @@ metadata:
   name: kafkarebalances.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -11502,7 +11503,7 @@ spec:
           type: string
         - name: Status
           description: Status of the current rebalancing operation
-          jsonPath: ".status.conditions[*].type"
+          jsonPath: '.status.conditions[*].type'
           type: string
       schema:
         openAPIV3Schema:
@@ -11729,7 +11730,7 @@ metadata:
   name: kafkanodepools.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -11839,7 +11840,7 @@ spec:
                         `type=persistent-claim`.
                     sizeLimit:
                       type: string
-                      pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                      pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                       description: >-
                         When type=ephemeral, defines the total amount of local
                         storage required for this EmptyDir volume (for example
@@ -11907,7 +11908,7 @@ spec:
                               Mandatory when `type=persistent-claim`.
                           sizeLimit:
                             type: string
-                            pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                            pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                             description: >-
                               When type=ephemeral, defines the total amount of
                               local storage required for this EmptyDir volume
@@ -11977,19 +11978,19 @@ spec:
                 jvmOptions:
                   type: object
                   properties:
-                    "-XX":
+                    '-XX':
                       additionalProperties:
                         type: string
                       type: object
                       description: A map of -XX options to the JVM.
-                    "-Xmx":
+                    '-Xmx':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xmx option to to the JVM."
-                    "-Xms":
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xmx option to to the JVM.'
+                    '-Xms':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xms option to to the JVM."
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xms option to to the JVM.'
                     gcLoggingEnabled:
                       type: boolean
                       description: >-
@@ -12538,7 +12539,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -12602,7 +12603,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -12639,7 +12640,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -12660,7 +12661,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -12676,12 +12677,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -13250,7 +13251,7 @@ rules:
     verbs:
       - update
   - apiGroups:
-      - ""
+      - ''
     resources:
       - secrets
     verbs:
@@ -13272,7 +13273,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-global
@@ -13285,11 +13286,11 @@ metadata:
   name: strimzi-cluster-operator-watched
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-watched
@@ -13302,7 +13303,7 @@ metadata:
   name: strimzipodsets.core.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: core.strimzi.io
   names:
@@ -13463,7 +13464,7 @@ metadata:
   name: kafkaconnects.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -13795,19 +13796,19 @@ spec:
                 jvmOptions:
                   type: object
                   properties:
-                    "-XX":
+                    '-XX':
                       additionalProperties:
                         type: string
                       type: object
                       description: A map of -XX options to the JVM.
-                    "-Xmx":
+                    '-Xmx':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xmx option to to the JVM."
-                    "-Xms":
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xmx option to to the JVM.'
+                    '-Xms':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xms option to to the JVM."
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xms option to to the JVM.'
                     gcLoggingEnabled:
                       type: boolean
                       description: >-
@@ -13861,7 +13862,7 @@ spec:
                       enum:
                         - inline
                         - external
-                      description: "Logging type, must be either 'inline' or 'external'."
+                      description: 'Logging type, must be either ''inline'' or ''external''.'
                     valueFrom:
                       type: object
                       properties:
@@ -13879,7 +13880,7 @@ spec:
                             configuration.
                       description: >-
                         `ConfigMap` entry where the logging configuration is
-                        stored.
+                        stored. 
                   required:
                     - type
                   description: Logging configuration for Kafka Connect.
@@ -14529,7 +14530,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -14593,7 +14594,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -14630,7 +14631,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -14651,7 +14652,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -14667,12 +14668,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -15705,7 +15706,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -15769,7 +15770,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -15806,7 +15807,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -15827,7 +15828,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -15843,12 +15844,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
@@ -16218,7 +16219,7 @@ spec:
                         properties:
                           name:
                             type: string
-                            pattern: "^[a-z0-9][-_a-z0-9]*[a-z0-9]$"
+                            pattern: '^[a-z0-9][-_a-z0-9]*[a-z0-9]$'
                             description: >-
                               The unique name of the connector plugin. Will be
                               used to generate the path where the connector
@@ -16286,7 +16287,7 @@ spec:
                                     while building the new container. If not
                                     specified, the downloaded artifact will not
                                     be verified. Not applicable to the `maven`
-                                    artifact type.
+                                    artifact type. 
                                 type:
                                   type: string
                                   enum:
@@ -16374,7 +16375,7 @@ spec:
                     properties:
                       name:
                         type: string
-                        pattern: "^[a-z0-9][-_a-z0-9]*[a-z0-9]$"
+                        pattern: '^[a-z0-9][-_a-z0-9]*[a-z0-9]$'
                         description: >-
                           A unique name for the connector plugin. This name is
                           used to generate the mount path for the connector
@@ -16529,11 +16530,11 @@ metadata:
   name: strimzi-cluster-operator
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-cluster-operator-namespaced
@@ -16546,7 +16547,7 @@ metadata:
   name: strimzi-cluster-operator
   labels:
     app: strimzi
-  namespace: kafka
+  namespace: queue
 spec:
   replicas: 1
   selector:
@@ -16570,7 +16571,7 @@ spec:
             name: strimzi-cluster-operator
       containers:
         - name: strimzi-cluster-operator
-          image: "quay.io/strimzi/operator:1.1.0"
+          image: 'quay.io/strimzi/operator:1.1.0'
           ports:
             - containerPort: 8080
               name: http
@@ -16587,13 +16588,13 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: STRIMZI_FULL_RECONCILIATION_INTERVAL_MS
-              value: "120000"
+              value: '120000'
             - name: STRIMZI_OPERATION_TIMEOUT_MS
-              value: "300000"
+              value: '300000'
             - name: STRIMZI_DEFAULT_KAFKA_EXPORTER_IMAGE
-              value: "quay.io/strimzi/kafka:1.1.0-kafka-4.3.0"
+              value: 'quay.io/strimzi/kafka:1.1.0-kafka-4.3.0'
             - name: STRIMZI_DEFAULT_CRUISE_CONTROL_IMAGE
-              value: "quay.io/strimzi/kafka:1.1.0-kafka-4.3.0"
+              value: 'quay.io/strimzi/kafka:1.1.0-kafka-4.3.0'
             - name: STRIMZI_KAFKA_IMAGES
               value: |
                 4.2.0=quay.io/strimzi/kafka:1.1.0-kafka-4.2.0
@@ -16610,27 +16611,27 @@ spec:
                 4.2.1=quay.io/strimzi/kafka:1.1.0-kafka-4.2.1
                 4.3.0=quay.io/strimzi/kafka:1.1.0-kafka-4.3.0
             - name: STRIMZI_DEFAULT_TOPIC_OPERATOR_IMAGE
-              value: "quay.io/strimzi/operator:1.1.0"
+              value: 'quay.io/strimzi/operator:1.1.0'
             - name: STRIMZI_DEFAULT_USER_OPERATOR_IMAGE
-              value: "quay.io/strimzi/operator:1.1.0"
+              value: 'quay.io/strimzi/operator:1.1.0'
             - name: STRIMZI_DEFAULT_KAFKA_INIT_IMAGE
-              value: "quay.io/strimzi/operator:1.1.0"
+              value: 'quay.io/strimzi/operator:1.1.0'
             - name: STRIMZI_DEFAULT_KAFKA_BRIDGE_IMAGE
-              value: "quay.io/strimzi/kafka-bridge:1.0.0"
+              value: 'quay.io/strimzi/kafka-bridge:1.0.0'
             - name: STRIMZI_DEFAULT_KANIKO_EXECUTOR_IMAGE
-              value: "quay.io/strimzi/kaniko-executor:1.1.0"
+              value: 'quay.io/strimzi/kaniko-executor:1.1.0'
             - name: STRIMZI_DEFAULT_BUILDAH_IMAGE
-              value: "quay.io/strimzi/buildah:1.1.0"
+              value: 'quay.io/strimzi/buildah:1.1.0'
             - name: STRIMZI_DEFAULT_MAVEN_BUILDER
-              value: "quay.io/strimzi/maven-builder:1.1.0"
+              value: 'quay.io/strimzi/maven-builder:1.1.0'
             - name: STRIMZI_OPERATOR_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: STRIMZI_FEATURE_GATES
-              value: ""
+              value: ''
             - name: STRIMZI_LEADER_ELECTION_ENABLED
-              value: "true"
+              value: 'true'
             - name: STRIMZI_LEADER_ELECTION_LEASE_NAME
               value: strimzi-cluster-operator
             - name: STRIMZI_LEADER_ELECTION_LEASE_NAMESPACE
@@ -16670,7 +16671,7 @@ metadata:
     app: strimzi
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - nodes
     verbs:
@@ -16686,7 +16687,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: strimzi-cluster-operator
-    namespace: kafka
+    namespace: queue
 roleRef:
   kind: ClusterRole
   name: strimzi-kafka-client
@@ -16699,7 +16700,7 @@ metadata:
   name: kafkabridges.kafka.strimzi.io
   labels:
     app: strimzi
-    strimzi.io/crd-install: "true"
+    strimzi.io/crd-install: 'true'
 spec:
   group: kafka.strimzi.io
   names:
@@ -17047,19 +17048,19 @@ spec:
                 jvmOptions:
                   type: object
                   properties:
-                    "-XX":
+                    '-XX':
                       additionalProperties:
                         type: string
                       type: object
                       description: A map of -XX options to the JVM.
-                    "-Xmx":
+                    '-Xmx':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xmx option to to the JVM."
-                    "-Xms":
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xmx option to to the JVM.'
+                    '-Xms':
                       type: string
-                      pattern: "^[0-9]+[mMgG]?$"
-                      description: "-Xms option to to the JVM."
+                      pattern: '^[0-9]+[mMgG]?$'
+                      description: '-Xms option to to the JVM.'
                     gcLoggingEnabled:
                       type: boolean
                       description: >-
@@ -17093,7 +17094,7 @@ spec:
                       enum:
                         - inline
                         - external
-                      description: "Logging type, must be either 'inline' or 'external'."
+                      description: 'Logging type, must be either ''inline'' or ''external''.'
                     valueFrom:
                       type: object
                       properties:
@@ -17111,7 +17112,7 @@ spec:
                             configuration.
                       description: >-
                         `ConfigMap` entry where the logging configuration is
-                        stored.
+                        stored. 
                   required:
                     - type
                   description: Logging configuration for HTTP Bridge.
@@ -17830,7 +17831,7 @@ spec:
                           type: string
                           description: >-
                             The name of the priority class used to assign
-                            priority to the pods.
+                            priority to the pods. 
                         schedulerName:
                           type: string
                           description: >-
@@ -17894,7 +17895,7 @@ spec:
                             be injected into Pod's environment variables.
                         tmpDirSizeLimit:
                           type: string
-                          pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                          pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                           description: >-
                             Defines the total amount of pod memory allocated for
                             the temporary `EmptyDir` volume `/tmp`. Specify the
@@ -17931,7 +17932,7 @@ spec:
                                     type: boolean
                                   secretName:
                                     type: string
-                                description: "`Secret` to use to populate the volume."
+                                description: '`Secret` to use to populate the volume.'
                               configMap:
                                 type: object
                                 properties:
@@ -17952,7 +17953,7 @@ spec:
                                     type: string
                                   optional:
                                     type: boolean
-                                description: "`ConfigMap` to use to populate the volume."
+                                description: '`ConfigMap` to use to populate the volume.'
                               emptyDir:
                                 type: object
                                 properties:
@@ -17968,12 +17969,12 @@ spec:
                                       medium.
                                   sizeLimit:
                                     type: string
-                                    pattern: "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"
+                                    pattern: '^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$'
                                     description: >-
                                       The total amount of local storage required
                                       for this EmptyDir volume (for example
                                       1Gi).
-                                description: "`EmptyDir` to use to populate the volume."
+                                description: '`EmptyDir` to use to populate the volume.'
                               persistentVolumeClaim:
                                 type: object
                                 properties:
