@@ -17,7 +17,6 @@
           - unzip
           - bash
           - grep
-          - gawk
           - open-iscsi
         state: present
         update_cache: yes
