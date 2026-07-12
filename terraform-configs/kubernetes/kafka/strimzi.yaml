@@ -23,7 +23,7 @@ data:
     %m%n
 
 
-    rootLogger.level = ${env:STRIMZI_LOG_LEVEL:-INFO}
+    rootLogger.level = INFO
 
     rootLogger.appenderRefs = stdout
 
