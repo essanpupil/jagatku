@@ -1,6 +1,6 @@
 resource "kubernetes_namespace_v1" "this" {
   metadata {
-    name = "storage"
+    name = "longhorn-system"  # Only works with this namespace
   }
 }
 
