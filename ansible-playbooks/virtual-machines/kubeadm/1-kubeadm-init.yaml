@@ -142,7 +142,7 @@
     - name: Update kubelet kubeadm arguments
       when: inventory_hostname in groups['workers']
       ansible.builtin.copy:
-        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }}\"\n"
+        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }} --housekeeping-interval=10s\"\n"
         dest: /var/lib/kubelet/kubeadm-flags.env
         mode: '0644'
       notify: Restart kubelet
