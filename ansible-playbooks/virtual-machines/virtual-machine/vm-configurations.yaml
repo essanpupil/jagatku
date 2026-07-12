@@ -15,6 +15,12 @@
           - gnupg
           - curl
           - unzip
+          - bash
+          - findmnt
+          - grep
+          - awk
+          - blkid
+          - open-iscsi
         state: present
         update_cache: yes
 
@@ -72,3 +78,20 @@
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
         state: present
         filename: kubernetes
+
+    - name: Ensure iscsid is running and enabled
+      become: true
+      ansible.builtin.service:
+        name: iscsid
+        state: started
+        enabled: true
+
+    - name: Check if iscsid is active
+      become: true
+      ansible.builtin.shell: systemctl is-active iscsid
+      register: iscsid_status
+      ignore_errors: true
+
+    - name: Display iscsid status
+      ansible.builtin.debug:
+        msg: "The iscsid service is currently {{ iscsid_status.stdout }}"
