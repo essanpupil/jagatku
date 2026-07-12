@@ -4,18 +4,24 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
-resource "helm_release" "this" {
-  name            = "kafka"
-  repository      = "https://charts.bitnami.com/bitnami"
-  chart           = "kafka"
-  namespace       = kubernetes_namespace_v1.this.metadata[0].name
-  version         = "32.4.3"
-  cleanup_on_fail = true
-  atomic          = true
+# Read a standard multi-document YAML file
+data "kubectl_path_documents" "strimzi" {
+  pattern = "${path.module}/strimzi.yaml"
+}
 
-  # Prevents Terraform timeouts if a chart has complex post-install jobs
-  wait = false
-  values = [
-    file("${path.module}/values.yaml")
-  ]
+# Apply all manifests found in the files
+resource "kubectl_manifest" "strimzi" {
+  for_each  = toset(data.kubectl_path_documents.strimzi.documents)
+  yaml_body = each.value
+}
+
+# Read a standard multi-document YAML file
+data "kubectl_path_documents" "kafka" {
+  pattern = "${path.module}/kafka-single-node.yaml"
+}
+
+# Apply all manifests found in the files
+resource "kubectl_manifest" "kafka" {
+  for_each  = toset(data.kubectl_path_documents.kafka.documents)
+  yaml_body = each.value
 }

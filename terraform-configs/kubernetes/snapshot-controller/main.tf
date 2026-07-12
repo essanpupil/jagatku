@@ -1,5 +1,5 @@
 resource "helm_release" "this" {
-  name            = "longhorn"
+  name            = "snapshot-controller"
   repository      = "https://piraeus.io/helm-charts/"
   chart           = "snapshot-controller"
   namespace       = "kube-system"
