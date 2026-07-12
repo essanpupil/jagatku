@@ -15,6 +15,8 @@
           - gnupg
           - curl
           - unzip
+          - bash
+          - grep
         state: present
         update_cache: yes
 
@@ -72,3 +74,44 @@
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
         state: present
         filename: kubernetes
+
+    - name: Install packages for longhorn
+      apt:
+        name:
+          - open-iscsi
+          - nfs-common
+          - jq
+          - cryptsetup
+          - dmsetup
+        state: present
+        update_cache: yes
+
+    - name: Ensure iscsi_tcp kernel module is loaded
+      community.general.modprobe:
+        name: iscsi_tcp
+        state: present
+        persistent: present
+
+    - name: Ensure iscsid is running and enabled
+      become: true
+      ansible.builtin.systemd_service:
+        name: iscsid
+        state: started
+        enabled: true
+
+    - name: Ensure open-iscsi is running and enabled
+      become: true
+      ansible.builtin.systemd_service:
+        name: open-iscsi
+        state: started
+        enabled: true
+
+    - name: Check if iscsid is active
+      become: true
+      ansible.builtin.shell: systemctl is-active iscsid
+      register: iscsid_status
+      ignore_errors: true
+
+    - name: Display iscsid status
+      ansible.builtin.debug:
+        msg: "The iscsid service is currently {{ iscsid_status.stdout }}"
