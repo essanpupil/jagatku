@@ -1,5 +1,5 @@
 global:
-  defaultStorageClass: "nfs"
+  defaultStorageClass: "longhorn"
 metrics:
   serviceMonitor:
     enabled: true
