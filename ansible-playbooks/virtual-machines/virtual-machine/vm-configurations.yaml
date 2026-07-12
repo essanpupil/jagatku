@@ -18,7 +18,6 @@
           - bash
           - grep
           - awk
-          - blkid
           - open-iscsi
         state: present
         update_cache: yes
