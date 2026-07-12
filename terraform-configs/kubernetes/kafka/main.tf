@@ -21,7 +21,7 @@ data "kubectl_path_documents" "kafka" {
 }
 
 # Apply all manifests found in the files
-resource "kubectl_manifest" "strimzi" {
+resource "kubectl_manifest" "kafka" {
   for_each  = toset(data.kubectl_path_documents.kafka.documents)
   yaml_body = each.value
 }
