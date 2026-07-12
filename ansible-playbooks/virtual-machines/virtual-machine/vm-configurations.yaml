@@ -17,7 +17,6 @@
           - unzip
           - bash
           - grep
-          - open-iscsi
         state: present
         update_cache: yes
 
@@ -75,6 +74,23 @@
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
         state: present
         filename: kubernetes
+
+    - name: Install packages for longhorn
+      apt:
+        name:
+          - open-iscsi
+          - nfs-common
+          - jq
+          - cryptsetup
+          - dmsetup
+        state: present
+        update_cache: yes
+
+    - name: Ensure iscsi_tcp kernel module is loaded
+      community.general.modprobe:
+        name: iscsi_tcp
+        state: present
+        persistent: present
 
     - name: Ensure iscsid is running and enabled
       become: true
