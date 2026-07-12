@@ -4,18 +4,15 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
-resource "helm_release" "this" {
-  name            = "kafka"
-  repository      = "https://charts.bitnami.com/bitnami"
-  chart           = "kafka"
-  namespace       = kubernetes_namespace_v1.this.metadata[0].name
-  version         = "32.4.3"
-  cleanup_on_fail = true
-  atomic          = true
+resource "kubernetes_manifest" "strimzi" {
+  manifest = yamldecode(
+    file("${path.module}/strimzi.yaml")
+  )
+}
 
-  # Prevents Terraform timeouts if a chart has complex post-install jobs
-  wait = false
-  values = [
-    file("${path.module}/values.yaml")
-  ]
+resource "kubernetes_manifest" "kafka" {
+  depends_on = [kubernetes_manifest.strimzi]
+  manifest = yamldecode(
+    file("${path.module}/kafka-single-node.yaml")
+  )
 }
