@@ -5,5 +5,5 @@ resource "grafana_folder" "this" {
 
 resource "grafana_dashboard" "this" {
   folder      = grafana_folder.this.uid
-  config_json = jsonencode(file("${path.module}/kubernetes-dashboard.json"))
+  config_json = file("${path.module}/kubernetes-dashboard.json")
 }
