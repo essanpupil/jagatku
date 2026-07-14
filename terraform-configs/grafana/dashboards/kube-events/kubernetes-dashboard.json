@@ -1,4 +1,16 @@
 {
     "title": "Kubernetes Events",
-    "uid": "kubernetes-events"
+    "uid": "kubernetes-events",
+    "tags": [
+        "kubernetes"
+    ],
+    "timezone": "browser",
+    "editable": false,
+    "graphTooltip": 1,
+    "panels": [],
+    "templating": {
+        "list": []
+    },
+    "time": {},
+    "timepicker": {}
 }
