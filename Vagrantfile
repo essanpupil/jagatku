@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--cpus", "2"]
       v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
       v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
-      v.memory = 2048
+      v.memory = 4096
     end
     node.vm.provision "shell", inline: <<-SHELL
       pub_key="#{File.read(File.expand_path('~/.ssh/id_ed25519.pub')).strip}"
