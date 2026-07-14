@@ -5,7 +5,7 @@
         "kubernetes"
     ],
     "timezone": "browser",
-    "editable": false,
+    "editable": true,
     "graphTooltip": 1,
     "panels": [],
     "templating": {
