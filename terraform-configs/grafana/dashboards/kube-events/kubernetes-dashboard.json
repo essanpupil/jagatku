@@ -26,5 +26,30 @@
         "list": []
     },
     "time": {},
-    "timepicker": {}
+    "timepicker": {
+        "collapse": false,
+        "enable": true,
+        "notice": false,
+        "now": true,
+        "hidden": false,
+        "nowDelay": "",
+        "quick_ranges": [
+            {
+                "display": "Last 15 minutes",
+                "from": "now-15m",
+                "to": "now"
+            },
+            {
+                "display": "Last 30 minutes",
+                "from": "now-30d",
+                "to": "now"
+            }
+        ],
+        "refresh_intervals": [
+            "5s",
+            "10s"
+        ],
+        "status": "Stable",
+        "type": "timepicker"
+    }
 }
