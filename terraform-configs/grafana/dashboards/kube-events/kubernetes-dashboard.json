@@ -7,7 +7,21 @@
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,
-    "panels": [],
+    "panels": [
+        {
+            "type": "text",
+            "title": "Pending pods",
+            "gridPos": {
+                "x": 0,
+                "y": 0,
+                "w": 12,
+                "h": 9
+            },
+            "id": 4,
+            "mode": "markdown",
+            "content": "# title"
+        }
+    ],
     "templating": {
         "list": []
     },
