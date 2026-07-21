@@ -1,7 +1,7 @@
 resource "helm_release" "this" {
-  name       = "cillium"
+  name       = "cilium"
   repository = "https://helm.cilium.io/"
-  chart      = "cillium"
+  chart      = "cilium"
   namespace  = "kube-system"
   version    = "1.19.6"
   # atomic     = true
