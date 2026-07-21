@@ -44,7 +44,12 @@
                     "query": {
                       "group": "",
                       "kind": "DataQuery",
-                      "spec": {},
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\"}[5m])) by (pod)\n",
+                        "legendFormat": "__auto",
+                        "range": true
+                      },
                       "version": "v0"
                     },
                     "refId": "A"
@@ -60,14 +65,72 @@
           "links": [],
           "title": "Jagat Kubernetes Dashboard",
           "vizConfig": {
-            "group": "__unconfigured-panel",
+            "group": "heatmap",
             "kind": "VizConfig",
             "spec": {
               "fieldConfig": {
-                "defaults": {},
+                "defaults": {
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "scaleDistribution": {
+                      "type": "linear"
+                    }
+                  }
+                },
                 "overrides": []
               },
-              "options": {}
+              "options": {
+                "annotations": {
+                  "clustering": -1,
+                  "multiLane": false
+                },
+                "calculate": false,
+                "calculation": {
+                  "xBuckets": {
+                    "value": ""
+                  },
+                  "yBuckets": {
+                    "scale": {
+                      "type": "linear"
+                    }
+                  }
+                },
+                "cellGap": 1,
+                "color": {
+                  "exponent": 0.5,
+                  "fill": "dark-orange",
+                  "mode": "scheme",
+                  "reverse": false,
+                  "scale": "exponential",
+                  "scheme": "Oranges",
+                  "steps": 64
+                },
+                "exemplars": {
+                  "color": "rgba(255,0,255,0.7)"
+                },
+                "filterValues": {
+                  "le": 1e-9
+                },
+                "legend": {
+                  "show": true
+                },
+                "rowsFrame": {
+                  "layout": "auto"
+                },
+                "tooltip": {
+                  "mode": "single",
+                  "showColorScale": false,
+                  "yHistogram": false
+                },
+                "yAxis": {
+                  "axisPlacement": "left",
+                  "reverse": false
+                }
+              }
             },
             "version": "13.1.0"
           }
@@ -93,7 +156,20 @@
         "rowHeightMode": "standard"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "external link",
+        "includeVars": false,
+        "keepTime": false,
+        "tags": [],
+        "targetBlank": true,
+        "title": "Source (GitHub)",
+        "tooltip": "View source file in repository",
+        "type": "link",
+        "url": "https://github.com/essanpupil/jagatku/blob/main/grafana-dashboards/jagat-kubernetes-dashboard.json"
+      }
+    ],
     "liveNow": false,
     "preferences": {
       "layout": {
