@@ -90,23 +90,32 @@
 
     - name: Initiate kubeadm
       command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }}"
-      when: not kubeadm_config.stat.exists and inventory_hostname in groups['workers']
+      when: not kubeadm_config.stat.exists and inventory_hostname in groups['servers']
+    
+    - name: Fetch kubeconfig
+      when: inventory_hostname == 'server1'
+      become: true
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/essan/.kube/config
+        flat: true
     
     - name: Generate join command string
-      command: kubeadm token create --print-join-command
+      command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
       register: join_command
       when: inventory_hostname in groups['servers']
       no_log: true
     
-    # - name: Debug jon command variable
+    # - name: Debug join command variable
     #   ansible.builtin.debug:
     #     var: join_command
 
     - name: Gather information about all cluster nodes
       when: inventory_hostname in groups['servers']
+      delegate_to: laptop1
       check_mode: false
       kubernetes.core.k8s_info:
-        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+        kubeconfig: "/home/essan/.kube/config"
         kind: Node
       register: node_list
 
