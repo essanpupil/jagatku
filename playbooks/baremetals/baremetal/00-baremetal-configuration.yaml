@@ -1,72 +1,105 @@
 ---
 - name: Install KVM and Libvirt on Ubuntu
   hosts: baremetals
-  become: True
+  become: true
   tasks:
     - name: Install core packages
-      apt:
+      ansible.builtin.apt:
         name:
           - apt-transport-https
           - wget
           - gnupg
           - ansible-lint
           - python3-kubernetes
+          - curl
         state: present
-        update_cache: yes
-      
+        update_cache: true
+
     - name: Download Grafana GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: https://packages.grafana.com/gpg.key
         dest: /etc/apt/keyrings/grafana.key
         mode: "0644"
+
     - name: De-armor Grafana GPG key
-      command: gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg /etc/apt/keyrings/grafana.key
+      ansible.builtin.command: gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg /etc/apt/keyrings/grafana.key
       args:
         creates: /etc/apt/keyrings/grafana.gpg
+
     - name: Add Grafana repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
         state: present
         filename: grafana
-      
+
     - name: Download Hashicorp vault GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: https://apt.releases.hashicorp.com/gpg
         dest: /etc/apt/keyrings/hashicorp.key
         mode: "0644"
+
     - name: De-armor Hashicorp GPG key
-      command: gpg --dearmor --yes -o /etc/apt/keyrings/hashicorp.gpg /etc/apt/keyrings/hashicorp.key
+      ansible.builtin.command: gpg --dearmor --yes -o /etc/apt/keyrings/hashicorp.gpg /etc/apt/keyrings/hashicorp.key
       args:
         creates: /etc/apt/keyrings/hashicorp.gpg
+
     - name: Add Hashicorp repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com trixie main"
         state: present
         filename: hashicorp
+
     - name: Install terraform
-      apt:
+      ansible.builtin.apt:
         name:
           - terraform
-        update_cache: yes
+        update_cache: true
         state: present
-      
+
     - name: Download github GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
         dest: /etc/apt/keyrings/github.key
         mode: "0644"
+
     - name: De-armor github GPG key
-      command: gpg --dearmor --yes -o /etc/apt/keyrings/github.gpg /etc/apt/keyrings/github.key
+      ansible.builtin.command: gpg --dearmor --yes -o /etc/apt/keyrings/github.gpg /etc/apt/keyrings/github.key
       args:
         creates: /etc/apt/keyrings/github.gpg
+
     - name: Add github repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/github.gpg] https://cli.github.com/packages stable main"
         state: present
         filename: github
+
+    - name: Download helm GPG key
+      ansible.builtin.get_url:
+        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+        dest: /etc/apt/keyrings/helm.key
+        mode: "0644"
+
+    - name: De-armor helm GPG key
+      ansible.builtin.command: gpg --dearmor --yes -o /etc/apt/keyrings/helm.gpg /etc/apt/keyrings/helm.key
+      args:
+        creates: /etc/apt/keyrings/helm.gpg
+
+    - name: Add helm repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+        state: present
+        filename: helm-debian
+
+    - name: Install helm
+      ansible.builtin.apt:
+        name:
+          - helm
+        update_cache: true
+        state: present
+
     - name: Install gh cli
-      apt:
+      ansible.builtin.apt:
         name:
           - gh
         state: present
-        update_cache: yes
+        update_cache: true
