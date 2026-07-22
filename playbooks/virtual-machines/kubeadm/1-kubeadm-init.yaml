@@ -2,8 +2,6 @@
 - name: Install kubeadm
   hosts: kube_nodes
   become: true
-  # vars:
-    # Removed redundant and recursive ansible_user definition here
   handlers:
     - name: Restart kubelet
       ansible.builtin.systemd:
@@ -30,7 +28,7 @@
         regexp: '^[\s]*disabled_plugins'
         backup: yes
         backrefs: yes
-        line: 'disabled_plugins = []'
+        line: "disabled_plugins = []"
         firstmatch: yes
         state: present
       ignore_errors: yes
@@ -44,12 +42,11 @@
     - name: Disable swap
       command: swapoff -a
 
-    - name: Disable swap permanently
-      lineinfile:
-        path: /etc/fstab
-        regexp: '^([^#].*?\\sswap\\s+.*)$'
-        line: '# \\1'
-        backrefs: yes
+    - name: Disable swap in fstab
+      ansible.posix.mount:
+        name: none
+        fstype: swap
+        state: absent
 
     - name: Install kubeadm package
       apt:
@@ -69,11 +66,13 @@
         - kubelet
         - kubectl
 
-    - name: Update kubelet kubeadm arguments
-      ansible.builtin.copy:
-        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }}"
-        dest: /var/lib/kubelet/kubeadm-flags.env
-        mode: '0644'
+    - name: Configure kubelet extra args
+      ansible.builtin.lineinfile:
+        path: /etc/default/kubelet
+        line: 'KUBELET_EXTRA_ARGS="--node-ip={{ ansible_host }}"'
+        create: yes
+        mode: "0644"
+      notify: Restart kubelet
 
     - name: Check if kubeadm is already initialized
       ansible.builtin.stat:
@@ -97,7 +96,7 @@
     - name: Initiate kubeadm
       command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }}"
       when: not kubeadm_config.stat.exists and inventory_hostname in groups['servers']
-    
+
     - name: Fetch kubeconfig
       when: inventory_hostname == 'node1'
       become: true
@@ -105,13 +104,13 @@
         src: /etc/kubernetes/admin.conf
         dest: /home/essan/.kube/config
         flat: true
-    
+
     - name: Generate join command string
       command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
       register: join_command
       when: inventory_hostname in groups['servers']
       no_log: true
-    
+
     # - name: Debug join command variable
     #   ansible.builtin.debug:
     #     var: join_command
@@ -171,10 +170,3 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: "0600"
-
-    - name: Fetch kubeconfig file to local control machine
-      when: inventory_hostname in groups['servers']
-      fetch:
-        src: /home/{{ ansible_user }}/.kube/config
-        dest: "~/.kube/config"
-        flat: yes
