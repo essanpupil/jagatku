@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'ansible-playbooks/**'
+      - "playbooks/**"
     types:
       - closed
 permissions:
@@ -57,7 +57,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'ansible_apply.txt'
+          body-path: "ansible_apply.txt"
       - name: State workflow to fail
         if: steps.ansible-apply.outcome == 'failure'
         run: |

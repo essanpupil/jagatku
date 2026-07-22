@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'ansible-playbooks/**'
+      - "playbooks/**"
 permissions:
   pull-requests: write
 
@@ -36,7 +36,7 @@ jobs:
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
-  
+
   ansible_check_diff:
     needs: list-ansible-playbooks
     runs-on: laptop1
@@ -64,7 +64,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'playbook_diff.md'
+          body-path: "playbook_diff.md"
       - name: State workflow to fail
         if: steps.ansible-diff.outcome == 'failure'
         run: |
