@@ -19,7 +19,7 @@ all:
       children:
         servers:
           hosts:
-            server1:
+            node1:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
@@ -28,21 +28,21 @@ all:
               node_name: node1
         workers:
           hosts:
-            worker1:
+            node2:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.13
               node_name: node2
-            worker2:
+            node3:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.14
               node_name: node3
-            worker3:
+            node4:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

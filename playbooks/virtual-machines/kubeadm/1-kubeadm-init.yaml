@@ -99,7 +99,7 @@
       when: not kubeadm_config.stat.exists and inventory_hostname in groups['servers']
     
     - name: Fetch kubeconfig
-      when: inventory_hostname == 'server1'
+      when: inventory_hostname == 'node1'
       become: true
       ansible.builtin.fetch:
         src: /etc/kubernetes/admin.conf
@@ -130,7 +130,7 @@
       register: node_names
       check_mode: false
       ansible.builtin.debug:
-        msg: "{{ hostvars['server1']['node_list'].resources | map(attribute='metadata.name') | list }}"
+        msg: "{{ hostvars['node1']['node_list'].resources | map(attribute='metadata.name') | list }}"
 
     - name: Debug node names already registered
       check_mode: false
@@ -149,7 +149,7 @@
         - node_name not in node_names.msg
 
     - name: Join kubeadm
-      ansible.builtin.command: "{{ hostvars['server1']['join_command'].stdout }}"
+      ansible.builtin.command: "{{ hostvars['node1']['join_command'].stdout }}"
       when:
         - inventory_hostname in groups['workers']
         - node_name not in node_names.msg
