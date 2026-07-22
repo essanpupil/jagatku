@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'ansible-playbooks/**'
+      - "playbooks/**"
     types:
       - closed
 permissions:
@@ -31,7 +31,7 @@ jobs:
       - name: Set playbooks as list
         id: set-list
         run: |
-          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("ansible-playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
@@ -57,7 +57,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: 'ansible_apply.txt'
+          body-path: "ansible_apply.txt"
       - name: State workflow to fail
         if: steps.ansible-apply.outcome == 'failure'
         run: |
