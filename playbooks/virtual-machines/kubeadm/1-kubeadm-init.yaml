@@ -67,10 +67,9 @@
         - kubectl
 
     - name: Configure kubelet extra args
-      ansible.builtin.lineinfile:
-        path: /etc/default/kubelet
-        line: 'KUBELET_EXTRA_ARGS="--node-ip={{ ansible_host }}"'
-        create: yes
+      ansible.builtin.copy:
+        content: 'KUBELET_EXTRA_ARGS="--node-ip={{ ansible_host }}"'
+        dest: /etc/default/kubelet
         mode: "0644"
       notify: Restart kubelet
 
