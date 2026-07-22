@@ -1,0 +1,51 @@
+---
+- name: Install kubeadm
+  hosts: node1
+  become: true
+  tasks:
+    - name: Enable and start kubelet service
+      register: kubelet_service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: restarted
+
+    - name: Copy initConfig
+      ansible.builtin.template:
+        src: init-defaults.yaml.j2
+        dest: /tmp/init-defaults.yaml
+        mode: "0644"
+
+    - name: Initiate kubeadm
+      ansible.builtin.command: "kubeadm init --config /tmp/init-defaults.yaml"
+      args:
+        creates: /etc/kubernetes/admin.conf
+      register: kubeadm_init_result
+
+    - name: Debug init result
+      ansible.builtin.debug:
+        var: kubeadm_init_result
+
+    - name: Fetch kubeconfig
+      become: true
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/essan/.kube/config
+        flat: true
+
+    - name: Create .kube directory for user
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0700"
+
+    - name: Copy kubeconfig to user directory
+      ansible.builtin.copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        remote_src: true
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0600"
