@@ -69,6 +69,12 @@
         - kubelet
         - kubectl
 
+    - name: Update kubelet kubeadm arguments
+      ansible.builtin.copy:
+        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }}"
+        dest: /var/lib/kubelet/kubeadm-flags.env
+        mode: '0644'
+
     - name: Check if kubeadm is already initialized
       ansible.builtin.stat:
         path: "/etc/kubernetes/admin.conf"
@@ -148,14 +154,6 @@
         - inventory_hostname in groups['workers']
         - node_name not in node_names.msg
 
-    - name: Update kubelet kubeadm arguments
-      when: inventory_hostname in groups['workers']
-      ansible.builtin.copy:
-        content: "KUBELET_KUBEADM_ARGS=\"--node-ip={{ ansible_host }} --housekeeping-interval=10s\"\n"
-        dest: /var/lib/kubelet/kubeadm-flags.env
-        mode: '0644'
-      notify: Restart kubelet
-
     - name: Create .kube directory for user
       file:
         path: "/home/{{ ansible_user }}/.kube"
@@ -180,8 +178,3 @@
         src: /home/{{ ansible_user }}/.kube/config
         dest: "~/.kube/config"
         flat: yes
-    # - name: Install python3 kubernetes
-    #   apt:
-    #     name: python3-kubernetes
-    #     state: present
-    #     update_cache: true
