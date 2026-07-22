@@ -1,137 +1,27 @@
 ---
 - name: Install kubeadm
-  hosts: kube_nodes
+  hosts: workers
   become: true
-  handlers:
-    - name: Restart kubelet
-      ansible.builtin.systemd:
-        name: kubelet
-        state: restarted
   tasks:
-    - name: Install Docker Engine
-      apt:
-        pkg:
-          - docker-ce
-          - containerd.io
-        state: latest
-        update_cache: true
-
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Enable cri plugin
-      lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: '^[\s]*disabled_plugins'
-        backup: yes
-        backrefs: yes
-        line: "disabled_plugins = []"
-        firstmatch: yes
-        state: present
-      ignore_errors: yes
-
-    - name: Restart containerd service
-      service:
-        name: containerd
-        state: restarted
-        enabled: yes
-
-    - name: Disable swap
-      command: swapoff -a
-
-    - name: Disable swap in fstab
-      ansible.posix.mount:
-        name: none
-        fstype: swap
-        state: absent
-
-    - name: Install kubeadm package
-      apt:
-        pkg:
-          - kubeadm
-          - kubelet
-          - kubectl
-        state: present
-        update_cache: yes
-
-    - name: Hold kubeadm package to prevent updates
-      ansible.builtin.dpkg_selections:
-        name: "{{ item }}"
-        selection: hold
-      loop:
-        - kubeadm
-        - kubelet
-        - kubectl
-
-    - name: Configure kubelet extra args
-      ansible.builtin.copy:
-        content: 'KUBELET_EXTRA_ARGS="--node-ip={{ ansible_host }}"'
-        dest: /etc/default/kubelet
-        mode: "0644"
-
-    - name: Enable and start kubelet service
-      register: kubelet_service
-      ansible.builtin.systemd_service:
-        name: kubelet
-        enabled: true
-        state: restarted
-
-    - name: Check if kubeadm is already initialized
-      ansible.builtin.stat:
-        path: "/etc/kubernetes/admin.conf"
-      register: kubeadm_config
-
-    - name: Check kubelet service
-      ansible.builtin.service_facts:
-
-    - name: Reset kubeadm when kubelet run but kubeadm is not running
-      command: kubeadm reset --force
-      when: not kubeadm_config.stat.exists and ansible_facts.services['kubelet.service']['state'] == 'running'
-
-    - name: Initiate kubeadm
-      command: "kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr={{ kubernetes_cidr }} --node-name={{ node_name  }}"
-      when: not kubeadm_config.stat.exists and inventory_hostname in groups['servers']
-
-    - name: Configure kubeadm args
-      ansible.builtin.copy:
-        content: 'KUBELET_KUBEADM_ARGS="--node-ip={{ ansible_host }}"'
-        dest: /var/lib/kubelet/kubeadm-flags.env
-        mode: "0644"
-      when:
-        - inventory_hostname in groups['servers']
-
-    - name: Enable and start kubelet service
-      register: kubelet_service
-      ansible.builtin.systemd_service:
-        name: kubelet
-        enabled: true
-        state: restarted
-      when:
-        - inventory_hostname in groups['servers']
-
-    - name: Fetch kubeconfig
-      when: inventory_hostname == 'node1'
-      become: true
-      ansible.builtin.fetch:
-        src: /etc/kubernetes/admin.conf
-        dest: /home/essan/.kube/config
-        flat: true
-
     - name: Generate join command string
-      command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
+      delegate_to: node1
+      ansible.builtin.command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
       register: join_command
-      when: inventory_hostname in groups['servers']
+      changed_when: false
       no_log: true
 
-    # - name: Debug join command variable
+    # - name: Debug join command
     #   ansible.builtin.debug:
     #     var: join_command
 
+    - name: Enable and start kubelet service
+      register: kubelet_service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: restarted
+
     - name: Gather information about all cluster nodes
-      when: inventory_hostname in groups['servers']
       delegate_to: laptop1
       check_mode: false
       kubernetes.core.k8s_info:
@@ -140,65 +30,25 @@
       register: node_list
 
     - name: Extract node name list
-      # when: inventory_hostname in groups['servers']
       register: node_names
       check_mode: false
       ansible.builtin.debug:
-        msg: "{{ hostvars['node1']['node_list'].resources | map(attribute='metadata.name') | list }}"
+        msg: "{{ node_list.resources | map(attribute='metadata.name') | list }}"
 
-    - name: Debug node names already registered
-      check_mode: false
-      ansible.builtin.debug:
-        msg: "{{ node_names.msg }}"
-
-    - name: Debug current node name
-      check_mode: false
-      ansible.builtin.debug:
-        msg: "{{ node_name }}"
-
-    - name: Reset kubeadm in worker node
-      command: kubeadm reset --force
-      when:
-        - inventory_hostname in groups['workers']
-        - node_name not in node_names.msg
+    - name: Copy join config
+      ansible.builtin.template:
+        src: join-defaults.yaml.j2
+        dest: /tmp/join-defaults.yaml
+        mode: "0644"
 
     - name: Join kubeadm
-      ansible.builtin.command: "{{ hostvars['node1']['join_command'].stdout }}"
+      ansible.builtin.command: "kubeadm join --config /tmp/join-defaults.yaml"
+      args:
+        creates: /etc/kubernetes/kubelet.conf
+      register: kubeadm_join_result
       when:
-        - inventory_hostname in groups['workers']
         - node_name not in node_names.msg
 
-    - name: Configure kubeadm args
-      ansible.builtin.copy:
-        content: 'KUBELET_KUBEADM_ARGS="--node-ip={{ ansible_host }}"'
-        dest: /var/lib/kubelet/kubeadm-flags.env
-        mode: "0644"
-      when:
-        - inventory_hostname in groups['workers']
-
-    - name: Enable and start kubelet service
-      register: kubelet_service
-      ansible.builtin.systemd_service:
-        name: kubelet
-        enabled: true
-        state: restarted
-      when:
-        - inventory_hostname in groups['workers']
-
-    - name: Create .kube directory for user
-      file:
-        path: "/home/{{ ansible_user }}/.kube"
-        state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0700"
-
-    - name: Copy kubeconfig to user directory
-      when: inventory_hostname in groups['servers']
-      copy:
-        src: /etc/kubernetes/admin.conf
-        dest: "/home/{{ ansible_user }}/.kube/config"
-        remote_src: yes
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0600"
+    # - name: Debug join result
+    #   ansible.builtin.debug:
+    #     var: kubeadm_join_result
