@@ -1,10 +1,48 @@
 redis-ha:
   enabled: false
+redis:
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
 controller:
   replicas: 1
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
 server:
   replicas: 1
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
 repoServer:
   replicas: 1
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
 applicationSet:
   replicas: 1
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
+dex:
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: prometheus
