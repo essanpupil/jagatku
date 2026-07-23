@@ -1,23 +1,18 @@
-# resource "kubernetes_namespace_v1" "this" {
-#   metadata {
-#     name = "queue"
-#   }
-# }
+resource "kubernetes_namespace_v1" "this" {
+  metadata {
+    name = "kafka"
+  }
+}
 
-# data "kubectl_path_documents" "strimzi" {
-#   pattern = "${path.module}/strimzi.yaml"
-# }
-
-# resource "kubectl_manifest" "strimzi" {
-#   for_each  = toset(data.kubectl_path_documents.strimzi.documents)
-#   yaml_body = each.value
-# }
-
-# data "kubectl_path_documents" "kafka" {
-#   pattern = "${path.module}/kafka-single-node.yaml"
-# }
-
-# resource "kubectl_manifest" "kafka" {
-#   for_each  = toset(data.kubectl_path_documents.kafka.documents)
-#   yaml_body = each.value
-# }
+resource "helm_release" "this" {
+  name       = "strimzi-kafka-operator"
+  repository = "oci://quay.io/strimzi-helm"
+  chart      = "strimzi-kafka-operator"
+  namespace  = kubernetes_namespace_v1.this.metadata[0].name
+  version    = "1.1.0"
+  # atomic     = true
+  # wait       = true
+  values = [
+    file("${path.module}/values.yaml")
+  ]
+}
