@@ -1,6 +1,0 @@
-longhornManager:
-  log:
-    format: "json"
-longhornDriver:
-  log:
-    format: "json"
