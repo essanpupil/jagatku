@@ -101,7 +101,7 @@ loki.relabel "kubernetes_pods" {
 
 discovery.kubernetes "pods" {
   role = "pod"
-  kubeconfig_file = "/etc/kubernetes/admin.conf"
+  kubeconfig_file = "/etc/kubernetes/kubelet.conf"
 }
 
 // Filter so nodes only scrape their own pods
