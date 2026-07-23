@@ -132,3 +132,13 @@
         - kubeadm
         - kubelet
         - kubectl
+
+    - name: Download and extract crictl binary
+      ansible.builtin.unarchive:
+        src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+        dest: /usr/local/bin
+        remote_src: yes
+        owner: root
+        group: root
+        mode: '0755'
+      become: true

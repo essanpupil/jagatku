@@ -5,8 +5,9 @@ all:
     kubernetes_cidr: "10.244.0.0/16"
     kube_version: "v1.36.0"
     calico_version: "3.32.0"
-    helm_version: "3.21.2" # Update to a stable, available version
+    helm_version: "3.21.2"
     helm_arch: "amd64"
+    crictl_version: "v1.36.0"
   children:
     baremetals:
       hosts:
