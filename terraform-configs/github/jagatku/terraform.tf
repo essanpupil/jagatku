@@ -10,6 +10,7 @@ terraform {
       version = "~> 6.0"
     }
   }
+  required_version = "~> 1.15.6"
 }
 
 provider "github" {
