@@ -10,21 +10,17 @@ prometheusNodeExporter:
 prometheus-operator:
   enabled: true
 
-# Configure Prometheus specifically for Agent Mode
 prometheus:
   agentMode: true
   prometheusSpec:
-    # Disable local alerting and recording rules since agents cannot process them
     disableAlertmanager: true
     ruleSelector: {}
     ruleNamespaceSelector: {}
 
-    # Define your centralized endpoint for metrics
     remoteWrite:
       - name: "localPrometheus"
         url: "http://192.168.1.2:9090/api/v1/write"
 
-    # Tune scraping resources and limits for edge clusters
     scrapeInterval: "30s"
     evaluationInterval: "30s"
     resources:
@@ -34,6 +30,4 @@ prometheus:
       requests:
         cpu: "200m"
         memory: "512Mi"
-
-    # Minimal retention to just hold data until it's remote-written
     retention: "10m"
