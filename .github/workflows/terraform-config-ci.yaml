@@ -36,7 +36,7 @@ jobs:
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
-  
+
   terraform_check_plan:
     needs: list-terraform-changes
     runs-on: laptop1

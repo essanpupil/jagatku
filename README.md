@@ -1,7 +1,7 @@
 # jagatku
 
 ## Laptop Requirements
-1. Apple Silicon 
+1. Apple Silicon
 2. Virtualbox
 3. Vagrant
 4. Ansible
@@ -23,4 +23,4 @@
 5. Install Prometheus node exporter: `ansible-playbook playbooks/virtual-machines/prometheus/prometheus-node-exporter-config.yaml`
 
 ## Kubernetes Provisioning
-1. 
+1.

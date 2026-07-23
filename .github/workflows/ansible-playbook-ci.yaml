@@ -32,7 +32,7 @@ jobs:
       - name: Set playbooks as list
         id: set-list
         run: |
-          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)          
+          JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)
           # Save the array to step outputs
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
