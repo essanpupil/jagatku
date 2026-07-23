@@ -1,24 +1,10 @@
 redis-ha:
   enabled: false
-redis:
-  metrics:
-    enabled: false
 controller:
   replicas: 1
-  metrics:
-    enabled: false
 server:
   replicas: 1
-  metrics:
-    enabled: false
 repoServer:
   replicas: 1
-  metrics:
-    enabled: false
 applicationSet:
   replicas: 1
-  metrics:
-    enabled: false
-dex:
-  metrics:
-    enabled: false
