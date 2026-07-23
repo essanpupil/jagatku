@@ -98,3 +98,24 @@ loki.relabel "kubernetes_pods" {
     replacement  = "kubernetes-pods"
   }
 }
+
+discovery.kubernetes "pods" {
+  role = "pod"
+}
+
+// Filter so nodes only scrape their own pods
+discovery.relabel "local_pods" {
+  targets = discovery.kubernetes.pods.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_node_name"]
+    regex         = sys.env("HOSTNAME") // Assumes your DaemonSet passes the node name as HOSTNAME
+    action        = "keep"
+  }
+}
+
+// Scrape targets found by discovery
+prometheus.scrape "k8s_metrics" {
+  targets    = discovery.relabel.local_pods.output
+  forward_to = [prometheus.remote_write.default.receiver]
+}
