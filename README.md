@@ -1,11 +1,9 @@
 # jagatku
 
-## Laptop Requirements
-1. Apple Silicon
-2. Virtualbox
-3. Vagrant
-4. Ansible
-5. Terraform
+## pre-commit requirements
+```shell
+$ brew install pre-commit terraform-docs terraform-linters/tap/tflint tfsec trivy checkov terrascan infracost tfupdate minamijoyo/hcledit/hcledit jq
+```
 
 ## Baremetal Deployment
 1. Install Debian Server on old laptop
