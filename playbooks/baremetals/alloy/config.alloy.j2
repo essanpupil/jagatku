@@ -103,7 +103,7 @@ prometheus.scrape "scrape_consul_cluster" {
 //
 discovery.kubernetes "cluster_nodes" {
   role = "node"
-  api_server = "{{ hostvars['node1']['ansible_host'] }}
+  api_server = "{{ hostvars['node1']['ansible_host'] }}"
   kubeconfig_file = "/home/essan/.kube/config"
   enable_http2 = true
 }
