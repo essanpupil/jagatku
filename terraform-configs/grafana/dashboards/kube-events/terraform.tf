@@ -1,4 +1,5 @@
 terraform {
+  required_version = "~>1.15.0"
   backend "consul" {
     address = "192.168.1.2:8500"
     scheme  = "http"
