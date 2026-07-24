@@ -49,6 +49,15 @@
       when: config_output.changed
       command: alloy validate /etc/alloy/config.alloy
 
+    - name: Deploy Alloy systemd service unit file
+      ansible.builtin.template:
+        src: alloy.service.j2
+        dest: /usr/lib/systemd/system/alloy.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart alloy
+
     - name: Ensure Alloy service is enabled and running
       ansible.builtin.systemd:
         name: alloy
