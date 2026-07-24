@@ -114,35 +114,26 @@ loki.relabel "journal" {
 //   forward_to = [prometheus.remote_write.default.receiver]
 // }
 
-discovery.kubernetes "cluster_ingress" {
-  role = "ingress"
-  kubeconfig_file = "/home/essan/.kube/config"
-}
-prometheus.scrape "ingress_metrics" {
-  targets    = discovery.kubernetes.cluster_ingress.targets
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-loki.source.kubernetes_events "cluster_events" {
-  job_name   = "integrations/kubernetes/eventhandler"
-  log_format = "logfmt"
-  forward_to = [
-    loki.process.cluster_events.receiver,
-  ]
-  client {
-    kubeconfig_file = "/home/essan/.kube/config"
-  }
-}
-loki.process "cluster_events" {
-  forward_to = [loki.write.loki_endpoint.receiver]
-  stage.static_labels {
-    values = {
-      cluster = "kubernetes",
-    }
-  }
-  stage.labels {
-    values = {
-      kubernetes_cluster_events = "job",
-    }
-  }
-}
+// loki.source.kubernetes_events "cluster_events" {
+//   job_name   = "integrations/kubernetes/eventhandler"
+//   log_format = "logfmt"
+//   forward_to = [
+//     loki.process.cluster_events.receiver,
+//   ]
+//   client {
+//     kubeconfig_file = "/home/essan/.kube/config"
+//   }
+// }
+// loki.process "cluster_events" {
+//   forward_to = [loki.write.loki_endpoint.receiver]
+//   stage.static_labels {
+//     values = {
+//       cluster = "kubernetes",
+//     }
+//   }
+//   stage.labels {
+//     values = {
+//       kubernetes_cluster_events = "job",
+//     }
+//   }
+// }
