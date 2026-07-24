@@ -80,3 +80,43 @@ prometheus.scrape "scrape_consul_cluster" {
   targets    = prometheus.exporter.consul.consul_health.targets
   forward_to = [prometheus.remote_write.default.receiver]
 }
+
+discovery.kubernetes "cluster_services" {
+  role = "service"
+  kubeconfig_file = "/home/essan/.kube/config"
+}
+
+prometheus.scrape "service_metrics" {
+  targets    = discovery.kubernetes.cluster_services.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.kubernetes "cluster_ingress" {
+  role = "ingress"
+  kubeconfig_file = "/home/essan/.kube/config"
+}
+
+prometheus.scrape "ingress_metrics" {
+  targets    = discovery.kubernetes.cluster_ingress.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.kubernetes "cluster_nodes" {
+  role = "node"
+  kubeconfig_file = "/home/essan/.kube/config"
+}
+
+prometheus.scrape "node_metrics" {
+  targets    = discovery.kubernetes.cluster_nodes.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.kubernetes "cluster_endpointslices" {
+  role = "endpointslice"
+  kubeconfig_file = "/home/essan/.kube/config"
+}
+
+prometheus.scrape "endpointslice_metrics" {
+  targets    = discovery.kubernetes.cluster_endpointslices.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+}
