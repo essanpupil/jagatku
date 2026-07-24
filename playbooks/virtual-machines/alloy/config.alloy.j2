@@ -1,3 +1,19 @@
+loki.write "loki_endpoint" {
+  endpoint {
+    url = "{{ loki_url }}"
+  }
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://192.168.1.2:9090/api/v1/write"
+    // basic_auth {
+    //   username = "your-username"
+    //   password = "your-password"
+    // }
+  }
+}
+
 local.file_match "debian_logs" {
   path_targets = [
     {
@@ -12,12 +28,6 @@ loki.source.file "local_files" {
   forward_to = [loki.write.loki_endpoint.receiver]
 }
 
-loki.write "loki_endpoint" {
-  endpoint {
-    url = "{{ loki_url }}"
-  }
-}
-
 loki.source.journal "system" {
   forward_to = [loki.write.loki_endpoint.receiver]
   format_as_json = true
@@ -30,16 +40,6 @@ loki.relabel "journal" {
   rule {
     source_labels = ["__journal__systemd_unit"]
     target_label  = "service_name"
-  }
-}
-
-prometheus.remote_write "default" {
-  endpoint {
-    url = "http://192.168.1.2:9090/api/v1/write"
-    // basic_auth {
-    //   username = "your-username"
-    //   password = "your-password"
-    // }
   }
 }
 
