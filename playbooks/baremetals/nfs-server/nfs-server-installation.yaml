@@ -1,0 +1,40 @@
+---
+- name: Install and configure NFS server on Debian
+  hosts: laptop1
+  become: true
+  vars:
+    nfs_export_dir: /srv/nfs/shared
+    nfs_export_options: "*(rw,sync,no_subtree_check,no_root_squash)"
+  tasks:
+    - name: Ensure NFS server packages are installed
+      apt:
+        name: nfs-kernel-server
+        state: present
+        update_cache: yes
+
+    - name: Ensure export directory exists
+      file:
+        path: "{{ nfs_export_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0775'
+
+    # - name: Configure NFS exports
+    #   copy:
+    #     dest: /etc/exports
+    #     content: "{{ nfs_export_dir }} {{ nfs_export_options }}\n"
+    #     owner: root
+    #     group: root
+    #     mode: '0644'
+
+    # - name: Export NFS shares
+    #   command: exportfs -ra
+    #   args:
+    #     warn: false
+
+    - name: Ensure NFS server is enabled and running
+      service:
+        name: nfs-kernel-server
+        state: started
+        enabled: yes
