@@ -106,7 +106,7 @@ discovery.kubernetes "cluster_nodes" {
   kubeconfig_file = "/home/essan/.kube/config"
   enable_http2 = true
   tls_config {
-    insecure_skip_verify = yes
+    insecure_skip_verify = true
   }
 }
 prometheus.scrape "node_metrics" {
