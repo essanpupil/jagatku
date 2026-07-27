@@ -35,6 +35,6 @@ scrape_configs:
     static_configs:
       - targets:
           - '{{ ansible_host }}:9100'
-          {% for host in groups['kube_nodes'] %}
-          - '{{ hostvars[host]['ansible_host'] }}:9100'
-          {% endfor %}
+  {% for host in groups['kube_nodes'] %}
+  - '{{ hostvars[host]['ansible_host'] }}:9100'
+  {% endfor %}
