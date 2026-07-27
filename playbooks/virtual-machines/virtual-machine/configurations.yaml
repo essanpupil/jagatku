@@ -89,16 +89,13 @@
         state: started
         enabled: yes
 
-    - name: Enable cri plugin
-      lineinfile:
-        path: /etc/containerd/config.toml
-        regexp: '^[\s]*disabled_plugins'
-        backup: yes
-        backrefs: yes
-        line: "disabled_plugins = []"
-        firstmatch: yes
-        state: present
-      ignore_errors: true
+    - name: Configure containerd for cri and systemdcgroup
+      ansible.builtin.template:
+        src: containerd.config.toml.j2
+        dest: /etc/containerd/config.toml
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Restart containerd service
       service:
