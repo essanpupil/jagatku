@@ -3,8 +3,8 @@
   hosts: laptop1
   become: true
   vars:
-    nfs_export_dir: /srv/nfs/shared
-    nfs_export_options: "*(rw,sync,no_subtree_check,no_root_squash)"
+    nfs_export_dir: /mnt/kube_data
+    nfs_export_options: "(rw,sync,no_subtree_check)"
   tasks:
     - name: Ensure NFS server packages are installed
       apt:
@@ -20,18 +20,18 @@
         group: root
         mode: '0775'
 
-    # - name: Configure NFS exports
-    #   copy:
-    #     dest: /etc/exports
-    #     content: "{{ nfs_export_dir }} {{ nfs_export_options }}\n"
-    #     owner: root
-    #     group: root
-    #     mode: '0644'
+    - name: Configure NFS exports
+      ansible.builtin.template:
+        src: nfs.exports.j2
+        dest: /etc/exports
+        owner: root
+        group: root
+        mode: '0644'
 
-    # - name: Export NFS shares
-    #   command: exportfs -ra
-    #   args:
-    #     warn: false
+    - name: Export NFS shares
+      command: exportfs -ra
+      args:
+        warn: false
 
     - name: Ensure NFS server is enabled and running
       service:
