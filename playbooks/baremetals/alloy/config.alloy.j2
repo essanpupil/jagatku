@@ -124,13 +124,16 @@ loki.relabel "journal" {
 //     kubeconfig_file = "/home/essan/.kube/config"
 //   }
 // }
+//
 // loki.process "cluster_events" {
 //   forward_to = [loki.write.loki_endpoint.receiver]
+//
 //   stage.static_labels {
 //     values = {
 //       cluster = "kubernetes",
 //     }
 //   }
+//
 //   stage.labels {
 //     values = {
 //       kubernetes_cluster_events = "job",
