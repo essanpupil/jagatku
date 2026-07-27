@@ -41,7 +41,9 @@ loki.relabel "journal" {
   }
 }
 
-prometheus.exporter.unix "local_system" { }
+prometheus.exporter.unix "local_system" {
+  disable_collectors = ["boottime", "devstat", "exec", "pressure", "thermal", "xfs", "zfs"]
+}
 
 prometheus.scrape "linux_metrics" {
   targets    = prometheus.exporter.unix.local_system.targets
