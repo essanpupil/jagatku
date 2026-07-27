@@ -41,13 +41,6 @@ loki.relabel "journal" {
   }
 }
 
-prometheus.exporter.unix "local_system" { }
-
-prometheus.scrape "linux_metrics" {
-  targets    = prometheus.exporter.unix.local_system.targets
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
 local.file "auth_vault_metrics" {
   filename  = "/etc/alloy/.auth_vault_metrics"
   is_secret = true
