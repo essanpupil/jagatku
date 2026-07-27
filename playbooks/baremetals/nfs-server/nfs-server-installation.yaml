@@ -30,8 +30,6 @@
 
     - name: Export NFS shares
       command: exportfs -ra
-      args:
-        warn: false
 
     - name: Ensure NFS server is enabled and running
       service:
