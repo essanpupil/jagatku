@@ -28,9 +28,13 @@ scrape_configs:
     scrape_interval: 15s
     scrape_timeout: 5s
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['{{ ansible_host }}:9090']
 
   - job_name: 'node_exporter'
     scrape_interval: 15s
     static_configs:
-      - targets: ['localhost:9100']
+      - targets:
+          - '{{ ansible_host }}:9100'
+          {% for host in groups['kube_nodes'] %}
+          - '{{ hostvars[host]['ansible_host'] }}:9100'
+          {% endfor %}
