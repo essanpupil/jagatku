@@ -11,6 +11,7 @@
       apt:
         name:
           - prometheus
+          - prometheus-node-exporter
         state: present
     - name: Render prometheus config for validation
       check_mode: false

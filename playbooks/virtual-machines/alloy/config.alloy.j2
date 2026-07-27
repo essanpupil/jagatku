@@ -43,13 +43,6 @@ loki.relabel "journal" {
   }
 }
 
-prometheus.exporter.unix "local_system" { }
-
-prometheus.scrape "linux_metrics" {
-  targets    = prometheus.exporter.unix.local_system.targets
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
 discovery.docker "linux" {
   host = "unix:///var/run/docker.sock"
 }
