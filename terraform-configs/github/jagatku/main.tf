@@ -13,6 +13,12 @@ resource "github_repository" "jagatku" {
   #checkov:skip=CKV_GIT_1
 }
 
+resource "github_branch_protection" "main" {
+  repository_id = github_repository.jagatku.node_id
+  pattern       = "main"
+  enforce_admins = true
+}
+
 
 resource "github_repository_vulnerability_alerts" "this" {
   repository = github_repository.jagatku.name
