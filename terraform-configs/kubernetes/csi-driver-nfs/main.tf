@@ -4,8 +4,8 @@ resource "helm_release" "this" {
   chart      = "csi-driver-nfs"
   namespace  = "kube-system"
   version    = "4.13.4"
-  # atomic     = true
-  # wait       = true
+  atomic     = true
+  wait       = true
   values = [
     file("${path.module}/values.yaml")
   ]
