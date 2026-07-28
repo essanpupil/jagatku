@@ -8,6 +8,8 @@ on:
     types:
       - closed
 permissions:
+  security-events: read
+  contents: read
   pull-requests: write
 
 jobs:

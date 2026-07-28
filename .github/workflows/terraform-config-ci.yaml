@@ -6,6 +6,8 @@ on:
     paths:
       - 'terraform-configs/**'
 permissions:
+  security-events: read
+  contents: read
   pull-requests: write
 
 jobs:
