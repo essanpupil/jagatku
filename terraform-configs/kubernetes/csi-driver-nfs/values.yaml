@@ -1,21 +1,13 @@
 storageClass:
   create: true
 storageClasses:
-  - name: nfs-delete
+  - name: nfs-csi
     annotations:
       storageclass.kubernetes.io/is-default-class: "true"
     parameters:
-      server: nfs-server.default.svc.cluster.local
-      share: /
+      server: 192.168.1.2
+      share: /mnt/kube_data
     reclaimPolicy: Delete
-    volumeBindingMode: Immediate
-    mountOptions:
-      - nfsvers=4.1
-  - name: nfs-retain
-    parameters:
-      server: nfs-server.default.svc.cluster.local
-      share: /data
-    reclaimPolicy: Retain
     volumeBindingMode: Immediate
     mountOptions:
       - nfsvers=4.1
