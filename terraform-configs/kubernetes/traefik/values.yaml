@@ -1,5 +1,3 @@
-gateway:
-  listeners:
-    web:
-      namespacePolicy:
-        from: All
+service:
+  spec:
+    type: "NodePort"
