@@ -1,1 +1,9 @@
 k8sServiceHost: "auto"
+prometheus:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+hubble:
+  metrics:
+    enable: "{dns,drop,tcp,flow,port-distribution,icmp,http}"
