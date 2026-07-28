@@ -17,7 +17,7 @@
           - unzip
           - bash
           - grep
-          -  nfs-common
+          - nfs-common
         state: present
         update_cache: yes
 
