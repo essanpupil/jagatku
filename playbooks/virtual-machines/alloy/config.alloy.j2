@@ -4,16 +4,6 @@ loki.write "loki_endpoint" {
   }
 }
 
-// prometheus.remote_write "default" {
-//   endpoint {
-//     url = "http://192.168.1.2:9090/api/v1/write"
-//     // basic_auth {
-//     //   username = "your-username"
-//     //   password = "your-password"
-//     // }
-//   }
-// }
-
 local.file_match "debian_logs" {
   path_targets = [
     {
@@ -91,16 +81,3 @@ loki.relabel "kubernetes_pods" {
     replacement  = "kubernetes-pods"
   }
 }
-
-// discovery.kubernetes "pods" {
-//   role = "pod"
-//   kubeconfig_file = "/etc/kubernetes/kubelet.conf"
-//   selectors {
-//     role = "pod"
-//     field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
-//   }
-// }
-// prometheus.scrape "k8s_metrics" {
-//   targets    = discovery.kubernetes.pods.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
