@@ -1,3 +1,5 @@
+externalSnapshotter:
+  enabled: true
 storageClass:
   create: true
   name: nfs-csi
