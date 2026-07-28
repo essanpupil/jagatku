@@ -4,12 +4,19 @@ resource "github_repository" "jagatku" {
   allow_merge_commit = false
   allow_rebase_merge = false
   allow_squash_merge = true
+  delete_branch_on_merge = true
   has_issues         = true
   has_projects       = true
   has_wiki           = true
 
   #checkov:skip=CKV_GIT_3
   #checkov:skip=CKV_GIT_1
+}
+
+resource "github_branch_protection" "main" {
+  repository_id = github_repository.jagatku.node_id
+  pattern       = "main"
+  enforce_admins = true
 }
 
 

@@ -6,6 +6,8 @@ on:
     paths:
       - 'terraform-configs/**'
 permissions:
+  security-events: read
+  contents: read
   pull-requests: write
 
 jobs:
@@ -59,7 +61,7 @@ jobs:
         id: tfplan
         working-directory: ./${{ matrix.terraforms }}
         env:
-            TF_VAR_token: ${{ github.token }}
+            TF_VAR_token: ${{ secrets.GH_PAT }}
             TF_CLI_ARGS: "-no-color"
         run: terraform plan | tee plan.txt
         continue-on-error: true
