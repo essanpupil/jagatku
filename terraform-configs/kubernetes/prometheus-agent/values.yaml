@@ -5,9 +5,9 @@ grafana:
   enabled: false
 kubeStateMetrics:
   enabled: true
-prometheusNodeExporter:
+nodeExporter:
   enabled: false
-prometheus-operator:
+prometheusOperator:
   enabled: false
 
 prometheus:
