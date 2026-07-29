@@ -1,16 +1,4 @@
 collectors:
-  # alloy-metrics:
-  #   enabled: true
-  #   presets: [medium, clustered, statefulset]
-  #   alloy:
-  #     extraArgs:
-  #       - "--disable-reporting"
-  # alloy-logs:
-  #   enabled: true
-  #   presets: [small, filesystem-log-reader, daemonset]
-  #   alloy:
-  #     extraArgs:
-  #       - "--disable-reporting"
   alloy-singleton:
     presets: [clustered]
     alloy:
@@ -23,15 +11,14 @@ clusterMetrics:
 clusterEvents:
   enabled: true
   collector: alloy-singleton
-# podLogsViaLoki:
-#   enabled: true
-#   collector: alloy-logs
-# hostMetrics:
-#   enabled: true
-#   collector: alloy-metrics
+
+telemetryServices:
+  kube-state-metrics:
+    deploy: true
 
 cluster:
   name: "kubernetes"
+
 destinations:
   localPrometheus:
     type: prometheus
