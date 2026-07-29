@@ -4,3 +4,6 @@ podAnnotations:
 operator:
   podAnnotations:
     k8s.grafana.com/scrape: "true"
+envoy:
+  podAnnotations:
+    k8s.grafana.com/scrape: "true"
