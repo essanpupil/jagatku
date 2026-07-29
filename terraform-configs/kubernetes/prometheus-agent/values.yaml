@@ -4,11 +4,11 @@ alertmanager:
 grafana:
   enabled: false
 kubeStateMetrics:
-  enabled: false
+  enabled: true
 prometheusNodeExporter:
   enabled: false
 prometheus-operator:
-  enabled: true
+  enabled: false
 
 prometheus:
   agentMode: true
@@ -16,11 +16,9 @@ prometheus:
     disableAlertmanager: true
     ruleSelector: {}
     ruleNamespaceSelector: {}
-
     remoteWrite:
       - name: "localPrometheus"
         url: "http://192.168.1.2:9090/api/v1/write"
-
     scrapeInterval: "30s"
     evaluationInterval: "30s"
     resources:
