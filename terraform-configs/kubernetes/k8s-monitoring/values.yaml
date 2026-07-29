@@ -17,6 +17,9 @@ collectors:
       extraArgs:
         - "--disable-reporting"
 
+clusterMetrics:
+  enabled: true
+
 clusterEvents:
   enabled: true
   collector: alloy-singleton
