@@ -1,3 +1,6 @@
+annotationAutodiscovery:
+  enabled: true
+
 collectors:
   alloy-singleton:
     presets: [clustered]
