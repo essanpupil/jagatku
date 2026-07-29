@@ -1,3 +1,6 @@
 service:
   spec:
     type: "NodePort"
+deployment:
+  podAnnotations:
+      k8s.grafana.com/scrape: true
