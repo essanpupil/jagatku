@@ -42,7 +42,7 @@ jobs:
           echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
           echo "$JSON_ARRAY"
 
-  terraform_check_plan:
+  terraform_apply_plan:
     if: github.event.pull_request.merged == true
     needs: list-terraform-changes
     runs-on: laptop1

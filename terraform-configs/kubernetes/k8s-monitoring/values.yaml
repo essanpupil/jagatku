@@ -12,7 +12,7 @@ collectors:
   #     extraArgs:
   #       - "--disable-reporting"
   alloy-singleton:
-    presets: [small]
+    presets: [clustered]
     alloy:
       extraArgs:
         - "--disable-reporting"
