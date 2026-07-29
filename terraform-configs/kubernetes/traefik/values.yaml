@@ -3,4 +3,4 @@ service:
     type: "NodePort"
 deployment:
   podAnnotations:
-      k8s.grafana.com/scrape: true
+    k8s.grafana.com/scrape: true
