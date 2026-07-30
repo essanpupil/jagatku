@@ -16,10 +16,9 @@
 
     - name: Upload certificates and capture the certificate key
       when: inventory_hostname == "node1"
-      ansible.builtin.command: kubeadm init phase upload-certs --upload-certs --kubeconfig /etc/kubernetes/admin.conf --config /tmp/init-defaults.yaml 
-      become: true
+      ansible.builtin.command: kubeadm init phase upload-certs --upload-certs --kubeconfig /etc/kubernetes/admin.conf --config /tmp/init-defaults.yaml
       register: upload_certs_output
-      changed_when: true
+      changed_when: false
 
     - name: Extract the certificate key from the output
       when: inventory_hostname == "node1"
