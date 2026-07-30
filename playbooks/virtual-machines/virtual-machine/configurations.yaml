@@ -140,3 +140,21 @@
         group: root
         mode: '0755'
       become: true
+
+    - name: Download and extract etcdctl binary
+      ansible.builtin.unarchive:
+        src: "https://github.com/coreos/etcd/releases/download/{{ etcdctl_version }}/etcd-{{ etcdctl_version }}-linux-amd64.tar.gz"
+        dest: /tmp/
+        remote_src: yes
+        owner: root
+        group: root
+      become: true
+
+    - name: Copy etcdctl binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/etcd-{{ etcdctl_version }}-linux-amd64/etcdctl
+        dest: /usr/local/bin/
+        remote_src: true
+        owner: root
+        group: root
+        mode: '07550'
