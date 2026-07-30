@@ -18,8 +18,16 @@
           - bash
           - grep
           - nfs-common
+          - systemd-resolved
         state: present
         update_cache: yes
+    
+    - name: Enable systemd-resolved service
+      ansible.builtin.systemd_service:
+        name: systemd-resolved
+        state: started
+        enabled: true
+        daemon_reload: true
 
     - name: Create keyrings directory
       file:
@@ -162,6 +170,47 @@
     - name: Copy etcdutl binary to /usr/local/bin
       ansible.builtin.copy:
         src: /tmp/etcd-{{ etcdctl_version }}-linux-amd64/etcdutl
+        dest: /usr/local/bin/
+        remote_src: true
+        owner: root
+        group: root
+        mode: '07550'
+
+    - name: Download and extract crictl binary for arm64 processor
+      when: ansible_architecture == 'aarch64'
+      ansible.builtin.unarchive:
+        src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-arm64.tar.gz"
+        dest: /usr/local/bin
+        remote_src: yes
+        owner: root
+        group: root
+        mode: '0755'
+      become: true
+
+    - name: Download and extract etcdctl binary for arm64 processor
+      when: ansible_architecture == 'aarch64'
+      ansible.builtin.unarchive:
+        src: "https://github.com/coreos/etcd/releases/download/{{ etcdctl_version }}/etcd-{{ etcdctl_version }}-linux-arm64.tar.gz"
+        dest: /tmp/
+        remote_src: yes
+        owner: root
+        group: root
+      become: true
+
+    - name: Copy etcdctl binary for arm64 processor to /usr/local/bin
+      when: ansible_architecture == 'aarch64'
+      ansible.builtin.copy:
+        src: /tmp/etcd-{{ etcdctl_version }}-linux-arm64/etcdctl
+        dest: /usr/local/bin/
+        remote_src: true
+        owner: root
+        group: root
+        mode: '07550'
+
+    - name: Copy etcdutl binary for arm64 processor to /usr/local/bin
+      when: ansible_architecture == 'aarch64'
+      ansible.builtin.copy:
+        src: /tmp/etcd-{{ etcdctl_version }}-linux-arm64/etcdutl
         dest: /usr/local/bin/
         remote_src: true
         owner: root

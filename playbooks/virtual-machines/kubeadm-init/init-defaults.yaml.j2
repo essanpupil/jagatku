@@ -44,6 +44,7 @@ etcd:
 imageRepository: registry.k8s.io
 kind: ClusterConfiguration
 kubernetesVersion: {{ kube_version }}
+controlPlaneEndpoint: "{{ hostvars['node1']['ansible_host'] }}:6443"
 networking:
   dnsDomain: cluster.local
   serviceSubnet: {{ kubernetes_cidr }}
