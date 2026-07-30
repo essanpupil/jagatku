@@ -8,6 +8,7 @@ all:
     helm_version: "3.21.2"
     helm_arch: "amd64"
     crictl_version: "v1.36.0"
+    etcdctl_version: "v3.7.1"
   children:
     baremetals:
       hosts:
