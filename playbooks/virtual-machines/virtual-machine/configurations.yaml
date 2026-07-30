@@ -158,3 +158,12 @@
         owner: root
         group: root
         mode: '07550'
+
+    - name: Copy etcdutl binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/etcd-{{ etcdctl_version }}-linux-amd64/etcdutl
+        dest: /usr/local/bin/
+        remote_src: true
+        owner: root
+        group: root
+        mode: '07550'
