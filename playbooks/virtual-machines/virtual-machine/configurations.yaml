@@ -18,8 +18,16 @@
           - bash
           - grep
           - nfs-common
+          - systemd-resolved
         state: present
         update_cache: yes
+    
+    - name: Enable systemd-resolved service
+      ansible.builtin.systemd_service:
+        name: systemd-resolved
+        state: started
+        enabled: true
+        daemon_reload: true
 
     - name: Create keyrings directory
       file:
