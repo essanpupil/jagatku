@@ -1,0 +1,40 @@
+---
+- name: Install and Configure Nginx
+  hosts: laptop1
+  become: true
+  handlers:
+    - name: Restart Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+  tasks:
+    - name: Ensure apt cache is up to date
+      ansible.builtin.apt:
+        update_cache: yes
+      cache_valid_time: 3600
+
+    - name: Install Nginx package
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Apply custom Nginx server configuration
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        mode: '0644'
+
+    - name: validate nginx configuration
+      ansible.builtin.command: sudo nginx -t
+
+    - name: Restart nginx service
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+    - name: Ensure Nginx is started and enabled on boot
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
