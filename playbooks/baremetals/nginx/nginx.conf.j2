@@ -1,0 +1,18 @@
+# /etc/nginx/nginx.conf
+
+stream {
+    upstream kube_apiserver {
+        least_conn;
+        # Replace IPs below with your control plane node IPs
+        {% for host in groups['servers'] %}
+            server '{{ hostvars[host]['ansible_host'] }}:6443 max_fails=3 fail_timeout=30s;'
+        {% endfor %}
+    }
+
+    server {
+        listen 6443;
+        proxy_pass kube_apiserver;
+        proxy_timeout 300s;
+        proxy_connect_timeout 5s;
+    }
+}
