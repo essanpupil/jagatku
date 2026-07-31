@@ -1,18 +1,12 @@
-# /etc/nginx/nginx.conf
+server {
+    listen 80;
+    server_name {{ grafana_local_domain }};
 
-stream {
-    upstream kube_apiserver {
-        least_conn;
-        # Replace IPs below with your control plane node IPs
-        {% for host in groups['servers'] %}
-            server '{{ hostvars[host]['ansible_host'] }}:6443 max_fails=3 fail_timeout=30s;'
-        {% endfor %}
-    }
-
-    server {
-        listen 6443;
-        proxy_pass kube_apiserver;
-        proxy_timeout 300s;
-        proxy_connect_timeout 5s;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
