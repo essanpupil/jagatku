@@ -4,11 +4,11 @@
   become: true
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
     - name: Install core packages
-      apt:
+      ansible.builtin.apt:
         name:
           - apt-transport-https
           - wget
@@ -20,8 +20,8 @@
           - nfs-common
           - systemd-resolved
         state: present
-        update_cache: yes
-    
+        update_cache: true
+
     - name: Enable systemd-resolved service
       ansible.builtin.systemd_service:
         name: systemd-resolved
@@ -30,73 +30,73 @@
         daemon_reload: true
 
     - name: Create keyrings directory
-      file:
+      ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
         mode: "0755"
 
     - name: Download Grafana GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: https://packages.grafana.com/gpg.key
         dest: /etc/apt/keyrings/grafana.key
         mode: "0644"
     - name: De-armor Grafana GPG key
-      command: gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg /etc/apt/keyrings/grafana.key
+      ansible.builtin.command: gpg --dearmor --yes -o /etc/apt/keyrings/grafana.gpg /etc/apt/keyrings/grafana.key
       args:
         creates: /etc/apt/keyrings/grafana.gpg
     - name: Add Grafana repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main"
         state: present
         filename: grafana
     - name: Download Docker GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
         dest: /etc/apt/keyrings/docker.asc
         mode: "0644"
         force: true
 
     - name: Download kubeadm gpg key
-      get_url:
+      ansible.builtin.get_url:
         url: https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key
         dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
         mode: "0644"
         force: true
 
     - name: De-armor Docker GPG key for APT
-      command: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/docker.asc
+      ansible.builtin.command: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/docker.asc
       args:
         creates: /etc/apt/keyrings/docker.gpg
 
     - name: De-armor kubeadm gpg key for APT
-      command: gpg --dearmor --yes --output /etc/apt/keyrings/kubernetes-apt-keyring.gpg /etc/apt/keyrings/kubernetes-apt-keyring.asc
+      ansible.builtin.command: gpg --dearmor --yes --output /etc/apt/keyrings/kubernetes-apt-keyring.gpg /etc/apt/keyrings/kubernetes-apt-keyring.asc
       args:
         creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     - name: Add Docker repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
         state: present
         filename: docker
 
     - name: Add kubeadm repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /"
         state: present
         filename: kubernetes
 
     - name: Install Docker Engine
-      apt:
+      ansible.builtin.apt:
         pkg:
           - docker-ce
           - containerd.io
-        state: latest
+        state: present
         update_cache: true
 
     - name: Start Docker service
-      service:
+      ansible.builtin.systemd_service:
         name: docker
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Configure containerd for cri and systemdcgroup
       ansible.builtin.template:
@@ -107,13 +107,16 @@
         mode: '0644'
 
     - name: Restart containerd service
-      service:
+      ansible.builtin.systemd_service:
         name: containerd
         state: restarted
-        enabled: yes
+        enabled: true
 
     - name: Disable swap
-      command: swapoff -a
+      ansible.builtin.command: swapoff -a
+      register: swapoff_result
+      changed_when: swapoff_result.rc == 0
+      failed_when: swapoff_result.rc != 0 and "Invalid argument" not in swapoff_result.stderr
 
     - name: Disable swap permanently
       ansible.posix.mount:
@@ -122,13 +125,13 @@
         state: absent
 
     - name: Install kubeadm package
-      apt:
+      ansible.builtin.apt:
         pkg:
           - kubeadm
           - kubelet
           - kubectl
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Hold kubeadm package to prevent updates
       ansible.builtin.dpkg_selections:
@@ -143,7 +146,7 @@
       ansible.builtin.unarchive:
         src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
         dest: /usr/local/bin
-        remote_src: yes
+        remote_src: true
         owner: root
         group: root
         mode: '0755'
@@ -153,7 +156,7 @@
       ansible.builtin.unarchive:
         src: "https://github.com/coreos/etcd/releases/download/{{ etcdctl_version }}/etcd-{{ etcdctl_version }}-linux-amd64.tar.gz"
         dest: /tmp/
-        remote_src: yes
+        remote_src: true
         owner: root
         group: root
       become: true
@@ -181,7 +184,7 @@
       ansible.builtin.unarchive:
         src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-arm64.tar.gz"
         dest: /usr/local/bin
-        remote_src: yes
+        remote_src: true
         owner: root
         group: root
         mode: '0755'
@@ -192,7 +195,7 @@
       ansible.builtin.unarchive:
         src: "https://github.com/coreos/etcd/releases/download/{{ etcdctl_version }}/etcd-{{ etcdctl_version }}-linux-arm64.tar.gz"
         dest: /tmp/
-        remote_src: yes
+        remote_src: true
         owner: root
         group: root
       become: true

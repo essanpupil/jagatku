@@ -1,15 +1,15 @@
 ---
 - name: Install and configure prometheus in laptop
   hosts: kube_nodes
-  become: True
+  become: true
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
 
     - name: Install Prometheus
-      apt:
+      ansible.builtin.apt:
         name:
           - prometheus-node-exporter
         state: present
