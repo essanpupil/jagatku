@@ -10,8 +10,8 @@
   tasks:
     - name: Ensure apt cache is up to date
       ansible.builtin.apt:
-        update_cache: yes
-      cache_valid_time: 3600
+        update_cache: true
+        cache_valid_time: 3600
 
     - name: Install Nginx package
       ansible.builtin.apt:
@@ -24,17 +24,18 @@
         dest: /etc/nginx/nginx.conf
         mode: '0644'
 
-    - name: validate nginx configuration
+    - name: Validate nginx configuration
       ansible.builtin.command: sudo nginx -t
+      changed_when: false
 
     - name: Restart nginx service
       ansible.builtin.systemd_service:
         name: nginx
         state: restarted
-        enabled: yes
+        enabled: true
 
     - name: Ensure Nginx is started and enabled on boot
       ansible.builtin.service:
         name: nginx
         state: started
-        enabled: yes
+        enabled: true
