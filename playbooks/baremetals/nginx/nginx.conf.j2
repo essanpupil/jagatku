@@ -83,4 +83,17 @@ http {
             proxy_read_timeout 310s;
         }
     }
+
+    # Hashicorp vault settings
+    upstream hashicorp_vault {
+        server 127.0.0.1:8200;
+    }
+
+    server {
+        listen 80;
+        server_name {% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        location / {
+            proxy_pass http://hashicorp_vault;
+        }
+    }
 }
