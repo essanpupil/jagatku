@@ -22,6 +22,9 @@ all:
       - name: "vault"
         ip: "192.168.1.50"
         fqdn: "vault.laptop1.local"
+      - name: "prometheus"
+        ip: "192.168.1.50"
+        fqdn: "prometheus.laptop1.local"
   children:
     baremetals:
       hosts:
