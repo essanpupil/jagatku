@@ -3,7 +3,7 @@
 
 # Full configuration options can be found at https://developer.hashicorp.com/vault/docs/configuration
 
-api_addr = "http://{{ ansible_host }}:8200"
+api_addr = "http://{% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %}"
 ui = true
 
 #mlock = true
@@ -20,13 +20,13 @@ storage "file" {
 
 # HTTP listener
 listener "tcp" {
-  address = "{{ ansible_host }}:8200"
+  address = "{% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %}"
   tls_disable = 1
 }
 
 # HTTPS listener
 # listener "tcp" {
-#   address       = "{{ ansible_host }}:8200"
+#   address       = "{% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %}"
 #   tls_cert_file = "/opt/vault/tls/tls.crt"
 #   tls_key_file  = "/opt/vault/tls/tls.key"
 # }
