@@ -49,4 +49,51 @@ http {
             proxy_pass http://grafana;
         }
     }
+
+    # Consul settings
+    upstream consul_backend {
+        server 127.0.0.1:8500;
+        keepalive 32;
+    }
+
+    server {
+        listen 80;
+        server_name {% for domain in local_domains %}{% if domain.name == 'consul' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+
+        # Optimize logs for API traffic
+        access_log /var/log/nginx/consul_access.log;
+        error_log /var/log/nginx/consul_error.log;
+
+        # Proxy all traffic to Consul
+        location / {
+            proxy_pass http://consul_backend;
+
+            # Required HTTP headers for Consul UI & API stability
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # WebSocket support (Required for Consul UI live updates)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            # Prevent Consul timeout on long-polling endpoints (like blocking queries)
+            proxy_read_timeout 310s;
+        }
+    }
+
+    # Hashicorp vault settings
+    upstream hashicorp_vault {
+        server 127.0.0.1:8200;
+    }
+
+    server {
+        listen 80;
+        server_name {% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        location / {
+            proxy_pass http://hashicorp_vault;
+        }
+    }
 }
