@@ -19,7 +19,7 @@ http {
     }
 
     server {
-        server_name {{ loki_local_domain }};
+        server_name {% for domain in local_domains %}{% if domain.name == 'loki' %}{{ domain.fqdn }}{% endif %}{% endfor %};
         listen 80;
 
         location / {
@@ -30,7 +30,7 @@ http {
     }
 
     server {
-        server_name {{ grafana_local_domain }};
+        server_name {% for domain in local_domains %}{% if domain.name == 'grafana' %}{{ domain.fqdn }}{% endif %}{% endfor %};
         listen 80;
         root /usr/share/nginx/html;
         index index.html index.htm;
