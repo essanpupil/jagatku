@@ -1,6 +1,7 @@
 terraform {
+  required_version = "~>1.15.0"
   backend "consul" {
-    address = "192.168.1.2:8500"
+    address = "consul.laptop1.local"
     scheme  = "http"
     path    = "terraform-configs/grafana/datasource/loki-local"
   }
@@ -17,13 +18,13 @@ terraform {
 }
 
 provider "vault" {
-  address          = "http://192.168.1.2:8200"
+  address          = "http://vault.laptop1.local"
   skip_child_token = true
   auth_login_userpass {}
 }
 
 provider "grafana" {
-  url  = "http://192.168.1.2:3000/"
+  url  = "http://grafana.laptop1.local"
   auth = tostring(ephemeral.vault_kv_secret_v2.grafana_secrets.data.grafana_api_key)
 }
 
