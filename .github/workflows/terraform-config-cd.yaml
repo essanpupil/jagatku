@@ -11,6 +11,8 @@ permissions:
   security-events: read
   contents: read
   pull-requests: write
+env:
+  NO_COLOR: "1"
 
 jobs:
   list-terraform-changes:

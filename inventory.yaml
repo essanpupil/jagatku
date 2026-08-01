@@ -10,6 +10,7 @@ all:
     crictl_version: "v1.36.0"
     etcdctl_version: "v3.7.1"
     grafana_local_domain: "grafana.laptop1.local"
+    loki_local_domain: "loki.laptop1.local"
   children:
     baremetals:
       hosts:

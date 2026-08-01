@@ -9,6 +9,8 @@ on:
       - closed
 permissions:
   pull-requests: write
+env:
+  NO_COLOR: "1"
 
 jobs:
   list-ansible-playbooks:

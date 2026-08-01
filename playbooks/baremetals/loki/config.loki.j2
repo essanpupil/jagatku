@@ -2,12 +2,13 @@ auth_enabled: false
 
 server:
   http_listen_port: 3100
+  http_listen_address: 127.0.0.1
   grpc_listen_port: 9096
   log_level: warn
   grpc_server_max_concurrent_streams: 1000
 
 common:
-  instance_addr: 192.168.1.2
+  instance_addr: {{ loki_local_domain }}
   path_prefix: /tmp/loki
   storage:
     filesystem:
@@ -32,7 +33,7 @@ limits_config:
 
 schema_config:
   configs:
-    - from: 2026-06-26
+    - from: 2026-08-01
       store: tsdb
       object_store: filesystem
       schema: v13
@@ -43,7 +44,7 @@ schema_config:
 pattern_ingester:
   enabled: true
   metric_aggregation:
-    loki_address: 192.168.1.2:3100
+    loki_address: {{ loki_local_domain }}
 
 ruler:
   alertmanager_url: http://localhost:9093
