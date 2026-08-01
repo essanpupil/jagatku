@@ -9,8 +9,22 @@ all:
     helm_arch: "amd64"
     crictl_version: "v1.36.0"
     etcdctl_version: "v3.7.1"
-    grafana_local_domain: "grafana.laptop1.local"
-    loki_local_domain: "loki.laptop1.local"
+    local_domains:
+      - name: "grafana"
+        ip: "192.168.1.50"
+        fqdn: "grafana.laptop1.local"
+      - name: "loki"
+        ip: "192.168.1.50"
+        fqdn: "loki.laptop1.local"
+      - name: "consul"
+        ip: "192.168.1.50"
+        fqdn: "consul.laptop1.local"
+      - name: "vault"
+        ip: "192.168.1.50"
+        fqdn: "vault.laptop1.local"
+      - name: "prometheus"
+        ip: "192.168.1.50"
+        fqdn: "prometheus.laptop1.local"
   children:
     baremetals:
       hosts:
