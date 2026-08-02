@@ -1,7 +1,7 @@
 ---
 all:
   vars:
-    ansible_distribution: 'Ubuntu'
+    ansible_distribution: "Ubuntu"
     kubernetes_cidr: "10.244.0.0/16"
     kube_version: "v1.36.0"
     calico_version: "3.32.0"
@@ -38,7 +38,7 @@ all:
         laptop1:
           ansible_user: essan
           ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-          ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
           ansible_python_interpreter: /usr/bin/python3
           ansible_host: 192.168.1.50
     kube_nodes:
@@ -48,21 +48,21 @@ all:
             node1:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.12
               node_name: node1
             cp1:
               ansible_user: vboxuser
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.51
               node_name: cp1
             cp2:
               ansible_user: vboxuser
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.52
               node_name: cp2
@@ -71,21 +71,21 @@ all:
             node2:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.13
               node_name: node2
             node3:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.14
               node_name: node3
             node4:
               ansible_user: vagrant
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
               ansible_python_interpreter: /usr/bin/python3
               ansible_host: 192.168.1.15
               node_name: node4
