@@ -16,10 +16,7 @@
         create_namespace: false
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         values:
-          cni:
-            enabled: true
-          ipam:
-            mode: kubernetes
+          k8sServiceHost: "auto"
         wait: true
       register: cilium_install_result
 
