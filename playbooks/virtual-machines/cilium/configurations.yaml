@@ -13,7 +13,7 @@
         chart_ref: cilium/cilium
         chart_version: "1.19.6"
         release_namespace: "kube-system"
-        create_namespace: true
+        create_namespace: false
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         values_files:
           - "{{ playbook_dir }}/values.yaml"
