@@ -12,7 +12,6 @@ stream {
     }
 
     server {
-        server_name {{ kubernetes.fqdn }}
         listen 6443;
         proxy_pass kube_apiserver;
     }
