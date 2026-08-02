@@ -6,7 +6,7 @@
     - name: Add Cilium Helm repository
       kubernetes.core.helm_repository:
         name: cilium
-        repo_url: "https://helm.cilium.io"
+        repo_url: "https://helm.cilium.io/cilium"
 
     - name: Deploy Cilium Helm chart
       kubernetes.core.helm:
@@ -15,7 +15,7 @@
         chart_version: "1.19.6"
         release_namespace: "kube-system"
         create_namespace: true
-        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+        kubeconfig: "/etc/kubernetes/admin.conf"
         values_files:
           - "values.yaml"
         wait: true
