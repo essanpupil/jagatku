@@ -7,6 +7,15 @@
       apt:
         update_cache: yes
         cache_valid_time: 3600
+
+    - name: Configure systemd-resolved
+      ansible.builtin.lineinfile:
+        line: "DNS=1.1.1.1 1.0.0.1 8.8.8.8 9.9.9.9"
+        dest: "/etc/systemd/resolved.conf"
+        owner: root
+        group: root
+        mode: "0644"
+
     - name: Install core packages
       apt:
         name:
@@ -21,7 +30,7 @@
           - systemd-resolved
         state: present
         update_cache: yes
-    
+
     - name: Enable systemd-resolved service
       ansible.builtin.systemd_service:
         name: systemd-resolved
@@ -104,7 +113,7 @@
         dest: /etc/containerd/config.toml
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
     - name: Restart containerd service
       service:
@@ -146,7 +155,7 @@
         remote_src: yes
         owner: root
         group: root
-        mode: '0755'
+        mode: "0755"
       become: true
 
     - name: Download and extract etcdctl binary
@@ -165,7 +174,7 @@
         remote_src: true
         owner: root
         group: root
-        mode: '07550'
+        mode: "07550"
 
     - name: Copy etcdutl binary to /usr/local/bin
       ansible.builtin.copy:
@@ -174,7 +183,7 @@
         remote_src: true
         owner: root
         group: root
-        mode: '07550'
+        mode: "07550"
 
     - name: Download and extract crictl binary for arm64 processor
       when: ansible_architecture == 'aarch64'
@@ -184,7 +193,7 @@
         remote_src: yes
         owner: root
         group: root
-        mode: '0755'
+        mode: "0755"
       become: true
 
     - name: Download and extract etcdctl binary for arm64 processor
@@ -205,7 +214,7 @@
         remote_src: true
         owner: root
         group: root
-        mode: '07550'
+        mode: "07550"
 
     - name: Copy etcdutl binary for arm64 processor to /usr/local/bin
       when: ansible_architecture == 'aarch64'
@@ -215,4 +224,4 @@
         remote_src: true
         owner: root
         group: root
-        mode: '07550'
+        mode: "07550"
