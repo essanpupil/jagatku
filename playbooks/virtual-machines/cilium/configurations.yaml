@@ -12,7 +12,7 @@
       kubernetes.core.helm:
         name: cilium
         chart_ref: cilium
-        chart_repo_url: "https://helm.cilium.io/cilium"
+        chart_repo_url: "https://helm.cilium.io"
         chart_version: "1.19.6"
         release_namespace: "kube-system"
         create_namespace: false
