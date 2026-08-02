@@ -39,11 +39,3 @@
         name: nginx
         state: started
         enabled: true
-
-    - name: Add static services hosts to /etc/hosts
-      ansible.builtin.lineinfile:
-        path: /etc/hosts
-        regexp: '.*{{ item.name }}$'
-        line: "{{ item.ip }}    {{ item.fqdn }} {{ item.name }}"
-        state: present
-      loop: "{{ local_domains }}"
