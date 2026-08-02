@@ -15,8 +15,11 @@
         release_namespace: "kube-system"
         create_namespace: false
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-        values_files:
-          - "{{ playbook_dir }}/values.yaml"
+        values:
+          cni:
+            enabled: true
+          ipam:
+            mode: kubernetes
         wait: true
       register: cilium_install_result
 
