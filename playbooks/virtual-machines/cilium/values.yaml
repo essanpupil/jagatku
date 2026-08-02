@@ -1,0 +1,4 @@
+cni:
+  enabled: true
+ipam:
+  mode: kubernetes
