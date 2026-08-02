@@ -8,20 +8,13 @@
         update_cache: yes
         cache_valid_time: 3600
 
-    - name: Configure systemd-resolved
+    - name: Configure emergency nameserver resolver
       ansible.builtin.lineinfile:
-        line: "DNS=1.1.1.1 1.0.0.1 8.8.8.8 9.9.9.9"
-        dest: "/etc/systemd/resolved.conf"
+        line: "nameserver 1.1.1.1"
+        dest: "/etc/resolv.conf"
         owner: root
         group: root
         mode: "0644"
-
-    - name: Enable systemd-resolved service
-      ansible.builtin.systemd_service:
-        name: systemd-resolved
-        state: restarted
-        enabled: true
-        daemon_reload: true
 
     - name: Install core packages
       apt:
@@ -37,6 +30,21 @@
           - systemd-resolved
         state: present
         update_cache: yes
+
+    - name: Configure systemd-resolved
+      ansible.builtin.lineinfile:
+        line: "DNS=1.1.1.1 1.0.0.1 8.8.8.8 9.9.9.9"
+        dest: "/etc/systemd/resolv.conf"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable systemd-resolved service
+      ansible.builtin.systemd_service:
+        name: systemd-resolved
+        state: restarted
+        enabled: true
+        daemon_reload: true
 
     - name: Create keyrings directory
       file:
