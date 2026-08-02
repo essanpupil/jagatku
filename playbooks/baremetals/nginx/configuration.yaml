@@ -15,7 +15,9 @@
 
     - name: Install Nginx package
       ansible.builtin.apt:
-        name: nginx
+        name:
+          - nginx
+          - libnginx-mod-stream. # Required to load balanced kubernetes api server
         state: present
 
     - name: Apply custom Nginx server configuration
