@@ -18,7 +18,7 @@ prometheus:
     ruleNamespaceSelector: {}
     remoteWrite:
       - name: "localPrometheus"
-        url: "http://192.168.1.2:9090/api/v1/write"
+        url: "http://prometheu.laptop1.local/api/v1/write"
     scrapeInterval: "30s"
     evaluationInterval: "30s"
     resources:

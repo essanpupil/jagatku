@@ -25,11 +25,11 @@ cluster:
 destinations:
   localPrometheus:
     type: prometheus
-    url: http://192.168.1.2:9090/api/v1/write
+    url: http://prometheus.laptop1.local/api/v1/write
 
   hostedLogs:
     type: loki
-    url: http://192.168.1.2:3100/loki/api/v1/push
+    url: http://loki.laptop1.local/loki/api/v1/push
     auth:
       # type: basic
       # username: "my-username"
