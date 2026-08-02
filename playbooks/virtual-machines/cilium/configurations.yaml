@@ -2,6 +2,11 @@
 - name: Install Cilium CNI via Helm
   hosts: laptop1
   tasks:
+    - name: Ensure helm-diff plugin is installed
+      kubernetes.core.helm_plugin:
+        plugin_path: https://github.com/databus23/helm-diff
+        state: present
+
     - name: Add Cilium Helm repository
       kubernetes.core.helm_repository:
         name: cilium
