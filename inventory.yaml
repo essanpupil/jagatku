@@ -50,14 +50,14 @@ all:
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.1.10
+              ansible_host: 192.168.1.51
               node_name: cp1
             cp2:
               ansible_user: vboxuser
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
               ansible_python_interpreter: /usr/bin/python3
-              ansible_host: 192.168.1.11
+              ansible_host: 192.168.1.52
               node_name: cp1
         workers:
           hosts:
