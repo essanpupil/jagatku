@@ -16,6 +16,13 @@
         group: root
         mode: "0644"
 
+    - name: Enable systemd-resolved service
+      ansible.builtin.systemd_service:
+        name: resolvconf
+        state: restarted
+        enabled: true
+        daemon_reload: true
+
     - name: Install core packages
       apt:
         name:
@@ -31,13 +38,6 @@
           - resolvconf
         state: present
         update_cache: yes
-
-    - name: Enable systemd-resolved service
-      ansible.builtin.systemd_service:
-        name: resolvconf
-        state: restarted
-        enabled: true
-        daemon_reload: true
 
     - name: Create keyrings directory
       file:
