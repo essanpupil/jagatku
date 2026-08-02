@@ -1,4 +1,6 @@
 # user nobody;
+include /etc/nginx/modules-enabled/*.conf;
+
 worker_processes 1;
 
 # Kubernetes control-plane settings
