@@ -5,6 +5,7 @@
     - name: Ensure helm-diff plugin is installed
       kubernetes.core.helm_plugin:
         plugin_path: https://github.com/databus23/helm-diff
+        verify: false
         state: present
 
     - name: Add Cilium Helm repository
