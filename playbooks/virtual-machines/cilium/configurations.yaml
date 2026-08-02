@@ -11,7 +11,7 @@
     - name: Deploy Cilium Helm chart
       kubernetes.core.helm:
         name: cilium
-        chart_ref: cilium/cilium
+        chart_ref: cilium
         chart_version: "1.19.6"
         release_namespace: "kube-system"
         create_namespace: true
