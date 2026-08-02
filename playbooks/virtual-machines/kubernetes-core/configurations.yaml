@@ -1,0 +1,25 @@
+---
+- name: Granular configuration control of kubernetes core services
+  hosts: node1
+  become: true
+  tasks:
+    - name: Copy etcd manifest
+      ansible.builtin.template:
+        src: etcd.yaml.j2
+        dest: /etc/kubernetes/manifests/etcd.yaml
+        mode: "0600"
+    - name: Copy kube-apiserver manifest
+      ansible.builtin.template:
+        src: kube-apiserver.yaml.j2
+        dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+        mode: "0600"
+    - name: Copy kube-controller-manager manifest
+      ansible.builtin.template:
+        src: kube-controller-manager.yaml.j2
+        dest: /etc/kubernetes/manifests/kube-controller-manager.yaml
+        mode: "0600"
+    - name: Copy kube-scheduler manifest
+      ansible.builtin.template:
+        src: kube-scheduler.yaml.j2
+        dest: /etc/kubernetes/manifests/kube-scheduler.yaml
+        mode: "0600"
