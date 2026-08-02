@@ -1,7 +1,6 @@
 ---
 - name: Install Cilium CNI via Helm
   hosts: laptop1
-  become: true
   tasks:
     - name: Add Cilium Helm repository
       kubernetes.core.helm_repository:
@@ -15,7 +14,7 @@
         chart_version: "1.19.6"
         release_namespace: "kube-system"
         create_namespace: true
-        kubeconfig: "/etc/kubernetes/admin.conf"
+        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         values_files:
           - "values.yaml"
         wait: true
