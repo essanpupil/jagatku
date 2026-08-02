@@ -3,10 +3,14 @@
   hosts: kube_nodes
   become: true
   tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+    - name: Configure emergency nameserver resolver
+      ansible.builtin.lineinfile:
+        line: "nameserver 1.1.1.1"
+        dest: "/etc/resolv.conf"
+        owner: root
+        group: root
+        mode: "0644"
+
     - name: Install core packages
       apt:
         name:
@@ -19,13 +23,20 @@
           - grep
           - nfs-common
           - systemd-resolved
-          - resolvconf
         state: present
-        # update_cache: yes
+        update_cache: yes
 
-    - name: Enable resolvconf service
+    - name: Configure systemd-resolved
+      ansible.builtin.lineinfile:
+        line: "DNS=1.1.1.1 8.8.8.8 9.9.9.9"
+        dest: "/etc/systemd/resolved.conf"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable systemd-resolved service
       ansible.builtin.systemd_service:
-        name: resolvconf
+        name: systemd-resolved
         state: restarted
         enabled: true
         daemon_reload: true
