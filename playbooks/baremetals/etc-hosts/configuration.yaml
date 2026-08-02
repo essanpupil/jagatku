@@ -10,3 +10,9 @@
         line: "{{ item.ip }}    {{ item.fqdn }} {{ item.name }}"
         state: present
       loop: "{{ local_domains }}"
+    - name: Add static kube-apiserver services hosts to /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '.*{{ kubernetes.name }}$'
+        line: "{{ kubernetes.ip }}    {{ kubernetes.fqdn }} {{ kubernetes.name }}"
+        state: present

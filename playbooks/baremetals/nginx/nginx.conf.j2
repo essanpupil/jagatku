@@ -1,7 +1,21 @@
 # user nobody;
 worker_processes 1;
 
+# Kubernetes control-plane settings
 events {}
+
+stream {
+    upstream kube_apiserver {
+        {% for host in groups['servers'] %}
+        server {{ hostvars[host]['ansible_host'] }}:6443;
+        {% endfor %}
+    }
+
+    server {
+        listen 6443;
+        proxy_pass kube_apiserver;
+    }
+}
 
 http {
     # This is required to proxy Grafana Live WebSocket connections.
