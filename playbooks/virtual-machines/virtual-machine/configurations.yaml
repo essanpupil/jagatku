@@ -28,8 +28,9 @@
 
     - name: Configure systemd-resolved
       ansible.builtin.lineinfile:
-        line: "DNS=1.1.1.1 8.8.8.8 9.9.9.9"
         dest: "/etc/systemd/resolved.conf"
+        regexp: "^#?DNS="
+        line: "DNS=1.1.1.1 8.8.8.8"
         owner: root
         group: root
         mode: "0644"
