@@ -28,13 +28,14 @@
           - grep
           - nfs-common
           - systemd-resolved
+          - resolvconf
         state: present
         update_cache: yes
 
     - name: Enable systemd-resolved service
       ansible.builtin.systemd_service:
-        name: systemd-resolved
-        state: started
+        name: resolvconf
+        state: restarted
         enabled: true
         daemon_reload: true
 
