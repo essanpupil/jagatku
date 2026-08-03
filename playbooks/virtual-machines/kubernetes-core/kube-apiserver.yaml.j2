@@ -44,7 +44,7 @@ spec:
     livenessProbe:
       failureThreshold: 8
       httpGet:
-        host: 192.168.1.12
+        host: {{ ansible_host }}
         path: /livez
         port: probe-port
         scheme: HTTPS
@@ -59,7 +59,7 @@ spec:
     readinessProbe:
       failureThreshold: 3
       httpGet:
-        host: 192.168.1.12
+        host: {{ ansible_host }}
         path: /readyz
         port: probe-port
         scheme: HTTPS
@@ -71,7 +71,7 @@ spec:
     startupProbe:
       failureThreshold: 24
       httpGet:
-        host: 192.168.1.12
+        host: {{ ansible_host }}
         path: /livez
         port: probe-port
         scheme: HTTPS
