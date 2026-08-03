@@ -1,25 +1,54 @@
 ---
 - name: Granular configuration control of kubernetes core services
-  hosts: node1
+  hosts: kube_nodes
   become: true
   tasks:
     - name: Copy etcd manifest
+      when: "'servers' in group_names"
       ansible.builtin.template:
         src: etcd.yaml.j2
         dest: /etc/kubernetes/manifests/etcd.yaml
         mode: "0600"
     - name: Copy kube-apiserver manifest
+      when: "'servers' in group_names"
       ansible.builtin.template:
         src: kube-apiserver.yaml.j2
         dest: /etc/kubernetes/manifests/kube-apiserver.yaml
         mode: "0600"
     - name: Copy kube-controller-manager manifest
+      when: "'servers' in group_names"
       ansible.builtin.template:
         src: kube-controller-manager.yaml.j2
         dest: /etc/kubernetes/manifests/kube-controller-manager.yaml
         mode: "0600"
     - name: Copy kube-scheduler manifest
+      when: "'servers' in group_names"
       ansible.builtin.template:
         src: kube-scheduler.yaml.j2
         dest: /etc/kubernetes/manifests/kube-scheduler.yaml
         mode: "0600"
+
+    - name: DNS resolver for kubernetes
+      ansible.builtin.copy:
+        dest: /etc/kubernetes/resolv.conf
+        content: |
+          nameserver 1.1.1.1
+          nameserver 8.8.8.8
+          nameserver 9.9.9.9
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Redirect Kubelet DNS to custom resolv.conf
+      ansible.builtin.lineinfile:
+        path: /var/lib/kubelet/config.yaml
+        regexp: "^resolvConf:"
+        line: "resolvConf: /etc/kubernetes/resolv.conf"
+      notify: Restart Kubelet
+
+  handlers:
+    - name: Restart Kubelet
+      ansible.builtin.systemd:
+        name: kubelet
+        state: restarted
+        daemon_reload: yes
