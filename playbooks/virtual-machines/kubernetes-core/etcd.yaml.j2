@@ -18,7 +18,6 @@ spec:
     - --data-dir=/var/lib/etcd
     - --feature-gates=InitialCorruptCheck=true
     - --initial-advertise-peer-urls=https://{{ ansible_host }}:2380
-    - --initial-cluster={% for host in groups['servers'] %}{{ hostvars[host]['node_name'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}
     - --key-file=/etc/kubernetes/pki/etcd/server.key
     - --listen-client-urls=https://127.0.0.1:2379,https://{{ ansible_host }}:2379
     - --listen-metrics-urls=http://127.0.0.1:2381
@@ -31,6 +30,7 @@ spec:
     - --snapshot-count=10000
     - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
     - --watch-progress-notify-interval=5s
+    - --initial-cluster={% for host in groups['servers'] %}{{ hostvars[host]['node_name'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}
     image: registry.k8s.io/etcd:3.6.8-0
     imagePullPolicy: IfNotPresent
     livenessProbe:
