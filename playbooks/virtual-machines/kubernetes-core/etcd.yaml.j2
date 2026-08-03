@@ -18,7 +18,7 @@ spec:
     - --data-dir=/var/lib/etcd
     - --feature-gates=InitialCorruptCheck=true
     - --initial-advertise-peer-urls=https://{{ ansible_host }}:2380
-    - --initial-cluster={% for host in groups['servers'] %}{{ hostvars[host]['node_name'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}{{ '\n' | safe }}
+    - --initial-cluster={% for host in groups['servers'] %}{{ hostvars[host]['node_name'] }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}
     - --key-file=/etc/kubernetes/pki/etcd/server.key
     - --listen-client-urls=https://127.0.0.1:2379,https://{{ ansible_host }}:2379
     - --listen-metrics-urls=http://127.0.0.1:2381
