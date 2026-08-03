@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'terraform-configs/**'
+      - "terraform-configs/**"
 permissions:
   security-events: read
   contents: read
@@ -57,15 +57,15 @@ jobs:
       - name: Terraform init
         working-directory: ./${{ matrix.terraforms }}
         env:
-            GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: terraform init
       - name: Terraform plan
         id: tfplan
         working-directory: ./${{ matrix.terraforms }}
         env:
-            TF_VAR_token: ${{ secrets.GH_PAT }}
-            TF_CLI_ARGS: "-no-color"
-        run: terraform plan | tee plan.txt
+          TF_VAR_token: ${{ secrets.GH_PAT }}
+          TF_CLI_ARGS: "-no-color"
+        run: terraform plan 2>&1 | tee plan.txt
         continue-on-error: true
       - name: Prepend playbook path for identification
         working-directory: ./${{ matrix.terraforms }}
@@ -84,7 +84,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: './${{ matrix.terraforms }}/terraform_plan.md'
+          body-path: "./${{ matrix.terraforms }}/terraform_plan.md"
       - name: State workflow to fail
         if: steps.tfplan.outcome == 'failure'
         run: |
