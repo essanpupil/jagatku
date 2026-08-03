@@ -13,6 +13,10 @@ all:
       name: kubernetes
       ip: "192.168.1.50"
       fqdn: "kubernetes.jagat.local"
+    loki:
+      name: loki
+      ip: "192.168.1.50"
+      fqdn: "loki.laptop1.local"
     local_domains:
       - name: "grafana"
         ip: "192.168.1.50"
