@@ -30,7 +30,7 @@ scrape_configs:
     static_configs:
       - targets: ['{{ ansible_host }}:9090']
 
-  - job_name: 'node_exporter'
+  - job_name: 'node-exporter'
     scrape_interval: 15s
     static_configs:
       - targets:
@@ -38,3 +38,9 @@ scrape_configs:
     {% for host in groups['kube_nodes'] %}
       - '{{ hostvars[host]['ansible_host'] }}:9100'
     {% endfor %}
+
+  - job_name: 'nginx'
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - 'localhost:8080'
