@@ -21,6 +21,22 @@ all:
       name: "nfs"
       ip: "192.168.1.50"
       fqdn: "nfs.laptop1.local"
+    prometheus:
+      name: "prometheus"
+      ip: "192.168.1.50"
+      fqdn: "prometheus.laptop1.local"
+    grafana:
+      name: "grafana"
+      ip: "192.168.1.50"
+      fqdn: "grafana.laptop1.local"
+    consul:
+      name: "consul"
+      ip: "192.168.1.50"
+      fqdn: "consul.laptop1.local"
+    vault:
+      name: "vault"
+      ip: "192.168.1.50"
+      fqdn: "vault.laptop1.local"
 
     local_domains:
       - name: "grafana"

@@ -35,46 +35,39 @@ http {
     # Prometheus configuration
     server {
         listen 80;
-        server_name prometheus.laptop1.local;
+        server_name {{ prometheus.fqdn }};
 
         location / {
             proxy_pass http://127.0.0.1:9090/;
         }
     }
 
-    # This is required to proxy Grafana Live WebSocket connections.
-    map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-    }
-
-    upstream grafana {
-        server localhost:3000;
-    }
-
-    upstream loki {
-        server 127.0.0.1:3100;
-    }
-
+    # Loki configuration
     server {
-        server_name {% for domain in local_domains %}{% if domain.name == 'loki' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        server_name {{ loki.fqdn }};
         listen 80;
 
         location / {
-            proxy_pass http://loki;
+            proxy_pass http://127.0.0.1:3100;
             # proxy_set_header Host $host;
             # proxy_http_version 1.1;
         }
     }
 
+    # Grafana
+    # This is required to proxy Grafana Live WebSocket connections.
+    map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+    }
     server {
-        server_name {% for domain in local_domains %}{% if domain.name == 'grafana' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        server_name {{ grafana.fqdn }};
         listen 80;
         root /usr/share/nginx/html;
         index index.html index.htm;
 
         location / {
-            proxy_pass http://grafana;
+            proxy_pass http://127.0.0.1:3000;
             proxy_set_header Host $host;
         }
 
@@ -89,14 +82,9 @@ http {
     }
 
     # Consul settings
-    upstream consul_backend {
-        server 127.0.0.1:8500;
-        keepalive 32;
-    }
-
     server {
         listen 80;
-        server_name {% for domain in local_domains %}{% if domain.name == 'consul' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        server_name {{ consul.fqdn }};
 
         # Optimize logs for API traffic
         access_log /var/log/nginx/consul_access.log;
@@ -104,7 +92,7 @@ http {
 
         # Proxy all traffic to Consul
         location / {
-            proxy_pass http://consul_backend;
+            proxy_pass http://127.0.0.1:8500;
 
             # Required HTTP headers for Consul UI & API stability
             proxy_set_header Host $host;
@@ -123,15 +111,11 @@ http {
     }
 
     # Hashicorp vault settings
-    upstream hashicorp_vault {
-        server 127.0.0.1:8200;
-    }
-
     server {
         listen 80;
-        server_name {% for domain in local_domains %}{% if domain.name == 'vault' %}{{ domain.fqdn }}{% endif %}{% endfor %};
+        server_name {{ vault.fqdn }};
         location / {
-            proxy_pass http://hashicorp_vault;
+            proxy_pass 127.0.0.1:8200;
         }
     }
 }
