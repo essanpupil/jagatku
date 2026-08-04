@@ -20,6 +20,18 @@ stream {
 }
 
 http {
+    # Metric block configured to be scraped by prometheus
+    server {
+        listen 127.0.0.1:8080;
+        server_name localhost;
+
+        location /nginx_status {
+            stub_status on;
+            allow 127.0.0.1;       # Only allow local connections
+            deny all;              # Deny everyone else
+        }
+    }
+
     # This is required to proxy Grafana Live WebSocket connections.
     map $http_upgrade $connection_upgrade {
     default upgrade;
