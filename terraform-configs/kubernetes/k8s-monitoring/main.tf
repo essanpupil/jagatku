@@ -22,6 +22,8 @@ resource "kubernetes_config_map_v1_data" "example" {
     name      = "coredns"
     namespace = "kube-system"
   }
+  force = true
+
   data = {
     "Corefile" = <<-EOF
       .:53 {
