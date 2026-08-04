@@ -77,7 +77,7 @@ http {
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection $connection_upgrade;
             proxy_set_header Host $host;
-            proxy_pass http://grafana;
+            proxy_pass http://127.0.0.1:3000;
         }
     }
 
@@ -115,7 +115,7 @@ http {
         listen 80;
         server_name {{ vault.fqdn }};
         location / {
-            proxy_pass 127.0.0.1:8200;
+            proxy_pass http://127.0.0.1:8200;
         }
     }
 }
