@@ -37,6 +37,7 @@ resource "kubernetes_config_map_v1_data" "example" {
           # Format: IP_ADDRESS HOSTNAME
           192.168.1.50 prometheus.laptop1.local
           192.168.1.50 loki.laptop1.local
+          192.168.1.50 nfs.laptop1.local
           # fallthrough passes unmatched queries to next plugin
           fallthrough
         }
