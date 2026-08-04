@@ -25,7 +25,7 @@ http {
         listen 127.0.0.1:8080;
         server_name localhost;
 
-        location /nginx_status {
+        location /stub_status {
             stub_status on;
             allow 127.0.0.1;       # Only allow local connections
             deny all;              # Deny everyone else
