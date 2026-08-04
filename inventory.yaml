@@ -17,6 +17,11 @@ all:
       name: loki
       ip: "192.168.1.50"
       fqdn: "loki.laptop1.local"
+    nfs:
+      name: "nfs"
+      ip: "192.168.1.50"
+      fqdn: "nfs.laptop1.local"
+
     local_domains:
       - name: "grafana"
         ip: "192.168.1.50"
