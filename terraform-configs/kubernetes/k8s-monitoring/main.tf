@@ -17,28 +17,44 @@ resource "helm_release" "k8s_monitoring" {
   ]
 }
 
-#trivy:ignore:KSV0108
-resource "kubernetes_service_v1" "prometheus_external" {
+resource "kubernetes_config_map_v1_data" "example" {
   metadata {
-    name      = "prometheus-external"
-    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    name      = "coredns"
+    namespace = "kube-system"
   }
-  spec {
-    type = "ExternalName"
-    #trivy:ignore:KSV0108
-    external_name = "prometheus.laptop1.local"
-  }
-}
-
-#trivy:ignore:KSV0108
-resource "kubernetes_service_v1" "loki_external" {
-  metadata {
-    name      = "loki-external"
-    namespace = kubernetes_namespace_v1.this.metadata[0].name
-  }
-  spec {
-    type = "ExternalName"
-    #trivy:ignore:KSV0108
-    external_name = "loki.laptop1.local"
+  data = {
+    "Corefile" = <<-EOF
+      .:53 {
+        errors
+        health {
+          lameduck 5s
+        }
+        ready
+        # Custom private dns entries
+        hosts {
+          # Format: IP_ADDRESS HOSTNAME
+          192.168.1.50 prometheus.laptop1.local
+          192.168.1.50 loki.laptop1.local
+          # fallthrough passes unmatched queries to next plugin
+          fallthrough
+        }
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+          pods insecure
+          fallthrough in-addr.arpa ip6.arpa
+          ttl 30
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+          max_concurrent 1000
+        }
+        cache 30 {
+          disable success cluster.local
+          disable denial cluster.local
+        }
+        loop
+        reload
+        loadbalance
+    }
+  EOF
   }
 }
