@@ -6,7 +6,7 @@ storageClass:
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
   parameters:
-    server: "{{ nfs.ip }}"
+    server: "nfs.laptop1.local"
     share: /mnt/kube_data
   reclaimPolicy: Delete
   volumeBindingMode: Immediate
