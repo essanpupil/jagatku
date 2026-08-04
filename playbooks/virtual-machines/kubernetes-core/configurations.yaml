@@ -1,6 +1,7 @@
 ---
 - name: Granular configuration control of kubernetes core services
   hosts: kube_nodes
+  serial: 1 # Make sure control plane nodes are configured one by one to prevent API failure
   become: true
   tasks:
     - name: Copy etcd manifest
