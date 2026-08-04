@@ -16,3 +16,29 @@ resource "helm_release" "k8s_monitoring" {
     file("${path.module}/values.yaml")
   ]
 }
+
+#trivy:ignore:KSV0108
+resource "kubernetes_service_v1" "prometheus_external" {
+  metadata {
+    name      = "prometheus-external"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+  spec {
+    type = "ExternalName"
+    #trivy:ignore:KSV0108
+    external_name = "prometheus.laptop1.local"
+  }
+}
+
+#trivy:ignore:KSV0108
+resource "kubernetes_service_v1" "loki_external" {
+  metadata {
+    name      = "loki-external"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+  spec {
+    type = "ExternalName"
+    #trivy:ignore:KSV0108
+    external_name = "loki.laptop1.local"
+  }
+}
