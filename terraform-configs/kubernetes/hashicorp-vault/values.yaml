@@ -1,0 +1,7 @@
+server:
+  enabled: false
+  dev:
+    enabled: false
+injector:
+  enabled: true
+  externalVaultAddr: "http://vault.laptop1.local"
