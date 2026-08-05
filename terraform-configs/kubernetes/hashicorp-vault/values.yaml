@@ -4,4 +4,4 @@ server:
     enabled: false
 injector:
   enabled: true
-  externalVaultAddr: "vault.laptop1.local"
+  externalVaultAddr: "http://vault.laptop1.local"
