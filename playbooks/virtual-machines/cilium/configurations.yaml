@@ -18,7 +18,9 @@
         create_namespace: false
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
         values:
-          k8sServiceHost: "auto"
+          k8sServiceHost: "{{ kubernetes.fqdn }}"
+          k8sServicePort: "6443"
+          kubeProxyReplacement: "true"
         wait: true
       register: cilium_install_result
 
