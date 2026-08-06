@@ -12,9 +12,35 @@
         kind: DaemonSet
         namespace: kube-system
         name: kube-proxy
+    - name: Delete kube-proxy Configmap
+      when: inventory_hostname == 'node1'
+      delegate_to: laptop1
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Configmap
+        namespace: kube-system
+        name: kube-proxy
+
+    - name: Check if kube-proxy nft table exists for ip4
+      ansible.builtin.command: nft list table ip kube-proxy
+      register: table_check
+      failed_when: false
+      changed_when: false
+      become: true
     - name: Clear kube-proxy nft tables ip4
-      ansible.builtin.command: sudo nft delete table ip kube-proxy
+      ansible.builtin.command: nft delete table ip kube-proxy
+      when: table_check.rc == 0
+      become: true
+
+    - name: Check if kube-proxy nft table exists for ip6
+      ansible.builtin.command: nft list table ip6 kube-proxy
+      register: table_check
+      failed_when: false
       changed_when: false
+      become: true
+
     - name: Clear kube-proxy nft tables ip6
-      ansible.builtin.command: sudo nft delete table ip6 kube-proxy
-      changed_when: false
+      ansible.builtin.command: nft delete table ip6 kube-proxy
+      when: table_check.rc == 0
+      become: true
