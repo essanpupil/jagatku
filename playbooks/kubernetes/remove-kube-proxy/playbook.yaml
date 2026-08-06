@@ -1,0 +1,17 @@
+---
+- name: Remove kube-proxy that will be rpelaced by cilium
+  hosts: kube_nodes
+  serial: 1
+  tasks:
+    - name: Delete kube-proxy DaemonSet
+      when: inventory_hostname == 'node1'
+      delegate_to: laptop1
+      kubernetes.core.k8s:
+        state: absent
+        api_version: apps/v1
+        kind: DaemonSet
+        namespace: kube-system
+        name: kube-proxy
+    - name: Restore iptables
+      ansible.builtin.command: iptables-save | grep -v KUBE | iptables-restore
+      changed_when: false
