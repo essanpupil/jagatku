@@ -21,6 +21,8 @@
           k8sServiceHost: "{{ kubernetes.fqdn }}"
           k8sServicePort: "6443"
           kubeProxyReplacement: "true"
+          bpf:
+            masquerade: true
         wait: true
       register: cilium_install_result
 
