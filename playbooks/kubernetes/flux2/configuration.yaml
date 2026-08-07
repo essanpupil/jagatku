@@ -5,7 +5,7 @@
     - name: Deploy Flux CD Helm chart
       kubernetes.core.helm:
         name: flux2
-        chart_ref: flux2
+        chart_ref: fluxcd-community/flux2
         chart_repo_url: "https://fluxcd-community.github.io/helm-charts"
         chart_version: "2.19.0"
         release_namespace: "flux-system"
