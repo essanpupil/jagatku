@@ -3,4 +3,4 @@ misconfigurations:
     statement: "Risk accepted and acknowledged"
     paths:
       - coredns-apiserver.yaml
-      - alloy-coredns.yaml
+      - alloy-network-policy.yaml
