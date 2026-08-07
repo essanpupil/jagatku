@@ -1,6 +1,6 @@
 loki.write "loki_endpoint" {
   endpoint {
-    url = "http://{{ loki_local_domain }}/loki/api/v1/push"
+    url = "http://{{ loki.fqdn }}/loki/api/v1/push"
   }
 }
 
