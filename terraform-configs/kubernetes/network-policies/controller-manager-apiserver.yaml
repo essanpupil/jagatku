@@ -1,12 +1,12 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: coredns-kube-apiserver
+  name: controller-manager-apiserver
   namespace: kube-system
 spec:
   endpointSelector:
     matchLabels:
-      k8s-app: kube-dns
+      component: kube-controller-manager
   egress:
     - toEntities:
         - kube-apiserver

@@ -3,3 +3,5 @@ misconfigurations:
     statement: "Risk accepted and acknowledged"
     paths:
       - coredns-apiserver.yaml
+      - controller-manager-apiserver.yaml
+      - scheduler-apiserver.yaml
