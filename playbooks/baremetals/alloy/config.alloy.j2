@@ -1,22 +1,15 @@
-// prometheus.remote_write "default" {
-//   endpoint {
-//     url = "http://192.168.1.2:9090/api/v1/write"
-//     // basic_auth {
-//     //   username = "your-username"
-//     //   password = "your-password"
-//     // }
-//   }
-// }
-
 loki.write "loki_endpoint" {
   endpoint {
-    url = "http://{{ loki_local_domain }}/loki/api/v1/push"
+    url = "http://{{ loki.fqdn }}/loki/api/v1/push"
   }
 }
 
 local.file_match "debian_logs" {
   path_targets = [
-    { "__path__" = "/var/log/**.log" },
+    {
+      "__path__" = "/var/log/**.log",
+      "node_name"        = "{{ node_name }}",
+    },
   ]
 }
 
@@ -29,7 +22,9 @@ loki.source.journal "system" {
   forward_to = [loki.write.loki_endpoint.receiver]
   format_as_json = true
   relabel_rules = loki.relabel.journal.rules
-  labels        = { job = "log_collection" }
+  labels        = {
+    job = "journald_log",
+  }
 }
 
 loki.relabel "journal" {
@@ -39,104 +34,8 @@ loki.relabel "journal" {
     source_labels = ["__journal__systemd_unit"]
     target_label  = "service_name"
   }
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "node_name"
+  }
 }
-
-// local.file "auth_vault_metrics" {
-//   filename  = "/etc/alloy/.auth_vault_metrics"
-//   is_secret = true
-// }
-
-// prometheus.scrape "vault" {
-//   forward_to = [prometheus.remote_write.default.receiver]
-//   targets = [
-//     {"__address__" = "{{ ansible_host }}:8200"},
-//   ]
-//   scheme = "http"
-//   job_name = "vault"
-//   scrape_interval = "10s"
-//   scrape_timeout = "5s"
-//   params = {
-//     format = ["prometheus"],
-//   }
-//   metrics_path = "/v1/sys/metrics"
-//   basic_auth {
-//     username = "vault_metrics"
-//     password = local.file.auth_vault_metrics.content
-//   }
-// }
-
-// prometheus.exporter.consul "consul_health" {
-//   server = "http://{{ ansible_host }}:8500"
-// }
-// prometheus.scrape "scrape_consul_cluster" {
-//   targets    = prometheus.exporter.consul.consul_health.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-
-// discovery.kubernetes "cluster_services" {
-//   role = "service"
-//   kubeconfig_file = "/home/essan/.kube/config"
-// }
-//
-// prometheus.scrape "service_metrics" {
-//   targets    = discovery.kubernetes.cluster_services.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-//
-// discovery.kubernetes "cluster_ingress" {
-//   role = "ingress"
-//   kubeconfig_file = "/home/essan/.kube/config"
-// }
-//
-// prometheus.scrape "ingress_metrics" {
-//   targets    = discovery.kubernetes.cluster_ingress.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-//
-// discovery.kubernetes "cluster_nodes" {
-//   role = "node"
-//   api_server = "{{ hostvars['node1']['ansible_host'] }}"
-//   kubeconfig_file = "/home/essan/.kube/config"
-//   enable_http2 = true
-// }
-// prometheus.scrape "node_metrics" {
-//   targets    = discovery.kubernetes.cluster_nodes.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-//
-// discovery.kubernetes "cluster_endpointslices" {
-//   role = "endpointslice"
-//   kubeconfig_file = "/home/essan/.kube/config"
-// }
-//
-// prometheus.scrape "endpointslice_metrics" {
-//   targets    = discovery.kubernetes.cluster_endpointslices.targets
-//   forward_to = [prometheus.remote_write.default.receiver]
-// }
-
-// loki.source.kubernetes_events "cluster_events" {
-//   job_name   = "integrations/kubernetes/eventhandler"
-//   log_format = "logfmt"
-//   forward_to = [
-//     loki.process.cluster_events.receiver,
-//   ]
-//   client {
-//     kubeconfig_file = "/home/essan/.kube/config"
-//   }
-// }
-//
-// loki.process "cluster_events" {
-//   forward_to = [loki.write.loki_endpoint.receiver]
-//
-//   stage.static_labels {
-//     values = {
-//       cluster = "kubernetes",
-//     }
-//   }
-//
-//   stage.labels {
-//     values = {
-//       kubernetes_cluster_events = "job",
-//     }
-//   }
-// }
