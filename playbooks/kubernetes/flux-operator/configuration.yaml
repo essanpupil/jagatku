@@ -5,7 +5,7 @@
     - name: Deploy Flux CD Helm chart
       kubernetes.core.helm:
         name: flux-operator
-        chart_ref: "oci://ghcr.io/controlplaneio-fluxcd/charts/"
+        chart_ref: "oci://ghcr.io/controlplaneio-fluxcd/charts"
         chart_version: "1.19.6"
         release_namespace: "flux-system"
         create_namespace: true
