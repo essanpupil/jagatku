@@ -8,7 +8,7 @@ local.file_match "debian_logs" {
   path_targets = [
     {
       "__path__" = "/var/log/**.log",
-      "node_name"        = "{{ node_name }}"
+      "node_name"        = "{{ node_name }}",
     },
   ]
 }
