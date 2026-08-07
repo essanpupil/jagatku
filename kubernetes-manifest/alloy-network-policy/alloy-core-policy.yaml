@@ -48,3 +48,24 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: observability
         app.kubernetes.io/name: alloy-singleton
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "alloy-egress-to-observability"
+  namespace: observability
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: alloy-singleton
+  egress:
+  - toFQDNs:
+      - matchName: "prometheus.laptop1.local"
+    toPorts:
+      - ports:
+          - port: "80"
+            protocol: TCP
+          - port: "443"
+            protocol: TCP
+          - port: "3100"
+            protocol: TCP
