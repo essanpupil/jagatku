@@ -9,6 +9,7 @@ local.file_match "debian_logs" {
     {
       "__path__"         = "/var/log/**.log",
       "__path_exclude__" = "/var/log/pods/**/*.log",
+      "node_name"        = "{{ node_name }}"
     },
   ]
 }
@@ -22,7 +23,10 @@ loki.source.journal "system" {
   forward_to = [loki.write.loki_endpoint.receiver]
   format_as_json = true
   relabel_rules = loki.relabel.journal.rules
-  labels        = { job = "log_collection" }
+  labels        = {
+    job = "journald_log",
+    node_name = "{{ node_name }}"
+  }
 }
 
 loki.relabel "journal" {
@@ -40,7 +44,10 @@ discovery.docker "linux" {
 loki.source.docker "default" {
   host       = "unix:///var/run/docker.sock"
   targets    = discovery.docker.linux.targets
-  labels     = {"app" = "docker"}
+  labels     = {
+    "app" = "docker",
+    "node_name" = "{{ node_name }}"
+  }
   forward_to = [loki.write.loki_endpoint.receiver]
 }
 
@@ -79,5 +86,9 @@ loki.relabel "kubernetes_pods" {
   rule {
     target_label = "job"
     replacement  = "kubernetes-pods"
+  }
+  rule {
+    target_label = "node_name"
+    replacement  = "{{ node_name }}"
   }
 }
