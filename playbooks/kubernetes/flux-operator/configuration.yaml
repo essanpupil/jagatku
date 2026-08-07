@@ -4,9 +4,8 @@
   tasks:
     - name: Deploy Flux CD Helm chart
       kubernetes.core.helm:
-        name: cilium
-        chart_ref: cilium
-        chart_repo_url: "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator"
+        name: flux-operator
+        chart_ref: "oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator"
         chart_version: "1.19.6"
         release_namespace: "flux-system"
         create_namespace: true
