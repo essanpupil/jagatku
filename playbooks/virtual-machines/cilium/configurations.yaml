@@ -24,6 +24,12 @@
           policyEnforcementMode: "always"
           bpf:
             masquerade: true
+          hubble:
+            enabled: true
+            relay:
+              enabled: true
+            ui:
+              enabled: true
         wait: true
       register: cilium_install_result
 
