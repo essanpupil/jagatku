@@ -49,7 +49,7 @@ loki.source.docker "default" {
   targets    = discovery.docker.linux.targets
   labels     = {
     "app" = "docker",
-    "node_name" = "{{ node_name }}"
+    "node_name" = "{{ node_name }}",
   }
   forward_to = [loki.write.loki_endpoint.receiver]
 }
