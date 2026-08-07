@@ -25,7 +25,6 @@ loki.source.journal "system" {
   relabel_rules = loki.relabel.journal.rules
   labels        = {
     job = "journald_log",
-    node_name = "{{ node_name }}"
   }
 }
 
@@ -34,6 +33,10 @@ loki.relabel "journal" {
   rule {
     source_labels = ["__journal__systemd_unit"]
     target_label  = "service_name"
+  }
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "node_name"
   }
 }
 
