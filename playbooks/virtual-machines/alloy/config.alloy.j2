@@ -9,7 +9,7 @@ local.file_match "debian_logs" {
     {
       "__path__"         = "/var/log/**.log",
       "__path_exclude__" = "/var/log/pods/**/*.log",
-      "node_name"        = "{{ node_name }}"
+      "node_name"        = "{{ node_name }}",
     },
   ]
 }
