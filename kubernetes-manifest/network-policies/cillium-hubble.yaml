@@ -37,96 +37,91 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: hubble-core-communication
+  name: hubble-relay-to-hubble-peer
   namespace: kube-system
 spec:
   endpointSelector:
-    matchExpressions:
-      - key: app.kubernetes.io/name
-        operator: In
-        values:
-          - hubble-relay
-          - cilium-agent
+    matchLabels:
+      app.kubernetes.io/name: hubble-peer
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s-app: hubble-ui
-            app.kubernetes.io/name: hubble-ui
-      toPorts:
-        - ports:
-            - port: "8090"
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            k8s-app: hubble-relay
             app.kubernetes.io/name: hubble-relay
       toPorts:
         - ports:
-            - port: "4244"
+            - port: "443"
               protocol: TCP
----
-apiVersion: "cilium.io/v2"
-kind: CiliumClusterwideNetworkPolicy
-metadata:
-  name: "cilium-node-infrastructure-requirements"
-spec:
-  description: "Allow internal Cilium node-to-node overlay, health checks, and Hubble communication."
-  # Menargetkan seluruh node/host di dalam klaster
-  nodeSelector:
-    matchLabels: {}
+    # - fromEndpoints:
+    #     - matchLabels:
+    #         k8s-app: hubble-relay
+    #         app.kubernetes.io/name: hubble-relay
+    #   toPorts:
+    #     - ports:
+    #         - port: "4244"
+    #           protocol: TCP
+# ---
+# apiVersion: "cilium.io/v2"
+# kind: CiliumClusterwideNetworkPolicy
+# metadata:
+#   name: "cilium-node-infrastructure-requirements"
+# spec:
+#   description: "Allow internal Cilium node-to-node overlay, health checks, and Hubble communication."
+#   # Menargetkan seluruh node/host di dalam klaster
+#   nodeSelector:
+#     matchLabels: {}
   
-  # Aturan Ingress (Lalu lintas masuk ke node)
-  ingress:
-    # 1. Overlay Network (VXLAN)
-  - fromNodes:
-    - matchLabels: {}
-    toPorts:
-    - ports:
-      - port: "8472"
-        protocol: UDP
+#   # Aturan Ingress (Lalu lintas masuk ke node)
+#   ingress:
+#     # 1. Overlay Network (VXLAN)
+#   - fromNodes:
+#     - matchLabels: {}
+#     toPorts:
+#     - ports:
+#       - port: "8472"
+#         protocol: UDP
 
-    # 2. Cilium Health Checks (TCP & ICMP)
-  - fromNodes:
-    - matchLabels: {}
-    toPorts:
-    - ports:
-      - port: "4240"
-        protocol: TCP
-    icmps:
-    - fields:
-      - type: 0
-        code: 0
-      - type: 8
-        code: 0
+#     # 2. Cilium Health Checks (TCP & ICMP)
+#   - fromNodes:
+#     - matchLabels: {}
+#     toPorts:
+#     - ports:
+#       - port: "4240"
+#         protocol: TCP
+#     icmps:
+#     - fields:
+#       - type: 0
+#         code: 0
+#       - type: 8
+#         code: 0
 
-    # 3. Hubble Server & Hubble Relay
-  - fromNodes:
-    - matchLabels: {}
-    toPorts:
-    - ports:
-      - port: "4244"
-        protocol: TCP
-      - port: "4245"
-        protocol: TCP
+#     # 3. Hubble Server & Hubble Relay
+#   - fromNodes:
+#     - matchLabels: {}
+#     toPorts:
+#     - ports:
+#       - port: "4244"
+#         protocol: TCP
+#       - port: "4245"
+#         protocol: TCP
 
-  # Aturan Egress (Lalu lintas keluar dari node)
-  egress:
-    # Mengizinkan node untuk mengirim balik traffic yang sama ke node lainnya
-  - toNodes:
-    - matchLabels: {}
-    toPorts:
-    - ports:
-      - port: "8472"
-        protocol: UDP
-      - port: "4240"
-        protocol: TCP
-      - port: "4244"
-        protocol: TCP
-      - port: "4245"
-        protocol: TCP
-    icmps:
-    - fields:
-      - type: 0
-        code: 0
-      - type: 8
-        code: 0
+#   # Aturan Egress (Lalu lintas keluar dari node)
+#   egress:
+#     # Mengizinkan node untuk mengirim balik traffic yang sama ke node lainnya
+#   - toNodes:
+#     - matchLabels: {}
+#     toPorts:
+#     - ports:
+#       - port: "8472"
+#         protocol: UDP
+#       - port: "4240"
+#         protocol: TCP
+#       - port: "4244"
+#         protocol: TCP
+#       - port: "4245"
+#         protocol: TCP
+#     icmps:
+#     - fields:
+#       - type: 0
+#         code: 0
+#       - type: 8
+#         code: 0
