@@ -22,6 +22,9 @@
           k8sServicePort: "6443"
           kubeProxyReplacement: "true"
           policyEnforcementMode: "always"
+          routingMode: tunnel
+          tunnelProtocol: vxlan
+          healthPort: 9879
           bpf:
             masquerade: true
           hubble:
