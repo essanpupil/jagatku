@@ -69,3 +69,16 @@ spec:
             protocol: TCP
           - port: "3100"
             protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: kube-apiserver-ingress-alloy
+  namespace: observability
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: alloy-operator
+  egress:
+  - toEntities:
+      - kube-apiserver
