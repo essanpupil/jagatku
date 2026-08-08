@@ -33,3 +33,21 @@ spec:
   - fromEndpoints:
     - matchLabels:
         app.kubernetes.io/name: hubble-relay
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-hubble-relay-to-peer
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s-app: cilium
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s-app: hubble-relay
+    toPorts:
+    - ports:
+      - port: "4244"
+        protocol: TCP
