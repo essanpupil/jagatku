@@ -1,3 +1,4 @@
+---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -8,13 +9,27 @@ spec:
     matchLabels:
       app.kubernetes.io/name: hubble-relay
   egress:
-  - toEntities:
-      - kube-apiserver
-  - toEndpoints:
+    - toEntities:
+        - kube-apiserver
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+          - port: "53"
+            protocol: UDP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "allow-coredns-from-hubble-relay"
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s-app: kube-dns
+  ingress:
+  - fromEndpoints:
     - matchLabels:
-        "k8s:io.kubernetes.pod.namespace": kube-system
-        k8s-app: kube-dns
-    toPorts:
-    - ports:
-      - port: "53"
-        protocol: UDP
+        app.kubernetes.io/name: hubble-relay
