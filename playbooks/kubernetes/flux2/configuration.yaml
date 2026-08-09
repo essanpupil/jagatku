@@ -12,31 +12,11 @@
         release_namespace: "{{ helm_namespace }}"
         create_namespace: true
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-        values:
-          installCRDs: true
+        # values:
+        #   installCRDs: true
         wait: true
       register: install_result
 
     - name: Display Cilium installation summary
       ansible.builtin.debug:
         var: install_result
-
-    - name: Configure network policy to core kube services
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: "cilium.io/v2"
-          kind: CiliumNetworkPolicy
-          metadata:
-            name: flux-to-apiserver
-            namespace: "{{ helm_namespace }}"
-          spec:
-            endpointSelector:
-              matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                    - flux-operator
-            egress:
-              - toEntities:
-                  - kube-apiserver
