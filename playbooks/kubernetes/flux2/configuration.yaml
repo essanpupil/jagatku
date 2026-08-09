@@ -4,27 +4,16 @@
   tasks:
     - name: Deploy Flux CD Helm chart
       kubernetes.core.helm:
-        name: flux2
-        chart_ref: flux2
-        chart_repo_url: "https://fluxcd-community.github.io/helm-charts"
-        chart_version: "2.19.0"
+        name: flux-operator
+        chart_ref: flux-operator
+        chart_repo_url: "oci://ghcr.io/controlplaneio-fluxcd/charts"
+        chart_version: "0.58.0"
         release_namespace: "flux-system"
         create_namespace: true
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-        # values:
-        #   k8sServiceHost: "{{ kubernetes.fqdn }}"
-        #   k8sServicePort: "6443"
-        #   kubeProxyReplacement: "true"
-        #   policyEnforcementMode: "always"
-        #   bpf:
-        #     masquerade: true
-        #   hubble:
-        #     enabled: true
-        #     relay:
-        #       enabled: true
-        #     ui:
-        #       enabled: true
-        # wait: true
+        values:
+          installCRDs: true
+        wait: true
       register: install_result
 
     - name: Display Cilium installation summary
