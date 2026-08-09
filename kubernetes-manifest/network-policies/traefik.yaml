@@ -1,0 +1,16 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: traefik-to-apiserver
+  namespace: traefik
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - traefik
+  egress:
+    - toEntities:
+        - kube-apiserver
