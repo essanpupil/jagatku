@@ -151,3 +151,29 @@ spec:
               protocol: TCP
             - port: "8081"
               protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: alloy-singleton-cross-node
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: alloy-singleton
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: alloy-singleton
+      toPorts:
+        - ports:
+            - port: "12345"
+              protocol: TCP
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: alloy-singleton
+      toPorts:
+        - ports:
+            - port: "12345"
+              protocol: TCP
