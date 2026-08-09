@@ -66,3 +66,19 @@ spec:
   egress:
     - toEntities:
       - remote-node
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: hubble-relay-to-host
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - hubble-relay
+  egress:
+    - toEntities:
+        - host
