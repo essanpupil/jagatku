@@ -73,12 +73,18 @@ spec:
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: kube-apiserver-ingress-alloy
+  name: allow-alloy-to-apiserver
   namespace: observability
 spec:
+  description: "Connection from all k8s-monitoring pods to control plane components"
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: alloy-operator
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - alloy-operator
+          - alloy-singleton
+          - kube-state-metrics
   egress:
-  - toEntities:
-      - kube-apiserver
+    - toEntities:
+        - kube-apiserver
