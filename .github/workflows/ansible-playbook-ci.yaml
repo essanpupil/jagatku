@@ -52,6 +52,7 @@ jobs:
       - name: Run ansible check diff
         id: ansible-diff
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
           ANSIBLE_NOCOLOR: 1
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml --diff --check 2>&1 | tee ansible_diff.txt
         continue-on-error: true
