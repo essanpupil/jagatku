@@ -22,8 +22,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    
-    # 2. Allow Alloy pods to talk to each other to form the cluster
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: alloy
@@ -44,10 +42,10 @@ spec:
     matchLabels:
       k8s-app: kube-dns
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: observability
-        app.kubernetes.io/name: alloy-singleton
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: observability
+            app.kubernetes.io/name: alloy-singleton
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -59,16 +57,16 @@ spec:
     matchLabels:
       app.kubernetes.io/name: alloy-singleton
   egress:
-  - toFQDNs:
-      - matchName: "prometheus.laptop1.local"
-    toPorts:
-      - ports:
-          - port: "80"
-            protocol: TCP
-          - port: "443"
-            protocol: TCP
-          - port: "3100"
-            protocol: TCP
+    - toFQDNs:
+        - matchName: "prometheus.laptop1.local"
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+            - port: "3100"
+              protocol: TCP
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -99,16 +97,16 @@ spec:
     matchLabels:
       app.kubernetes.io/name: alloy-singleton
   egress:
-  - toEntities:
-    - host
-    - remote-node
-    toPorts:
-    - ports:
-      - port: "10250"
-        protocol: TCP
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "10250"
+              protocol: TCP
 ---
 apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
+kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: alloy-metrics
   namespace: traefik
@@ -117,16 +115,39 @@ spec:
     matchLabels:
       app.kubernetes.io/name: traefik
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        app.kubernetes.io/name: alloy-singleton
-    toPorts:
-    - ports:
-      - port: "8000"
-        protocol: TCP
-      - port: "9100"
-        protocol: TCP
-      - port: "8080"
-        protocol: TCP
-      - port: "8081"
-        protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: alloy-singleton
+            "k8s:io.kubernetes.pod.namespace": observability
+      toPorts:
+        - ports:
+            - port: "8443"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
+            - port: "9100"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
+            - port: "8081"
+              protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: alloy-singleton-kube-state-metrics
+  namespace: observability
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: alloy-singleton
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+            - port: "8081"
+              protocol: TCP
