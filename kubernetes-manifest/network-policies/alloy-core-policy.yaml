@@ -106,3 +106,27 @@ spec:
     - ports:
       - port: "10250"
         protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: alloy-metrics
+  namespace: traefik
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: traefik
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: alloy-singleton
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
+      - port: "9100"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+      - port: "8081"
+        protocol: TCP
