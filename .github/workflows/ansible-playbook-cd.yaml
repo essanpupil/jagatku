@@ -9,6 +9,7 @@ on:
       - closed
 permissions:
   pull-requests: write
+  packages: read
 env:
   NO_COLOR: "1"
 
@@ -51,6 +52,8 @@ jobs:
     steps:
       - name: Apply ansible changes
         id: ansible-apply
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: ansible-playbook ${{ matrix.playbooks }}/*.yaml 2>&1 | tee ansible_apply.txt
         continue-on-error: true
       - name: Add playbook path for identification
