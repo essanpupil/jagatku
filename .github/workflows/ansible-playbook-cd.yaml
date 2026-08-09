@@ -9,6 +9,7 @@ on:
       - closed
 permissions:
   pull-requests: write
+  packages: read
 env:
   NO_COLOR: "1"
 
