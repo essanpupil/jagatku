@@ -1,11 +1,12 @@
 annotationAutodiscovery:
   enabled: true
+  collector: alloy-metrics
 
 collectors:
   alloy-metrics:
     presets: [daemonset]
   alloy-singleton:
-    presets: [clustered]
+    presets: [singleton]
     alloy:
       extraArgs:
         - "--disable-reporting"
