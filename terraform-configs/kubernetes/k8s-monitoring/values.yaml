@@ -13,6 +13,7 @@ collectors:
 
 clusterMetrics:
   enabled: true
+  collector: alloy-metrics
 
 clusterEvents:
   enabled: true
