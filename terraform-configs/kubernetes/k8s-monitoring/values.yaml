@@ -3,7 +3,7 @@ annotationAutodiscovery:
 
 collectors:
   alloy-metrics:
-    presets: [linux-host-monitor, daemonset]
+    presets: [daemonset]
   alloy-singleton:
     presets: [clustered]
     alloy:
