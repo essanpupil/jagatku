@@ -83,6 +83,7 @@ spec:
           - alloy-operator
           - alloy-singleton
           - kube-state-metrics
+          - k8s-monitoring
   egress:
     - toEntities:
         - kube-apiserver
