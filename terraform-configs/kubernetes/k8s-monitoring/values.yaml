@@ -21,6 +21,7 @@ clusterEvents:
 
 hostMetrics:
   enabled: true
+  collector: alloy-metrics
   node-exporter:
     enabled: true
 
