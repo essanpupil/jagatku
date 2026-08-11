@@ -32,3 +32,22 @@ spec:
         - ports:
             - port: "9440"
               protocol: TCP
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "flux-github-lookup"
+  namespace: flux-system
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/component: source-controller
+  egress:
+    - toFQDNs:
+        - matchName: "github.com"
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
