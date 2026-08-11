@@ -40,3 +40,34 @@
             egress:
               - toEntities:
                   - kube-apiserver
+
+    - name: Configure gitops repo monitoring
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: source.toolkit.fluxcd.io/v1
+          kind: GitRepository
+          metadata:
+            name: jagatku
+            namespace: flux-system
+          spec:
+            interval: 1m
+            url: https://github.com/essanpupil/jagatku.git
+            ref:
+              branch: main
+    - name: Configure path for jagatku gitops deployment
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: kustomize.toolkit.fluxcd.io/v1
+          kind: Kustomization
+          metadata:
+            name: jagatku-manifest-selection
+            namespace: flux-system
+          spec:
+            interval: 1m
+            path: ./kubernetes-manifest
+            prune: true
+            sourceRef:
+              kind: GitRepository
+              name: jagatku
