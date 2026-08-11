@@ -4,7 +4,7 @@ annotationAutodiscovery:
 
 collectors:
   alloy-metrics:
-    presets: [daemonset]
+    presets: [clustered]
   alloy-singleton:
     presets: [singleton]
     alloy:
