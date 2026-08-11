@@ -2,6 +2,8 @@ annotationAutodiscovery:
   enabled: true
 
 collectors:
+  alloy-metrics:
+    presets: [linux-host-monitor, daemonset]
   alloy-singleton:
     presets: [clustered]
     alloy:
@@ -14,6 +16,11 @@ clusterMetrics:
 clusterEvents:
   enabled: true
   collector: alloy-singleton
+
+hostMetrics:
+  enabled: true
+  node-exporter:
+    enabled: true
 
 telemetryServices:
   kube-state-metrics:
