@@ -6,8 +6,12 @@ metadata:
   namespace: observability
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: alloy-singleton
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - alloy-singleton
+          - alloy-metrics
   egress:
     - toEndpoints:
         - matchLabels:
@@ -44,8 +48,11 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: observability
+            io.kubernetes.pod.namespace: observability
             app.kubernetes.io/name: alloy-singleton
+        - matchLabels:
+            io.kubernetes.pod.namespace: observability
+            app.kubernetes.io/name: alloy-metrics
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
