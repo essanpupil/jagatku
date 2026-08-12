@@ -6,8 +6,11 @@ metadata:
   namespace: kube-system
 spec:
   endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: hubble-relay
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: in
+        values:
+          - hubble-relay
   egress:
     - toEntities:
         - kube-apiserver
