@@ -27,12 +27,15 @@
           # healthPort: 9879
           bpf:
             masquerade: true
-          # hubble:
-          #   enabled: true
-          #   relay:
-          #     enabled: true
-          #   ui:
-          #     enabled: true
+          hubble:
+            enabled: true
+            relay:
+              enabled: true
+            ui:
+              enabled: true
+          ingressController:
+            enabled: true
+            default: false
         wait: true
         atomic: true
       register: cilium_install_result
