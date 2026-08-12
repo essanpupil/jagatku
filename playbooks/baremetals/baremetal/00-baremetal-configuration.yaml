@@ -12,6 +12,7 @@
           - ansible-lint
           - python3-kubernetes
           - curl
+          - ca-certificates
         state: present
         update_cache: true
 
@@ -103,3 +104,23 @@
           - gh
         state: present
         update_cache: true
+
+    - name: Download Flux install script
+      ansible.builtin.get_url:
+        url: https://fluxcd.io/install.sh
+        dest: /tmp/flux-install.sh
+        mode: "0755"
+
+    - name: Execute Flux install script
+      ansible.builtin.command: /tmp/flux-install.sh
+      args:
+        creates: /usr/local/bin/flux
+
+    - name: Verify Flux CLI version
+      ansible.builtin.command: flux --version
+      register: flux_version
+      changed_when: false
+
+    - name: Show installed Flux version
+      ansible.builtin.debug:
+        msg: "{{ flux_version.stdout }}"
