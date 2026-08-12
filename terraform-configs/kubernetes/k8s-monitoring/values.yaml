@@ -5,6 +5,9 @@ annotationAutodiscovery:
 collectors:
   alloy-metrics:
     presets: [clustered]
+    alloy:
+      extraArgs:
+        - "--disable-reporting"
   alloy-singleton:
     presets: [singleton]
     alloy:

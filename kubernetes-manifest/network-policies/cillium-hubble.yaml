@@ -8,7 +8,7 @@ spec:
   endpointSelector:
     matchExpressions:
       - key: app.kubernetes.io/name
-        operator: in
+        operator: In
         values:
           - hubble-relay
   egress:
