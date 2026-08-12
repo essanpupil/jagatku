@@ -1,0 +1,77 @@
+name: Check ansible playbook
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "kubernetes-manifest/**"
+permissions:
+  pull-requests: write
+  packages: read
+env:
+  NO_COLOR: "1"
+
+jobs:
+  check_manifest_diff:
+    runs-on: laptop1
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+    # outputs:
+    #   baremetals_playbooks: ${{ steps.set-list.outputs.string_array }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      # - name: Changed Files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@v47.0.6
+      # - name: List all changed files
+      #   env:
+      #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      #   run: |
+      #     for file in ${ALL_CHANGED_FILES}; do
+      #       echo "$file" >> playbooks.txt
+      #     done
+      - name: Print manifest diff
+        id: manifest-diff
+        run: |
+          flux diff
+  #         JSON_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0 and startswith("playbooks"))) | map(split("/")[:-1] | join("/")) | unique' playbooks.txt)
+  #         # Save the array to step outputs
+  #         echo "string_array=$JSON_ARRAY" >> $GITHUB_OUTPUT
+  #         echo "$JSON_ARRAY"
+
+  # ansible_check_diff:
+  #   needs: list-ansible-playbooks
+  #   runs-on: laptop1
+  #   defaults:
+  #     run:
+  #       shell: bash -eo pipefail {0}
+  #   strategy:
+  #     matrix:
+  #       playbooks: ${{ fromJson(needs.list-ansible-playbooks.outputs.baremetals_playbooks) }}
+  #   steps:
+  #     - name: Run ansible check diff
+  #       id: ansible-diff
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+  #         ANSIBLE_NOCOLOR: 1
+  #       run: ansible-playbook ${{ matrix.playbooks }}/*.yaml --diff --check 2>&1 | tee ansible_diff.txt
+  #       continue-on-error: true
+  #     - name: Prepare PR comment format
+  #       run: |
+  #         echo "\`\`\`diff" >> playbook_diff.md
+  #         cat ansible_diff.txt >> playbook_diff.md
+  #         echo "\`\`\`" >> playbook_diff.md
+  #     - name: Add playbook path for identification
+  #       run: echo "${{ matrix.playbooks }}" >> playbook_diff.md
+  #     - name: Post comment of ansible check diff result
+  #       uses: peter-evans/create-or-update-comment@v5
+  #       with:
+  #         issue-number: ${{ github.event.pull_request.number }}
+  #         body-path: "playbook_diff.md"
+  #     - name: State workflow to fail
+  #       if: steps.ansible-diff.outcome == 'failure'
+  #       run: |
+  #         echo "Ansible apply failed"
+  #         exit 1
