@@ -1,0 +1,22 @@
+---
+- name: Install MetalLB via Helm
+  hosts: laptop1
+  vars:
+    helm_namespace: metallb-system
+  tasks:
+    - name: Deploy Metal LB Helm chart
+      kubernetes.core.helm:
+        name: metallb
+        chart_repo_url: "https://metallb.github.io/metallb"
+        chart_version: "0.16.1"
+        release_namespace: "{{ helm_namespace }}"
+        create_namespace: true
+        kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+        # values:
+        #   installCRDs: true
+        wait: true
+      register: install_result
+
+    - name: Display metallb installation summary
+      ansible.builtin.debug:
+        var: install_result
