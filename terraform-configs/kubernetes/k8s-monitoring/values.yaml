@@ -1,36 +1,13 @@
-annotationAutodiscovery:
-  enabled: true
-  collector: alloy-metrics
-
 collectors:
-  alloy-metrics:
-    presets: [clustered]
-    alloy:
-      extraArgs:
-        - "--disable-reporting"
   alloy-singleton:
     presets: [singleton]
     alloy:
       extraArgs:
         - "--disable-reporting"
 
-clusterMetrics:
-  enabled: true
-  collector: alloy-metrics
-
 clusterEvents:
   enabled: true
   collector: alloy-singleton
-
-hostMetrics:
-  enabled: true
-  collector: alloy-metrics
-  node-exporter:
-    enabled: true
-
-telemetryServices:
-  kube-state-metrics:
-    deploy: true
 
 cluster:
   name: "kubernetes"
