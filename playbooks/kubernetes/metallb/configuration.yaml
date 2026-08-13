@@ -33,9 +33,11 @@
         release_namespace: "{{ helm_namespace }}"
         create_namespace: true
         kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-        # values:
-        #   installCRDs: true
+        values:
+          controller:
+            enabled: true
         wait: true
+        atomic: true
       register: install_result
 
     - name: Display metallb installation summary
