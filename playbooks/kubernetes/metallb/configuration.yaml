@@ -4,6 +4,26 @@
   vars:
     helm_namespace: metallb-system
   tasks:
+    - name: Prepare Network Policy for metallb
+      kubernetes.core.k8s:
+        status: present
+        definition:
+          apiVersion: "cilium.io/v2"
+          kind: CiliumNetworkPolicy
+          metadata:
+            name: metallb-to-apiserver
+            namespace: "{{ helm_namespace }}"
+          spec:
+            endpointSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - metallb
+            egress:
+              - toEntities:
+                  - kube-apiserver
+
     - name: Deploy Metal LB Helm chart
       kubernetes.core.helm:
         name: metallb
