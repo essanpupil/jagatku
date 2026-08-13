@@ -20,7 +20,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Print manifest diff
+      - name: Check manifest diff
         id: manifest-diff
         run: |
-          flux diff kustomization jagatku-manifest-selection --path kubernetes-manifest/
+          flux diff kustomization jagatku-manifest-selection --path kubernetes-manifest/ 2>&1 | tee flux_diff.txt
+      - name: Post comment of check diff result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: ./flux_diff.txt"
