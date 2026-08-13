@@ -34,7 +34,7 @@
             ui:
               enabled: true
           ingressController:
-            enabled: true
+            enabled: false
             default: false
         wait: true
         atomic: true
