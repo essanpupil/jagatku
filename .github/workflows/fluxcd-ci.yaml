@@ -25,11 +25,16 @@ jobs:
         continue-on-error: true
         run: |
           flux diff kustomization jagatku-manifest-selection --path kubernetes-manifest/ 2>&1 | tee flux_diff.txt
+      - name: Prepare PR comment format
+        run: |
+          echo "\`\`\`diff" >> flux_diff.md
+          cat flux_diff.txt >> flux_diff.md
+          echo "\`\`\`" >> flux_diff.md
       - name: Post comment of check diff result
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: ./flux_diff.txt
+          body-path: ./flux_diff.md
       - name: State workflow to fail
         if: steps.manifest-diff.outcome == 'failure'
         run: |
