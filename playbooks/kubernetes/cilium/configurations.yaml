@@ -33,6 +33,8 @@
               enabled: true
             ui:
               enabled: true
+              service:
+                type: "LoadBalancer"
           ingressController:
             enabled: false
             default: false
