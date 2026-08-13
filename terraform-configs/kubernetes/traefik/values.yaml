@@ -1,6 +1,6 @@
 service:
   spec:
-    type: "NodePort"
+    type: "LoadBalancer"
 deployment:
   podAnnotations:
     k8s.grafana.com/scrape: "true"
