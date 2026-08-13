@@ -4,3 +4,11 @@ service:
 deployment:
   podAnnotations:
     k8s.grafana.com/scrape: "true"
+providers:
+  kubernetesGateway:
+    enabled: true
+experimental:
+  kubernetesGateway:
+    enabled: true
+ingressClass:
+  enabled: false
