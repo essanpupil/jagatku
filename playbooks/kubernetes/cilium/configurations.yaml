@@ -35,9 +35,6 @@
               enabled: true
               service:
                 type: "LoadBalancer"
-          ingressController:
-            enabled: false
-            default: false
         wait: true
         atomic: true
       register: cilium_install_result
