@@ -6,7 +6,7 @@
   tasks:
     - name: Download gateway api manifest
       ansible.builtin.get_url:
-        url: https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ gateway_api_version }}/standard-install.yaml"
+        url: "https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ gateway_api_version }}/standard-install.yaml"
         dest: /tmp/gateway-api.yaml
         mode: '0664'
     - name: Apply metrics-server manifest to the cluster.
