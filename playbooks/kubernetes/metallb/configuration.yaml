@@ -7,7 +7,8 @@
     - name: Deploy Metal LB Helm chart
       kubernetes.core.helm:
         name: metallb
-        chart_repo_url: "https://metallb.github.io/metallb"
+        chart_ref: metallb
+        chart_repo_url: "https://metallb.github.io"
         chart_version: "0.16.1"
         release_namespace: "{{ helm_namespace }}"
         create_namespace: true
