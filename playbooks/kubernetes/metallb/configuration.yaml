@@ -6,7 +6,7 @@
   tasks:
     - name: Prepare Network Policy for metallb
       kubernetes.core.k8s:
-        status: present
+        state: present
         definition:
           apiVersion: "cilium.io/v2"
           kind: CiliumNetworkPolicy
