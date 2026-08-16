@@ -4,6 +4,15 @@
   vars:
     helm_namespace: flux-system
   tasks:
+    - name: Configure fluxcd namesapce
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ helm_namespace }}"
+
     - name: Deploy Flux CD Helm chart
       kubernetes.core.helm:
         state: absent
@@ -52,6 +61,7 @@
             url: https://github.com/essanpupil/jagatku.git
             ref:
               branch: main
+
     - name: Configure path for jagatku gitops deployment
       kubernetes.core.k8s:
         state: absent
