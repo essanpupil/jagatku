@@ -4,6 +4,42 @@
   vars:
     helm_namespace: metallb-system
   tasks:
+    - name: Prepare Network Policy for metallb webhook
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          metadata:
+            name: allow-apiserver-to-metallb-webhook
+            namespace: metallb-system
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/name: metallb
+            ingress:
+              - fromEntities:
+                  - kube-apiserver
+                toPorts:
+                  - ports:
+                      - port: "9443"
+                        protocol: TCP
+              - fromEntities:
+                  - host
+                  - remote-node
+                toPorts:
+                  - ports:
+                      - port: "9443"
+                        protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      app.kubernetes.io/component: kustomize-controller
+                      io.kubernetes.pod.namespace: flux-system
+                toPorts:
+                  - ports:
+                      - port: "9443"
+                        protocol: TCP
+
     - name: Prepare Network Policy for metallb
       kubernetes.core.k8s:
         state: absent
@@ -44,3 +80,29 @@
     - name: Display metallb installation summary
       ansible.builtin.debug:
         var: install_result
+
+    - name: Configure IPAddressPool for metallb
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata:
+            name: local-ip-pool
+            namespace: metallb-system
+          spec:
+            addresses:
+              - 192.168.1.60/28
+
+    - name: Configure IP Advertisement
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: metallb.io/v1beta1
+          kind: L2Advertisement
+          metadata:
+            name: l2-advertise
+            namespace: metallb-system
+          spec:
+            ipAddressPools:
+              - local-ip-pool
