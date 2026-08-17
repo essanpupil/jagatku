@@ -1,6 +1,8 @@
+global:
+  checkNewVersion: false
 service:
   spec:
-    type: "LoadBalancer"
+    type: "NodePort"
 deployment:
   podAnnotations:
     k8s.grafana.com/scrape: "true"
