@@ -25,6 +25,14 @@
           # routingMode: tunnel
           # tunnelProtocol: vxlan
           # healthPort: 9879
+          ingressController:
+            enabled: true
+            default: true
+            loadbalancerMode: shared
+            hostNetwork:
+              enabled: true
+            service:
+              type: NodePort
           bpf:
             masquerade: true
           hubble:
