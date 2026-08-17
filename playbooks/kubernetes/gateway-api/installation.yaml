@@ -11,7 +11,7 @@
         mode: '0664'
     - name: Apply gateway manifest to the cluster.
       kubernetes.core.k8s:
-        state: absent
+        state: present
         src: /tmp/gateway-api.yaml
         apply: true
         server_side_apply:
