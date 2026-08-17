@@ -14,6 +14,12 @@
     #   ansible.builtin.debug:
     #     var: join_command
 
+    - name: Copy initConfig
+      ansible.builtin.template:
+        src: init-defaults.yaml.j2
+        dest: /tmp/init-defaults.yaml
+        mode: "0644"
+
     - name: Upload certificates and capture the certificate key
       when: inventory_hostname == "node1"
       ansible.builtin.command: kubeadm init phase upload-certs --upload-certs --kubeconfig /etc/kubernetes/admin.conf --config /tmp/init-defaults.yaml
