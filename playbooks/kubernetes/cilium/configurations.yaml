@@ -28,13 +28,15 @@
           bpf:
             masquerade: true
           hubble:
-            enabled: true
+            enabled: false
             relay:
-              enabled: true
+              enabled: false
             ui:
-              enabled: true
+              enabled: false
               service:
-                type: "LoadBalancer"
+                type: "NodePort"
+          envoy:
+            enabled: false
         wait: true
         atomic: true
       register: cilium_install_result
