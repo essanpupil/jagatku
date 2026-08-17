@@ -8,11 +8,11 @@ deployment:
     k8s.grafana.com/scrape: "true"
 providers:
   kubernetesIngress:
-    enabled: false
-  kubernetesGateway:
     enabled: true
+  kubernetesGateway:
+    enabled: false
 experimental:
   kubernetesGateway:
-    enabled: true
+    enabled: false
 ingressClass:
-  enabled: false
+  enabled: true
