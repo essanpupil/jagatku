@@ -9,9 +9,9 @@
         url: "https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ gateway_api_version }}/standard-install.yaml"
         dest: /tmp/gateway-api.yaml
         mode: '0664'
-    - name: Apply metrics-server manifest to the cluster.
+    - name: Apply gateway manifest to the cluster.
       kubernetes.core.k8s:
-        state: present
+        state: absent
         src: /tmp/gateway-api.yaml
         apply: true
         server_side_apply:
