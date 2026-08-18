@@ -46,6 +46,8 @@
           envoy:
             enabled: false
           defaultLBServiceIPAM: nodeipam
+          nodeIPAM:
+            enabled: true
         wait: true
         atomic: true
       register: cilium_install_result
