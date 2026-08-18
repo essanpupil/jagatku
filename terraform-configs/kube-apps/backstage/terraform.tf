@@ -3,7 +3,7 @@ terraform {
   backend "consul" {
     address = "consul.laptop1.local"
     scheme  = "http"
-    path    = "terraform-configs/kubernetes/backstage"
+    path    = "terraform-configs/kube-apps/backstage"
   }
 
   required_providers {
