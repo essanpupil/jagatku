@@ -54,3 +54,10 @@ This is because the functionality of kube-proxy will be handled by Cilium.
    $ terraform plan  # Check for any unexpected planning, then fix as needed
    $ terrafrom apply # Apply terraform config of cilium helm release
    ```
+2. Install kube-state-metrics
+   ```shell
+   $ cd terraform-configs/kubernetes/kube-state-metrics/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
