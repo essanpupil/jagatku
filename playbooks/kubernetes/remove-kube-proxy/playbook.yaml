@@ -4,7 +4,7 @@
   serial: 1
   tasks:
     - name: Delete kube-proxy DaemonSet
-      when: inventory_hostname == 'node1'
+      when: inventory_hostname == 'cp1'
       delegate_to: laptop1
       kubernetes.core.k8s:
         state: absent
@@ -13,7 +13,7 @@
         namespace: kube-system
         name: kube-proxy
     - name: Delete kube-proxy Configmap
-      when: inventory_hostname == 'node1'
+      when: inventory_hostname == 'cp1'
       delegate_to: laptop1
       kubernetes.core.k8s:
         state: absent

@@ -35,9 +35,20 @@ scrape_configs:
     static_configs:
       - targets:
           - '{{ ansible_host }}:9100'
+    {% for host in groups['kube_nodes'] %}
+      - '{{ hostvars[host]['ansible_host'] }}:9100'
+    {% endfor %}
 
   - job_name: 'nginx'
     scrape_interval: 15s
     static_configs:
       - targets:
           - 'localhost:9113'
+
+  # Make sure kube-state-metrics is already installed in kubernetes cluster
+  # Get target ip and port by running kubectl -n kube-system get svc kube-state-metrics
+  - job_name: 'kube-state-metrics'
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - '192.168.1.200:8080'

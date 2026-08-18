@@ -1,24 +1,84 @@
 # jagatku
+Store various proof of concept for SRE, DevOps and Platform Engineering.
 
-## pre-commit requirements
-```shell
-$ brew install pre-commit terraform-docs terraform-linters/tap/tflint tfsec trivy checkov terrascan infracost tfupdate minamijoyo/hcledit/hcledit jq
-```
+## Start Up
+To activate the system, follow the guide below
+1. Clone this repo.  
+   `$ git clone https://github.com/essanpupil/jagatku.git`
+2. Go to repo directory:  
+   `$ cd jagatku`
+3. Edit `Vagrantfile` as necessary.
+4. Edit `inventory.yaml` aligned with `Vagrantfile`.
+5. Start up virtual servers:  
+   `$ vagrant up`
 
-## Baremetal Deployment
-1. Install Debian Server on old laptop
-2. install core packages and core repository: `ansible-playbook palybooks playbooks/baremetals/baremetal/00-baremetal-configuration.yaml`
-3. Install Prometheus: `ansible-playbook playbooks/baremetals/prometheus/02-prometheus-configuration.yaml`
-4. Install Loki: `ansible-playbook playbooks/baremetals/loki/01-loki-configuration.yaml`
-5. Install GRafana: `ansible-playbook playbooks/baremetals/grafana/01-grafana-configuration.yaml`
-6. Install Alloy: `ansible-playbook playbooks/baremetals/alloy/alloy-configuration.yaml`
+## Virtual Machine Configuration
+Run ansible playbooks with the following order to configure virtual machines for kubernetes.
+1. Virtual machine common configuration.  
+   `$ ansible-playbook playbooks/virtual-machines/virtual-machine/configurations.yaml`
+2. Update server `/etc/hosts` config for private domain name.  
+   `$ ansible-playbook playbooks/baremetals/etc-hosts/configuration.yaml`
+3. Prometheus node exporter configuration for node metrics monitoring.  
+   `$ ansible-playbook playbooks/virtual-machines/prometheus/prometheus-node-exporter-config.yaml`
+4. Alloy for logging agent.  
+   `$ ansible-playbook playbooks/virtual-machines/alloy/alloy-configuration.yaml`
+5. Update prometheus configuration.  
+   `$ ansible-playbook playbooks/baremetals/prometheus/configuration.yaml`
 
-## Server Deployment
-1. Spin up virtual servers: `vagrant up`
-2. Install minimum core packages and important repositories: `ansible-playbook playbooks/virtual-machines/virtual-machine/vm-configurations.yaml`
-3. Initiate kubeadm kubernetes cluster: `ansible-playbook playbooks/virtual-machines/kubeadm/1-kubeadm-init.yaml`
-4. Install Alloy: `ansible-playbook playbooks/virtual-machines/alloy/alloy-configuration.yaml`
-5. Install Prometheus node exporter: `ansible-playbook playbooks/virtual-machines/prometheus/prometheus-node-exporter-config.yaml`
+## Kubernetes Core Deployment
+Kubernetes cluster is deployed using `kubeadm` without kube-proxy.
+This is because the functionality of kube-proxy will be handled by Cilium.
+1. Initiate kubeadm.  
+   `$ ansible-playbook playbooks/kubernetes/kubeadm-cp/cluster-init.yaml`
+2. Update nginx upstream kube-apiserver in baremetal.  
+   `$ ansible-playbook playbooks/baremetals/nginx/configuration.yaml`
+3. Install and join kubeadm node.  
+   `$ ansible-playbook playbooks/baremetals/etc-hosts/configuration.yaml`
+4. Update kubernetes nameserver IP address.  
+   `$ ansible-playbook playbooks/kubernetes/kubernetes-core/configurations.yaml`
+5. Install Cilium Kubernetes CNI addon.
+   ```shell
+   $ cd terraform-configs/kubernetes/cillium/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+6. Make sure kube-proxy removal and kube node os config.  
+   `$ ansible-playbook playbooks/kubernetes/remove-kube-proxy/playbook.yaml`
 
-## Kubernetes Provisioning
-1.
+## Kubernetes Advance Configuration
+1. Install MetalLB to provide service type LoadBalancer
+   ```shell
+   $ cd terraform-configs/kubernetes/metallb/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+2. Install csi-driver-nfs to provide persistent volume storage class
+   ```shell
+   $ cd terraform-configs/kubernetes/csi-driver-nfs/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+3. Install secrets-store-csi-driver to provide external secure secrets 
+   ```shell
+   $ cd terraform-configs/kubernetes/secrets-store-csi-driver/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+4. Install hashicorp-vault to provide secure secrets to hashicorp vault 
+   ```shell
+   $ cd terraform-configs/kubernetes/hashicorp-vault/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+5. Install kube-state-metrics for kubernetes objects state metrics monitoring
+   ```shell
+   $ cd terraform-configs/kubernetes/kube-state-metrics/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```

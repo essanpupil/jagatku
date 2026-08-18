@@ -3,7 +3,7 @@ terraform {
   backend "consul" {
     address = "consul.laptop1.local"
     scheme  = "http"
-    path    = "terraform-configs/kubernetes/cillium"
+    path    = "terraform-configs/kubernetes/metallb"
   }
 
   required_providers {
@@ -16,8 +16,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "3.2.0"
     }
+
   }
 }
+
 
 provider "helm" {
   kubernetes = {

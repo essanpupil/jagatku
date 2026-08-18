@@ -12,4 +12,4 @@
       ansible.builtin.apt:
         name:
           - prometheus-node-exporter
-        state: absent
+        state: present
