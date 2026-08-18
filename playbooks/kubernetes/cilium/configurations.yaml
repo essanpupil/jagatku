@@ -28,7 +28,7 @@
           ingressController:
             enabled: true
             default: true
-            loadbalancerMode: shared
+            loadbalancerMode: dedicated
             hostNetwork:
               enabled: true
             service:
