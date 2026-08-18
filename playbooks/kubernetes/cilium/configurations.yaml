@@ -45,8 +45,7 @@
                 type: "NodePort"
           envoy:
             enabled: false
-          nodeIPAM:
-            enabled: true
+          defaultLBServiceIPAM: nodeipam
         wait: true
         atomic: true
       register: cilium_install_result
