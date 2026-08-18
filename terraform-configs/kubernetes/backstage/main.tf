@@ -16,3 +16,20 @@ resource "helm_release" "this" {
     file("${path.module}/values.yaml")
   ]
 }
+
+resource "kubernetes_manifest" "backstage_ingress_network_policy" {
+  manifest = yamldecode(<<-EOF
+    apiVersion: "cilium.io/v2"
+    kind: CiliumClusterwideNetworkPolicy
+    metadata:
+      name: "allow-world-backstage"
+    spec:
+      endpointSelector:
+        matchLabels:
+          app.kubernetes.io/name: backstage
+      ingress:
+        - fromentities:
+            - world
+  EOF
+  )
+}
