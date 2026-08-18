@@ -2,3 +2,5 @@ ingress:
   enabled: true
   className: cilium
   host: backstage.jagatku.local
+service:
+  type: LoadBalancer
