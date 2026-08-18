@@ -21,7 +21,7 @@ nodeRegistration:
     - name: node-ip
       value: {{ ansible_host }}
 skipPhases:
-  - addons/kube-proxy
+  - addon/kube-proxy
 timeouts:
   controlPlaneComponentHealthCheck: 4m0s
   discovery: 5m0s

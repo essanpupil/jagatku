@@ -1,6 +1,6 @@
 ---
 - name: Install kubeadm
-  hosts: node1
+  hosts: cp1
   become: true
   tasks:
     - name: Enable and start kubelet service

@@ -4,7 +4,7 @@
   become: true
   tasks:
     - name: Generate join command string
-      when: inventory_hostname == "node1"
+      when: inventory_hostname == "cp1"
       ansible.builtin.command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
       register: join_command
       changed_when: false
@@ -21,24 +21,24 @@
         mode: "0644"
 
     - name: Upload certificates and capture the certificate key
-      when: inventory_hostname == "node1"
+      when: inventory_hostname == "cp1"
       ansible.builtin.command: kubeadm init phase upload-certs --upload-certs --kubeconfig /etc/kubernetes/admin.conf --config /tmp/init-defaults.yaml
       register: upload_certs_output
       changed_when: false
 
     - name: Extract the certificate key from the output
-      when: inventory_hostname == "node1"
+      when: inventory_hostname == "cp1"
       ansible.builtin.set_fact:
         control_plane_cert_key: "{{ upload_certs_output.stdout_lines[-1] | trim }}"
 
     - name: Debug printed certificate key
-      when: inventory_hostname == "node1"
+      when: inventory_hostname == "cp1"
       ansible.builtin.debug:
         msg: "The newly generated certificate key is: {{ control_plane_cert_key }}"
 
     - name: Enable and start kubelet service
       register: kubelet_service
-      when: inventory_hostname != "node1"
+      when: inventory_hostname != "cp1"
       ansible.builtin.systemd_service:
         name: kubelet
         enabled: true
@@ -64,11 +64,11 @@
 
     - name: Join kubeadm as control-panel
       ansible.builtin.command: >
-        {{ hostvars['node1']['join_command'].stdout }}
+        {{ hostvars['cp1']['join_command'].stdout }}
         --control-plane
         --node-name {{ node_name }}
         --apiserver-advertise-address {{ ansible_facts['default_ipv4']['address'] }}
-        --certificate-key {{ hostvars['node1']['control_plane_cert_key'] }}
+        --certificate-key {{ hostvars['cp1']['control_plane_cert_key'] }}
       become: true
       register: join_output
       when:
