@@ -44,3 +44,11 @@ scrape_configs:
     static_configs:
       - targets:
           - 'localhost:9113'
+
+  # Make sure kube-state-metrics is already installed in kubernetes cluster
+  # Get target ip and port by running kubectl -n kube-system get svc kube-state-metrics
+  - job_name: 'kube-state-metrics'
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - '192.168.1.200:8080'
