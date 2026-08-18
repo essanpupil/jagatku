@@ -44,7 +44,7 @@
               service:
                 type: "NodePort"
           envoy:
-            enabled: false
+            enabled: true
           defaultLBServiceIPAM: nodeipam
           nodeIPAM:
             enabled: true
