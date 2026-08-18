@@ -8,4 +8,4 @@ backstage:
 ingress:
   enabled: true
   className: cilium
-  # host: backstage.jagatku.local
+  host: backstage.jagatku.local
