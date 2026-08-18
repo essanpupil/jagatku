@@ -1,2 +1,11 @@
-service:
-  type: LoadBalancer
+backstage:
+  appConfig:
+      app:
+        title: "Jagat Platform"
+        baseUrl: http://backstage.jagatku.local
+      backend:
+        baseUrl: http://backstage.jagatku.local
+ingress:
+  enabled: true
+  className: cilium
+  host: backstage.jagatku.local
