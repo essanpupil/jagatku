@@ -16,10 +16,8 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "3.2.0"
     }
-
   }
 }
-
 
 provider "helm" {
   kubernetes = {
