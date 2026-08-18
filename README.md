@@ -61,14 +61,21 @@ This is because the functionality of kube-proxy will be handled by Cilium.
    $ terraform plan  # Check for any unexpected planning, then fix as needed
    $ terrafrom apply # Apply terraform config of cilium helm release
    ```
-1. Install secrets-store-csi-driver to provide secure secrets 
+3. Install secrets-store-csi-driver to provide external secure secrets 
    ```shell
    $ cd terraform-configs/kubernetes/secrets-store-csi-driver/
    $ terraform init  # Initiate terraform providers
    $ terraform plan  # Check for any unexpected planning, then fix as needed
    $ terrafrom apply # Apply terraform config of cilium helm release
    ```
-2. Install kube-state-metrics for kubernetes objects state metrics monitoring
+4. Install hashicorp-vault to provide secure secrets to hashicorp vault 
+   ```shell
+   $ cd terraform-configs/kubernetes/hashicorp-vault/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+5. Install kube-state-metrics for kubernetes objects state metrics monitoring
    ```shell
    $ cd terraform-configs/kubernetes/kube-state-metrics/
    $ terraform init  # Initiate terraform providers
