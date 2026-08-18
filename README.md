@@ -47,14 +47,28 @@ This is because the functionality of kube-proxy will be handled by Cilium.
    `$ ansible-playbook playbooks/kubernetes/remove-kube-proxy/playbook.yaml`
 
 ## Kubernetes Advance Configuration
-1. Install MetalLB
+1. Install MetalLB to provide service type LoadBalancer
    ```shell
    $ cd terraform-configs/kubernetes/metallb/
    $ terraform init  # Initiate terraform providers
    $ terraform plan  # Check for any unexpected planning, then fix as needed
    $ terrafrom apply # Apply terraform config of cilium helm release
    ```
-2. Install kube-state-metrics
+2. Install csi-driver-nfs to provide persistent volume storage class
+   ```shell
+   $ cd terraform-configs/kubernetes/csi-driver-nfs/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+1. Install secrets-store-csi-driver to provide secure secrets 
+   ```shell
+   $ cd terraform-configs/kubernetes/secrets-store-csi-driver/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
+2. Install kube-state-metrics for kubernetes objects state metrics monitoring
    ```shell
    $ cd terraform-configs/kubernetes/kube-state-metrics/
    $ terraform init  # Initiate terraform providers
