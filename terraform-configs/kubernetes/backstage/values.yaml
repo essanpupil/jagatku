@@ -1,2 +1,4 @@
-backstage:
-  replicas: 1
+ingress:
+  enabled: true
+  className: cilium
+  host: backstage.jagatku.local
