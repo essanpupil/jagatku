@@ -4,11 +4,11 @@
   become: true
   tasks:
     - name: Generate join command string
-      delegate_to: node1
+      delegate_to: cp1
       ansible.builtin.command: kubeadm token create --print-join-command --kubeconfig /etc/kubernetes/admin.conf
       register: join_command
       changed_when: false
-      no_log: true
+      # no_log: true
 
     # - name: Debug join command
     #   ansible.builtin.debug:

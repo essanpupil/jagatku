@@ -1,9 +1,3 @@
-k8sServiceHost: "auto"
-podAnnotations:
-  k8s.grafana.com/scrape: "true"
-operator:
-  podAnnotations:
-    k8s.grafana.com/scrape: "true"
-envoy:
-  podAnnotations:
-    k8s.grafana.com/scrape: "true"
+k8sServiceHost: "kubernetes.jagat.local"
+k8sServicePort: "6443"
+kubeProxyReplacement: "true"
