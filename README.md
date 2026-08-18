@@ -16,7 +16,7 @@ To activate the system, follow the guide below
 Run ansible playbooks with the following order to configure virtual machines for kubernetes.
 1. Virtual machine common configuration.  
    `$ ansible-playbook playbooks/virtual-machines/virtual-machine/configurations.yaml`
-2. Update server `/etc/hosts` config for private domain name/
+2. Update server `/etc/hosts` config for private domain name.  
    `$ ansible-playbook playbooks/baremetals/etc-hosts/configuration.yaml`
 3. Prometheus node exporter configuration for node metrics monitoring.  
    `$ ansible-playbook playbooks/virtual-machines/prometheus/prometheus-node-exporter-config.yaml`
@@ -25,7 +25,7 @@ Run ansible playbooks with the following order to configure virtual machines for
 5. Update prometheus configuration.  
    `$ ansible-playbook playbooks/baremetals/prometheus/configuration.yaml`
 
-## Kubernetes Deployment
+## Kubernetes Core Deployment
 Kubernetes cluster is deployed using `kubeadm` without kube-proxy.
 This is because the functionality of kube-proxy will be handled by Cilium.
 1. Initiate kubeadm.  
@@ -34,7 +34,7 @@ This is because the functionality of kube-proxy will be handled by Cilium.
    `$ ansible-playbook playbooks/baremetals/nginx/configuration.yaml`
 3. Install and join kubeadm node.  
    `$ ansible-playbook playbooks/baremetals/etc-hosts/configuration.yaml`
-4. Update kubernetes nameserver IP address
+4. Update kubernetes nameserver IP address.  
    `$ ansible-playbook playbooks/kubernetes/kubernetes-core/configurations.yaml`
 5. Install Cilium Kubernetes CNI addon.
    ```shell
@@ -42,5 +42,15 @@ This is because the functionality of kube-proxy will be handled by Cilium.
    $ terraform init  # Initiate terraform providers
    $ terraform plan  # Check for any unexpected planning, then fix as needed
    $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
 6. Make sure kube-proxy removal and kube node os config.  
    `$ ansible-playbook playbooks/kubernetes/remove-kube-proxy/playbook.yaml`
+
+## Kubernetes Advance Configuration
+1. Install MetalLB
+   ```shell
+   $ cd terraform-configs/kubernetes/metallb/
+   $ terraform init  # Initiate terraform providers
+   $ terraform plan  # Check for any unexpected planning, then fix as needed
+   $ terrafrom apply # Apply terraform config of cilium helm release
+   ```
