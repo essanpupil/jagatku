@@ -33,7 +33,7 @@ resource "vault_kubernetes_auth_backend_role" "this" {
 
 resource "vault_kv_secret_v2" "backstage_config" {
   mount = data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path
-  name  = "backstage/config"
+  name  = "backstage-config"
 
   data_json = jsonencode({
     db_username = "ChangeMe"
