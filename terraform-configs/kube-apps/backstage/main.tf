@@ -32,26 +32,8 @@ resource "vault_kubernetes_auth_backend_role" "this" {
 }
 
 resource "kubernetes_manifest" "db_secrets" {
-  #checkov:skip=CKV_SECRET_6
-  #checkov:skip=APPSEC_SECRET_6
-  manifest = yamldecode(<<EOF
-    apiVersion: secrets-store.csi.x-k8s.io/v1
-    kind: SecretProviderClass
-    metadata:
-      name: backstage-db-auth
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      provider: vault
-      parameters:
-        vaultAddress: "http://vault.laptop1.local"
-        roleName: ${vault_kubernetes_auth_backend_role.this.role_name}
-        objects: |
-          - objectName: "db_password"
-            secretPath: "/secret/data/backstage/config"
-            secretKey: "password"
-          - objectName: "db_username"
-            secretPath: "/secret/data/backstage/config"
-            secretKey: "username"
-  EOF
-  )
+  manifest = yamldecode(templatefile("${path.module}/secret-provider.yaml", {
+    namespace  = kubernetes_namespace_v1.this.metadata[0].name
+    vault_role = vault_kubernetes_auth_backend_role.this.role_name
+  }))
 }
