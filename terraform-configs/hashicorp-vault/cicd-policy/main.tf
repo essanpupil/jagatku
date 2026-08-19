@@ -12,9 +12,9 @@ data "vault_policy_document" "this" {
   }
 
   rule {
-    path         = "sys/mounts/auth/kubernetes"
+    path         = "sys/mounts/auth/*"
     capabilities = ["read", "update"]
-    description  = "Allow vault kubernetes auth for cicd"
+    description  = "Allow cicd to view available backend auth"
   }
 }
 
