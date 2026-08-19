@@ -22,6 +22,18 @@ data "vault_policy_document" "this" {
     capabilities = ["read", "update"]
     description  = "Allow cicd to update kubernetes auth config"
   }
+
+  rule {
+    path         = "sys/policies/acl/*"
+    capabilities = ["read", "list", "update"]
+    description  = "Allow CICD to update application policy"
+  }
+
+  rule {
+    path         = "auth/kubernetes/role/*"
+    capabilities = ["create", "read", "update", "delete", "list"]
+    description  = "Allow CICD to update vault kubernetes auth role"
+  }
 }
 
 resource "vault_policy" "this" {
