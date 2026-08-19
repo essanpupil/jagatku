@@ -5,6 +5,8 @@ backstage:
         baseUrl: http://backstage.jagatku.local
       backend:
         baseUrl: http://backstage.jagatku.local
+        cors:
+          origin: http://backstage.jagatku.local
 ingress:
   enabled: true
   className: cilium
