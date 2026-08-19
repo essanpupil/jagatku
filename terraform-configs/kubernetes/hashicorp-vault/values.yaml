@@ -5,3 +5,5 @@ server:
 injector:
   enabled: true
   externalVaultAddr: "http://vault.laptop1.local"
+csi:
+  enabled: true
