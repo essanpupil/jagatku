@@ -23,3 +23,16 @@ resource "vault_kubernetes_auth_backend_config" "example" {
   kubernetes_host    = "http://kubernetes.jagat.local"
   kubernetes_ca_cert = data.kubernetes_config_map_v1.kube_root_ca.data["ca.crt"]
 }
+
+resource "vault_mount" "kvv2" {
+  path = "secret"
+  type = "kv-v2"
+  options = {
+    version = "2"
+  }
+}
+
+import {
+  to = vault_mount.kvv2
+  id = "secret"
+}
