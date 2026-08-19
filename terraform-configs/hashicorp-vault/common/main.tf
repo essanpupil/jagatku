@@ -32,7 +32,6 @@ resource "vault_mount" "kvv2" {
   }
 }
 
-import {
-  to = vault_mount.kvv2
-  id = "secret"
+output "kv_secret_path" {
+  value = vault_mount.kvv2.path
 }
