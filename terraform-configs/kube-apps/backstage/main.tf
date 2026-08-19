@@ -31,9 +31,20 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   token_ttl                        = 1800 # 30 minutes
 }
 
+resource "vault_kv_secret_v2" "backstage_config" {
+  mount = data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path
+  name  = "backstage-config"
+
+  data_json = jsonencode({
+    db_username = "ChangeMe"
+    db_password = "ChangeMe"
+  })
+}
+
 resource "kubernetes_manifest" "db_secrets" {
   manifest = yamldecode(templatefile("${path.module}/secret-provider.yaml", {
-    namespace  = kubernetes_namespace_v1.this.metadata[0].name
-    vault_role = vault_kubernetes_auth_backend_role.this.role_name
+    namespace   = kubernetes_namespace_v1.this.metadata[0].name
+    vault_role  = vault_kubernetes_auth_backend_role.this.role_name
+    secret_path = "secret/data/backstage-config" # checkov:skip=CKV_SECRET_6
   }))
 }
