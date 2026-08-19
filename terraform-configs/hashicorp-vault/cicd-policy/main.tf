@@ -2,13 +2,19 @@ data "vault_policy_document" "this" {
   rule {
     path         = "grafana-token/metadata/*"
     capabilities = ["read", "list"]
-    # description  = "allow all on secrets"
+    description  = "Grafana auth from cicd"
   }
 
   rule {
     path         = "grafana-token/data/*"
     capabilities = ["create", "read", "update", "list"]
-    # description  = "allow all on secrets"
+    description  = "Grafana auth from cicd"
+  }
+
+  rule {
+    path         = "sys/mounts/auth/kubernetes"
+    capabilities = ["read", "update"]
+    description  = "Allow vault kubernetes auth for cicd"
   }
 }
 
