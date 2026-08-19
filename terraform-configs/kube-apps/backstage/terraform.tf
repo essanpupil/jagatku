@@ -17,6 +17,10 @@ terraform {
       version = "3.2.0"
     }
 
+    vault = {
+      source  = "hashicorp/vault"
+      version = "5.10.1"
+    }
   }
 }
 
@@ -29,4 +33,10 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
+}
+
+provider "vault" {
+  address          = "http://vault.laptop1.local"
+  skip_child_token = true
+  auth_login_userpass {}
 }

@@ -26,6 +26,11 @@ resource "helm_release" "this" {
 #   token_ttl                        = 1800 # 30 minutes
 # }
 
+resource "vault_policy" "this" {
+  name   = "backstage-jagat"
+  policy = data.vault_policy_document.this.hcl
+}
+
 resource "kubernetes_manifest" "db_secrets" {
   #checkov:skip=CKV_SECRET_6
   #checkov:skip=APPSEC_SECRET_6
