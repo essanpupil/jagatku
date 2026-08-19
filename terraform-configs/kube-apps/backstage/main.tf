@@ -18,7 +18,7 @@ resource "helm_release" "this" {
 }
 
 resource "vault_policy" "this" {
-  name   = "backstage-jagat"
+  name   = local.vault_policy_name
   policy = data.vault_policy_document.this.hcl
 }
 
