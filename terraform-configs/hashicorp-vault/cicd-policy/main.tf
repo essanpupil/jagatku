@@ -16,6 +16,12 @@ data "vault_policy_document" "this" {
     capabilities = ["read", "update"]
     description  = "Allow cicd to view available backend auth"
   }
+
+  rule {
+    path         = "auth/kubernetes/config"
+    capabilities = ["read", "update"]
+    description  = "Allow cicd to update kubernetes auth config"
+  }
 }
 
 resource "vault_policy" "this" {
