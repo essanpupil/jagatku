@@ -12,8 +12,8 @@ data "vault_policy_document" "this" {
   }
 
   rule {
-    path         = "sys/mounts/auth/*"
-    capabilities = ["read", "update"]
+    path         = "sys/mounts/*"
+    capabilities = ["create", "read", "update", "list"]
     description  = "Allow cicd to view available backend auth"
   }
 
