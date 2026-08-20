@@ -1,0 +1,5 @@
+controller:
+  hostAliases:
+    - ip: 192.168.1.50
+      hostnames:
+        - vault.laptop1.local

@@ -25,4 +25,7 @@ resource "helm_release" "vso" {
   version    = "1.5.1"
   atomic     = true
   wait       = true
+  values = [
+    file("${path.module}/values-cso.yaml")
+  ]
 }
