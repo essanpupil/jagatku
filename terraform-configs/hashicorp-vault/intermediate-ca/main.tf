@@ -8,7 +8,7 @@ resource "vault_mount" "pki_int" {
 }
 
 resource "vault_pki_secret_backend_intermediate_cert_request" "csr-request" {
-  backend     = data.terraform_remote_state.root_ca.outputs.pki_path
+  backend     = vault_mount.pki_int.path
   type        = "internal"
   common_name = "Intermediate Certificate Authority"
 }
