@@ -27,8 +27,8 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "intermediate" {
   certificate = vault_pki_secret_backend_root_sign_intermediate.intermediate.certificate
 }
 
-resource "vault_pki_secret_backend_issuer" "intermediate" {
-  backend     = vault_pki_secret_backend_intermediate_set_signed.intermediate.backend
-  issuer_ref  = vault_pki_secret_backend_intermediate_set_signed.intermediate.imported_issuers[0]
-  issuer_name = "int-ca-issuer"
-}
+# resource "vault_pki_secret_backend_issuer" "intermediate" {
+#   backend     = vault_pki_secret_backend_intermediate_set_signed.intermediate.backend
+#   issuer_ref  = vault_pki_secret_backend_intermediate_set_signed.intermediate.imported_issuers[0]
+#   issuer_name = "int-ca-issuer"
+# }
