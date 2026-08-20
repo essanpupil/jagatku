@@ -36,16 +36,38 @@ resource "vault_kv_secret_v2" "backstage_config" {
   name  = "backstage-config"
 
   data_json = jsonencode({
-    db_username = "ChangeMe"
+    db_username = local.db_username
     db_password = "ChangeMe"
   })
 }
 
 resource "kubernetes_manifest" "db_secrets" {
-  manifest = yamldecode(templatefile("${path.module}/secret-provider.yaml", {
-    secret_name = local.secret_name
-    namespace   = kubernetes_namespace_v1.this.metadata[0].name
-    vault_role  = vault_kubernetes_auth_backend_role.this.role_name
-    secret_path = vault_kv_secret_v2.backstage_config.path # checkov:skip=CKV_SECRET_6
-  }))
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets-store.csi.x-k8s.io/v1
+    kind: SecretProviderClass
+    metadata:
+      name: backstage-db-auth
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+    spec:
+      provider: vault
+      secretObjects:
+      - secretName: ${local.secret_name}
+        type: Opaque
+        data:
+        - objectName: db_password
+          key: password
+        - objectName: db_username
+          key: username
+      parameters:
+        vaultAddress: "http://vault.laptop1.local"
+        roleName: ${vault_kubernetes_auth_backend_role.this.role_name}
+        objects: |
+          - objectName: "db_password"
+            secretPath: ${vault_kv_secret_v2.backstage_config.path} # checkov:skip=CKV_SECRET_6
+            secretKey: "password"
+          - objectName: "db_username"
+            secretPath: ${vault_kv_secret_v2.backstage_config.path} # checkov:skip=CKV_SECRET_6
+            secretKey: "username"
+  EOF
+  )
 }

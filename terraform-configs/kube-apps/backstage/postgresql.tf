@@ -10,7 +10,7 @@ resource "kubernetes_manifest" "db_cluster" {
             bootstrap:
                 initdb:
                     database: backstage_db
-                    owner: backstager
+                    owner: ${local.db_username}
                     secret:
                         name: ${local.secret_name}
             storage:
