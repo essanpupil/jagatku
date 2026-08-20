@@ -7,6 +7,8 @@ backstage:
         baseUrl: http://backstage.jagatku.local
         cors:
           origin: http://backstage.jagatku.local
+        csp:
+          upgrade-insecure-requests: false
 ingress:
   enabled: true
   className: cilium
