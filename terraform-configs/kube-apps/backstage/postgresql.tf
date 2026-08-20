@@ -4,11 +4,11 @@ resource "kubernetes_manifest" "db_cluster" {
         kind: Cluster
         metadata:
             name: backstage-db-cluster
-            namespace: platform
+            namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
         spec:
             instances: 3
-        storage:
-            size: 1Gi
+            storage:
+                size: 1Gi
     EOF
   )
 }
