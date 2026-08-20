@@ -7,6 +7,12 @@ resource "kubernetes_manifest" "db_cluster" {
             namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
         spec:
             instances: 3
+            bootstrap:
+                initdb:
+                    database: backstage_db
+                    owner: backstager
+                    secret:
+                        name: ${local.secret_name}
             storage:
                 size: 1Gi
     EOF

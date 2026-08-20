@@ -43,6 +43,7 @@ resource "vault_kv_secret_v2" "backstage_config" {
 
 resource "kubernetes_manifest" "db_secrets" {
   manifest = yamldecode(templatefile("${path.module}/secret-provider.yaml", {
+    secret_name = local.secret_name
     namespace   = kubernetes_namespace_v1.this.metadata[0].name
     vault_role  = vault_kubernetes_auth_backend_role.this.role_name
     secret_path = vault_kv_secret_v2.backstage_config.path # checkov:skip=CKV_SECRET_6
