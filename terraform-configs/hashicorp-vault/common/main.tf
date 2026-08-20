@@ -35,3 +35,16 @@ resource "vault_mount" "kvv2" {
 output "kv_secret_path" {
   value = vault_mount.kvv2.path
 }
+
+resource "vault_mount" "pki" {
+  path        = "pki"
+  type        = "pki"
+  description = "PKI mount for https certs"
+
+  default_lease_ttl_seconds = 86400
+  max_lease_ttl_seconds     = 315360000
+}
+
+output "pki_path" {
+  value = vault_mount.pki.path
+}
