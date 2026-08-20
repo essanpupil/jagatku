@@ -1,7 +1,3 @@
-locals {
-  vault_connection_name = "vault-connection"
-}
-
 resource "kubernetes_namespace_v1" "this" {
   metadata {
     name = "vault"
@@ -32,23 +28,4 @@ resource "helm_release" "vso" {
   values = [
     file("${path.module}/values-cso.yaml")
   ]
-}
-
-resource "kubernetes_manifest" "vault_laptop1_connection" {
-  depends_on = [helm_release.vso]
-
-  manifest = yamldecode(<<EOF
-    apiVersion: secrets.hashicorp.com/v1beta1
-    kind: VaultConnection
-    metadata:
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      name: ${local.vault_connection_name}
-    spec:
-      address: http://vault.laptop1.local
-  EOF
-  )
-}
-
-output "vault_connection_name" {
-  value = local.vault_connection_name
 }

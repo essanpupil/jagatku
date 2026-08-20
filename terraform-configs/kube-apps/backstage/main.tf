@@ -33,6 +33,19 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   token_ttl                        = 1800 # 30 minutes
 }
 
+resource "kubernetes_manifest" "vault_laptop1_connection" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultConnection
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.vault_connection_name}
+    spec:
+      address: http://vault.laptop1.local
+  EOF
+  )
+}
+
 resource "kubernetes_manifest" "backstage_vault_auth" {
   manifest = yamldecode(<<EOF
     apiVersion: secrets.hashicorp.com/v1beta1
@@ -41,7 +54,7 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: vault-auth
     spec:
-      vaultConnectionRef: ${data.terraform_remote_state.vso.outputs.vault_connection_name}
+      vaultConnectionRef: ${local.vault_connection_name}
       method: kubernetes
       mount: kubernetes
       kubernetes:
