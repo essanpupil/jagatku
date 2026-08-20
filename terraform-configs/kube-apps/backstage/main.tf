@@ -18,3 +18,19 @@ resource "helm_release" "this" {
     })
   ]
 }
+
+resource "kubernetes_cluster_role_binding_v1" "backstage" {
+  metadata {
+    name = "backstage-vault"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "system:auth-delegator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
