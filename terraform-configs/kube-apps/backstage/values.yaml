@@ -11,3 +11,8 @@ ingress:
   enabled: true
   className: cilium
   host: backstage.jagatku.local
+  annotations:
+    ingress.cilium.io/force-https: disabled
+serviceAccount:
+  create: true
+  name: ${service_account_name}
