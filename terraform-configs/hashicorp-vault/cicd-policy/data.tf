@@ -42,6 +42,12 @@ data "vault_policy_document" "this" {
   }
 
   rule {
+    path         = "pki_int/issue/*"
+    capabilities = ["create", "read", "update", "delete", "list"]
+    description  = "Work with pki secrets engine"
+  }
+
+  rule {
     path         = "auth/kubernetes/config"
     capabilities = ["read", "update"]
     description  = "Allow cicd to update kubernetes auth config"
