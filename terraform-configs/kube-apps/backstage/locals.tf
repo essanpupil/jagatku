@@ -4,4 +4,5 @@ locals {
   db_username           = "backstager"
   service_account_name  = "backstager-sa"
   vault_connection_name = "backstage-vault-conn"
+  vault_auth_name       = "vault-auth"
 }
