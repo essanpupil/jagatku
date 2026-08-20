@@ -1,12 +1,3 @@
-data "terraform_remote_state" "root_ca" {
-  backend = "consul"
-  config = {
-    address = "consul.laptop1.local"
-    scheme  = "http"
-    path    = "terraform-configs/hashicorp-vault/root-ca"
-  }
-}
-
 resource "vault_mount" "pki_int" {
   path        = "pki_int"
   type        = "pki"
@@ -34,4 +25,10 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "intermediate" {
 resource "vault_pki_secret_backend_intermediate_set_signed" "intermediate" {
   backend     = vault_mount.pki_int.path
   certificate = vault_pki_secret_backend_root_sign_intermediate.intermediate.certificate
+}
+
+resource "vault_pki_secret_backend_issuer" "intermediate" {
+  backend     = vault_pki_secret_backend_intermediate_set_signed.intermediate.backend
+  issuer_ref  = vault_pki_secret_backend_intermediate_set_signed.intermediate.imported_issuers[0]
+  issuer_name = "int-ca-issuer"
 }
