@@ -11,12 +11,12 @@ resource "vault_pki_secret_backend_role" "intermediate_role" {
   allow_subdomains = true
 }
 
-resource "vault_pki_secret_backend_cert" "backstage_jagatku_local" {
-  depends_on = [vault_pki_secret_backend_role.intermediate_role]
-  # issuer_ref  = data.terraform_remote_state.intermediate_ca.outputs.issuer_ref
-  backend     = vault_pki_secret_backend_role.intermediate_role.backend
-  name        = vault_pki_secret_backend_role.intermediate_role.name
-  common_name = "backstage.jagatku.local"
-  ttl         = 3600
-  revoke      = true
-}
+# resource "vault_pki_secret_backend_cert" "backstage_jagatku_local" {
+#   depends_on = [vault_pki_secret_backend_role.intermediate_role]
+#   # issuer_ref  = data.terraform_remote_state.intermediate_ca.outputs.issuer_ref
+#   backend     = vault_pki_secret_backend_role.intermediate_role.backend
+#   name        = vault_pki_secret_backend_role.intermediate_role.name
+#   common_name = "backstage.jagatku.local"
+#   ttl         = 3600
+#   revoke      = true
+# }
