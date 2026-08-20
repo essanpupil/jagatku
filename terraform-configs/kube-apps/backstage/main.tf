@@ -33,6 +33,24 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   token_ttl                        = 1800 # 30 minutes
 }
 
+resource "kubernetes_manifest" "backstage_vault_auth" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultAuth
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: vault-auth
+    spec:
+      vaultConnectionRef: ${data.terraform_remote_state.vso.outputs.vault_connection_name}
+      method: kubernetes
+      mount: kubernetes
+      kubernetes:
+        role: ${vault_kubernetes_auth_backend_role.this.role_name}
+        serviceAccount: ${local.service_account_name}
+  EOF
+  )
+}
+
 resource "vault_kv_secret_v2" "backstage_config" {
   mount = data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path
   name  = "backstage-config"

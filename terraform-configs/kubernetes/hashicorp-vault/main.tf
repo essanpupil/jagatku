@@ -29,6 +29,9 @@ resource "helm_release" "vso" {
   version    = "1.5.1"
   atomic     = true
   wait       = true
+  values = [
+    file("${path.module}/values-cso.yaml")
+  ]
 }
 
 resource "kubernetes_manifest" "vault_laptop1_connection" {

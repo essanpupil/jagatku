@@ -1,3 +1,12 @@
+data "terraform_remote_state" "vso" {
+  backend = "consul"
+  config = {
+    address = "consul.laptop1.local"
+    scheme  = "http"
+    path    = "terraform-configs/kubernetes/hashicorp-vault"
+  }
+}
+
 data "terraform_remote_state" "kubernetes_vault" {
   backend = "consul"
   config = {
