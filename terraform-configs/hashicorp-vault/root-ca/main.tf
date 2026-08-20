@@ -7,6 +7,14 @@ resource "vault_mount" "pki" {
   max_lease_ttl_seconds     = 315360000
 }
 
+output "pki_path" {
+  value = vault_mount.pki.path
+}
+
+output "issuer_id" {
+  value = vault_pki_secret_backend_issuer.root_2023.issuer_id
+}
+
 resource "vault_pki_secret_backend_root_cert" "root_2023" {
   backend     = vault_mount.pki.path
   type        = "internal"
