@@ -6,5 +6,6 @@ ingressController:
   enabled: true
   default: true
   loadbalancerMode: shared
+  enforceHttps: false
 envoy:
   enabled: true
