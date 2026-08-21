@@ -34,7 +34,7 @@ data "vault_policy_document" "this" {
   }
   rule {
     path         = "auth/kubernetes/login"
-    capabilities = ["create", "read", "update", "list"]
+    capabilities = ["create", "read", "update", "list", "patch", "sudo"]
     description  = "Access secrets for backstage"
   }
 }

@@ -10,6 +10,7 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
+    audience                         = "vault"
 }
 
 resource "kubernetes_manifest" "vault_laptop1_connection" {
@@ -64,7 +65,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.secret_name}-static
     spec:
-      vaultAuthRef: ${local.vault_auth_name}
+      vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
       mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.secret_name}
@@ -73,6 +74,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       destination:
         create: true
         name: ${local.secret_name}
+        overwrite: true
     EOF
   )
 }
