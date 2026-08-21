@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.secret_name}-static
       annotations:
-        checkov.io/skip#: CKV_SECRET_6=secrets value will be updated and changed from vault web ui
+        checkov.io/skip#: CKV_SECRET_6
     spec:
       vaultAuthRef: ${local.vault_auth_name}
       mount: kvv2
