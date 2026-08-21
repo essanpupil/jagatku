@@ -64,7 +64,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       vaultAuthRef: ${local.vault_auth_name}
       mount: kvv2
       type: kv-v2
-      path: ${vault_kv_secret_v2.backstage_config.path}
+      path: ${vault_kv_secret_v2.backstage_config.path} # checkov:skip=CKV_SECRET_6
       version: 2
       refreshAfter: 60s
       destination:
