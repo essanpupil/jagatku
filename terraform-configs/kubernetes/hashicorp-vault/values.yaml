@@ -1,9 +1,5 @@
-server:
-  enabled: false
-  dev:
-    enabled: false
-injector:
-  enabled: true
-  externalVaultAddr: "http://vault.laptop1.local"
-csi:
-  enabled: true
+controller:
+  hostAliases:
+    - ip: 192.168.1.50
+      hostnames:
+        - vault.laptop1.local
