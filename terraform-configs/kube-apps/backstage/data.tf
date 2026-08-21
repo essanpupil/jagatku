@@ -18,7 +18,7 @@ data "terraform_remote_state" "intermediate_ca" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = "secret/data/backstage/*"
+    path         = "${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}/data/${vault_kv_secret_v2.backstage_config.path}/*"
     capabilities = ["read", "list"]
     description  = "Access secrets for backstage"
   }
