@@ -49,7 +49,7 @@ resource "vault_kv_secret_v2" "backstage_config" {
 
   data_json = jsonencode({
     db_username = local.db_username
-    db_password = "ChangeMe"
+    db_password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
 }
 
