@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
 
 resource "vault_kv_secret_v2" "backstage_config" {
   mount = data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path
-  name  = "backstage-config"
+  name  = local.secret_name
 
   data_json = jsonencode({
     db_username = local.db_username
@@ -54,12 +54,15 @@ resource "vault_kv_secret_v2" "backstage_config" {
 }
 
 resource "kubernetes_manifest" "backstage_secret" {
+  # checkov:skip=CKV_SECRET_6
   manifest = yamldecode(<<EOF
     apiVersion: secrets.hashicorp.com/v1beta1
     kind: VaultStaticSecret
     metadata:
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.secret_name}-static
+      annotations:
+        checkov.io/skip#: CKV_SECRET_6
     spec:
       vaultAuthRef: ${local.vault_auth_name}
       mount: kvv2

@@ -9,7 +9,7 @@ resource "vault_kubernetes_auth_backend_config" "example" {
 }
 
 resource "vault_mount" "kvv2" {
-  path = "secret"
+  path = "sensitive-data"
   type = "kv-v2"
   options = {
     version = "2"
