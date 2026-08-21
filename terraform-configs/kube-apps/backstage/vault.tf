@@ -35,10 +35,12 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
     spec:
       vaultConnectionRef: ${local.vault_connection_name}
       method: kubernetes
-      mount: kubernetes
+      mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path}
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${local.service_account_name}
+        audiences:
+          - vault
   EOF
   )
 }
