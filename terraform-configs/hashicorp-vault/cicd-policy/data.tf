@@ -25,7 +25,13 @@ data "vault_policy_document" "this" {
 
   rule {
     path         = "sys/remount"
-    capabilities = ["create", "read", "update", "delete", "list", "sudo", "patch"]
+    capabilities = ["update", "sudo"]
+    description  = "Allow cicd to manage secrets engine"
+  }
+
+  rule {
+    path         = "sys/remount/*"
+    capabilities = ["create", "read", "delete", "list"]
     description  = "Allow cicd to manage secrets engine"
   }
 
