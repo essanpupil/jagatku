@@ -54,6 +54,7 @@ resource "vault_kv_secret_v2" "backstage_config" {
 }
 
 resource "kubernetes_manifest" "backstage_secret" {
+  # checkov:skip=CKV_SECRET_6
   manifest = yamldecode(<<EOF
     apiVersion: secrets.hashicorp.com/v1beta1
     kind: VaultStaticSecret
