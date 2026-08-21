@@ -4,19 +4,6 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
-resource "helm_release" "this" {
-  name       = "vault"
-  repository = "https://helm.releases.hashicorp.com"
-  chart      = "vault"
-  namespace  = kubernetes_namespace_v1.this.metadata[0].name
-  version    = "0.34.0"
-  atomic     = true
-  wait       = true
-  values = [
-    file("${path.module}/values.yaml")
-  ]
-}
-
 resource "helm_release" "vso" {
   name       = "vault-secrets-operator"
   repository = "https://helm.releases.hashicorp.com"
@@ -26,6 +13,6 @@ resource "helm_release" "vso" {
   atomic     = true
   wait       = true
   values = [
-    file("${path.module}/values-cso.yaml")
+    file("${path.module}/values.yaml")
   ]
 }
