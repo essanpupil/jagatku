@@ -12,13 +12,13 @@ data "vault_policy_document" "this" {
   }
 
   rule {
-    path         = "secret/data/*"
+    path         = "sensitive-data/data/*"
     capabilities = ["create", "read", "update", "list", "delete"]
     description  = "Allow cicd to modify secrets data"
   }
 
   rule {
-    path         = "secret/metadata/*"
+    path         = "sensitive-data/metadata/*"
     capabilities = ["create", "read", "update", "list", "delete"]
     description  = "Allow cicd to modify secrets metadata"
   }
