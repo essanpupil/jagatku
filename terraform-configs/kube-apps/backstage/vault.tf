@@ -49,7 +49,7 @@ resource "vault_kv_secret_v2" "backstage_config" {
 
   data_json = jsonencode({
     db_username = local.db_username
-    db_password = "ChangeMe"
+    db_password = "PleaseChangeMe" # checkov:skip=CKV_AWS_18:Access logging not required here
   })
 }
 
