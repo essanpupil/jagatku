@@ -3,3 +3,7 @@ controller:
     - ip: 192.168.1.50
       hostnames:
         - vault.laptop1.local
+defaultVaultConnection:
+   enabled: true
+   address: "http://vault.laptop1.local"
+   skipTLSVerify: true
