@@ -17,8 +17,13 @@ data "terraform_remote_state" "intermediate_ca" {
 }
 
 data "vault_policy_document" "this" {
+  #   URL: GET http://vault.laptop1.local/v1/sensitive-data/data/backstage-db-secret?version=2
+  # Code: 403. Errors:
+
+  # * 1 error occurred:
+  #   * permission denied
   rule {
-    path         = "${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}/data/${vault_kv_secret_v2.backstage_config.path}/*"
+    path         = "sensitive-data/data/backstage-db-secret/*"
     capabilities = ["read", "list"]
     description  = "Access secrets for backstage"
   }
