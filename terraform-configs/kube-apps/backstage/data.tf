@@ -23,8 +23,13 @@ data "vault_policy_document" "this" {
   # * 1 error occurred:
   #   * permission denied
   rule {
-    path         = "sensitive-data/data/backstage-db-secret/*"
-    capabilities = ["read", "list"]
+    path         = "${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}/data/${local.secret_name}/*"
+    capabilities = ["create", "read", "update", "list"]
+    description  = "Access secrets for backstage"
+  }
+  rule {
+    path         = "${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}/metadata/${local.secret_name}/*"
+    capabilities = ["create", "read", "update", "list"]
     description  = "Access secrets for backstage"
   }
   rule {
