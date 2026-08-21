@@ -65,7 +65,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       vaultAuthRef: ${local.vault_auth_name}
       mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}
       type: kv-v2
-      path: ${vault_kv_secret_v2.backstage_config.path}
+      path: ${local.secret_name}
       version: 2
       refreshAfter: 60s
       destination:
