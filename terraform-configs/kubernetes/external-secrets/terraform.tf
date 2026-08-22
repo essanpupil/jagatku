@@ -3,7 +3,7 @@ terraform {
   backend "consul" {
     address = "consul.laptop1.local"
     scheme  = "http"
-    path    = "terraform-configs/kube-apps/backstage"
+    path    = "terraform-configs/kubernetes/external-secrets"
   }
 
   required_providers {
@@ -17,10 +17,6 @@ terraform {
       version = "3.2.0"
     }
 
-    vault = {
-      source  = "hashicorp/vault"
-      version = "5.11"
-    }
   }
 }
 
@@ -33,12 +29,4 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-}
-
-provider "vault" {
-  address          = "http://vault.laptop1.local"
-  skip_child_token = true
-  auth_login_token_file {
-    filename = pathexpand("~/.vault_pass")
-  }
 }
