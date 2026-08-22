@@ -17,9 +17,20 @@ terraform {
       version = "3.2.0"
     }
 
+    vault = {
+      source  = "hashicorp/vault"
+      version = "5.11"
+    }
   }
 }
 
+provider "vault" {
+  address          = "http://vault.laptop1.local"
+  skip_child_token = true
+  auth_login_token_file {
+    filename = pathexpand("~/.vault_pass")
+  }
+}
 
 provider "helm" {
   kubernetes = {
