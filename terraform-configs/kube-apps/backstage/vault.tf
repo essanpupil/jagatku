@@ -10,7 +10,14 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
-    audience                         = "vault"
+  audience                         = "vault"
+}
+
+resource "vault_kubernetes_auth_backend_config" "example" {
+  backend            = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+  kubernetes_host    = "https://kubernetes.jagat.local:6443"
+  kubernetes_ca_cert = kubernetes_secret_v1.backstager_sa.data["ca.crt"]
+  token_reviewer_jwt = kubernetes_secret_v1.backstager_sa.data["token"]
 }
 
 resource "vault_kv_secret_v2" "backstage_config" {
@@ -21,6 +28,39 @@ resource "vault_kv_secret_v2" "backstage_config" {
     db_username = local.db_username
     db_password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
+}
+
+resource "kubernetes_manifest" "vault_laptop1_connection" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultConnection
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.vault_connection_name}
+    spec:
+      address: ${local.vault_address}
+  EOF
+  )
+}
+
+resource "kubernetes_manifest" "backstage_vault_auth" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultAuth
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.vault_auth_name}
+    spec:
+      vaultConnectionRef: ${local.vault_connection_name}
+      method: kubernetes
+      mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path}
+      kubernetes:
+        role: ${vault_kubernetes_auth_backend_role.this.role_name}
+        serviceAccount: ${local.service_account_name}
+        audiences:
+          - vault
+  EOF
+  )
 }
 
 resource "kubernetes_manifest" "backstage_secret" {

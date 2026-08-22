@@ -34,3 +34,14 @@ resource "kubernetes_cluster_role_binding_v1" "backstage" {
     namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
 }
+
+resource "kubernetes_secret_v1" "backstager_sa" {
+  metadata {
+    name      = "${local.service_account_name}-token"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    annotations = {
+      "kubernetes.io/service-account.name" = local.service_account_name
+    }
+  }
+  type = "kubernetes.io/service-account-token"
+}

@@ -7,15 +7,6 @@ data "terraform_remote_state" "kubernetes_vault" {
   }
 }
 
-data "terraform_remote_state" "helm_vault" {
-  backend = "consul"
-  config = {
-    address = "consul.laptop1.local"
-    scheme  = "http"
-    path    = "terraform-configs/kubernetes/hashicorp-vault"
-  }
-}
-
 data "terraform_remote_state" "intermediate_ca" {
   backend = "consul"
   config = {
