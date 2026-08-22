@@ -7,3 +7,13 @@ defaultVaultConnection:
    enabled: true
    address: "http://vault.laptop1.local"
    skipTLSVerify: true
+defaultAuthMethod:
+  enabled: true
+  namespace: ${vault_namespace}
+  allowedNamespaces: ${jsonencode(allowed_namespaces)}
+  method: kubernetes
+  mount: ${mount}
+  kubernetes:
+    role: ${vault_kubernetes_role}
+    serviceAccount: ${kubernetes_vault_service_account}
+    tokenAudiences: ${jsonencode(token_audiences)}
