@@ -18,12 +18,7 @@ data "terraform_remote_state" "intermediate_ca" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = "sensitive-data/data/backstage-db-secret"
-    capabilities = ["create", "read", "update"]
-    description  = "Access secrets for backstage"
-  }
-  rule {
-    path         = "sensitive-data/metadata/backstage-db-secret"
+    path         = vault_kv_secret_v2.backstage_config.path
     capabilities = ["create", "read", "update"]
     description  = "Access secrets for backstage"
   }
