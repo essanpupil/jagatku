@@ -20,7 +20,7 @@ resource "google_container_cluster" "jagatku" {
   }
 
   resource_labels = {
-    "ManagedBy" = "terraform"
+    "managedby" = "terraform"
   }
 
   workload_identity_config {
