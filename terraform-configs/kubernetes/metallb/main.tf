@@ -23,7 +23,7 @@ resource "kubernetes_manifest" "main_pool" {
     kind: IPAddressPool
     metadata:
       name: main-pool
-      namespace: ${ kubernetes_namespace_v1.this.metadata[0].name }
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
       addresses:
         - 192.168.1.200-192.168.1.250
@@ -37,7 +37,7 @@ resource "kubernetes_manifest" "l2_advertisement" {
     kind: L2Advertisement
     metadata:
       name: l2-advertisement
-      namespace: ${ kubernetes_namespace_v1.this.metadata[0].name }
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
       ipAddressPools:
         - main-pool
