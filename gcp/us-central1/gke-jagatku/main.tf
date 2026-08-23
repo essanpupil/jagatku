@@ -47,7 +47,14 @@ resource "google_container_cluster" "jagatku" {
   }
 
   private_cluster_config {
-    enable_private_nodes = true
+    enable_private_nodes    = true
+    enable_private_endpoint = true
+  }
+
+  control_plane_endpoints_config {
+    dns_endpoint_config {
+      allow_external_traffic = true
+    }
   }
 
   master_auth {
@@ -63,6 +70,10 @@ resource "google_container_cluster" "jagatku" {
   master_authorized_networks_config {
     gcp_public_cidrs_access_enabled      = false
     private_endpoint_enforcement_enabled = true
+    # cidr_blocks {
+    #   cidr_block   = "125.160.217.225/32"
+    #   display_name = "DreamSpace"
+    # }
   }
 }
 
