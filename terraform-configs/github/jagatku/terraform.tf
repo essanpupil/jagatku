@@ -1,6 +1,6 @@
 terraform {
   backend "consul" {
-    address = "192.168.1.2:8500"
+    address = "consul.laptop1.local"
     scheme  = "http"
     path    = "terraform-configs/github/jagatku"
   }
