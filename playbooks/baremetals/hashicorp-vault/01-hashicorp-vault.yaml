@@ -12,11 +12,11 @@
         daemon_reload: true
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
     - name: Install Hashicorp vault
-      apt:
+      ansible.builtin.apt:
         name: vault
         state: present
     - name: Write the systemd service file for hashicorp vault

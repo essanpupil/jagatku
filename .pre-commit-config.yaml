@@ -24,3 +24,8 @@ repos:
       - id: terraform_trivy
         args:
           - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore.yaml
+
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.8.0
+    hooks:
+      - id: ansible-lint

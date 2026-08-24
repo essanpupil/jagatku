@@ -1,20 +1,21 @@
 ---
 - name: Install and configure prometheus in laptop
   hosts: baremetals
-  become: True
+  become: true
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
     - name: Install Prometheus
-      apt:
+      ansible.builtin.apt:
         name:
           - prometheus
           - prometheus-node-exporter
         state: present
     - name: Render prometheus config for validation
       check_mode: false
+      register: temp_prome_config
       ansible.builtin.template:
         src: config.prometheus.j2
         dest: /tmp/prometheus_config.yml
@@ -22,6 +23,7 @@
         mode: '0640'
     - name: Validate prometheus config
       check_mode: false
+      changed_when: temp_prome_config.changed
       ansible.builtin.command:
         cmd: promtool check config /tmp/prometheus_config.yml
     - name: Deploy Prometheus default arguments
@@ -44,10 +46,10 @@
       notify: Restart prometheus
 
     - name: Start Prometheus service
-      service:
+      ansible.builtin.systemd_service:
         name: prometheus
         state: started
-        enabled: yes
+        enabled: true
 
   handlers:
     - name: Restart prometheus

@@ -71,6 +71,7 @@
         --certificate-key {{ hostvars['cp1']['control_plane_cert_key'] }}
       become: true
       register: join_output
+      changed_when: join_output.rc == 0
       when:
         - node_name not in node_names.msg
 

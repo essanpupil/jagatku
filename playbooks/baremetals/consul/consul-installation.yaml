@@ -13,11 +13,11 @@
 
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
         cache_valid_time: 3600
     - name: Install Hashicorp Consul
-      apt:
+      ansible.builtin.apt:
         name: consul
         state: present
     - name: Write the systemd service file for consul
@@ -39,6 +39,7 @@
       register: consul_validation
       ansible.builtin.command:
         cmd: consul validate /etc/consul.d/
+      changed_when: false
       notify: Restart consul
     - name: Print validation output if it fails
       ansible.builtin.debug:

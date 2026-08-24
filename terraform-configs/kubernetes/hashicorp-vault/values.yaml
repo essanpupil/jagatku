@@ -4,9 +4,9 @@ controller:
       hostnames:
         - vault.laptop1.local
 defaultVaultConnection:
-   enabled: true
-   address: "http://vault.laptop1.local"
-   skipTLSVerify: true
+  enabled: true
+  address: "http://vault.laptop1.local"
+  skipTLSVerify: true
 defaultAuthMethod:
   enabled: true
   namespace: ${vault_namespace}

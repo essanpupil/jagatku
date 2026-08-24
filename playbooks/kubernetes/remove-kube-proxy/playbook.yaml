@@ -31,6 +31,7 @@
     - name: Clear kube-proxy nft tables ip4
       ansible.builtin.command: nft delete table ip kube-proxy
       when: table_check.rc == 0
+      changed_when: true
       become: true
 
     - name: Check if kube-proxy nft table exists for ip6
@@ -43,4 +44,5 @@
     - name: Clear kube-proxy nft tables ip6
       ansible.builtin.command: nft delete table ip6 kube-proxy
       when: table_check.rc == 0
+      changed_when: true
       become: true

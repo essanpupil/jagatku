@@ -20,8 +20,8 @@ spec:
             k8s-app: kube-dns
       toPorts:
         - ports:
-          - port: "53"
-            protocol: UDP
+            - port: "53"
+              protocol: UDP
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -33,9 +33,9 @@ spec:
     matchLabels:
       k8s-app: kube-dns
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        app.kubernetes.io/name: hubble-relay
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: hubble-relay
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
@@ -62,13 +62,13 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      'reserved:health': ''
+      "reserved:health": ""
   ingress:
     - fromEntities:
-      - remote-node
+        - remote-node
   egress:
     - toEntities:
-      - remote-node
+        - remote-node
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy

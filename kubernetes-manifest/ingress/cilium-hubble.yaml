@@ -6,15 +6,15 @@ metadata:
   namespace: kube-system
 spec:
   parentRefs:
-  - name: external-web-gateway
-    namespace: traefik
+    - name: external-web-gateway
+      namespace: traefik
   hostnames:
-  - "hubble.jagatku.local"
+    - "hubble.jagatku.local"
   rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
-    - name: hubble-ui
-      port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: hubble-ui
+          port: 80

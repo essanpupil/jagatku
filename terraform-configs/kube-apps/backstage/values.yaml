@@ -1,14 +1,14 @@
 backstage:
   appConfig:
-      app:
-        title: "Jagat Platform"
-        baseUrl: http://backstage.jagatku.local
-      backend:
-        baseUrl: http://backstage.jagatku.local
-        cors:
-          origin: http://backstage.jagatku.local
-        csp:
-          upgrade-insecure-requests: false
+    app:
+      title: "Jagat Platform"
+      baseUrl: http://backstage.jagatku.local
+    backend:
+      baseUrl: http://backstage.jagatku.local
+      cors:
+        origin: http://backstage.jagatku.local
+      csp:
+        upgrade-insecure-requests: false
 ingress:
   enabled: true
   className: cilium
