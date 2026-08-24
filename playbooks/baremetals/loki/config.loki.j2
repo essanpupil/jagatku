@@ -8,7 +8,7 @@ server:
   grpc_server_max_concurrent_streams: 1000
 
 common:
-  instance_addr: {{ loki_local_domain }}
+  instance_addr: {{ loki.fqdn }}
   path_prefix: /tmp/loki
   storage:
     filesystem:
@@ -44,7 +44,7 @@ schema_config:
 pattern_ingester:
   enabled: true
   metric_aggregation:
-    loki_address: {{ loki_local_domain }}
+    loki_address: {{ loki.fqdn }}
 
 ruler:
   alertmanager_url: http://localhost:9093
