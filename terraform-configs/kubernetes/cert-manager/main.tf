@@ -16,8 +16,3 @@ resource "helm_release" "this" {
     file("${path.module}/values.yaml")
   ]
 }
-
-import {
-  to = helm_release.this
-  id = "kube-system/cilium"
-}
