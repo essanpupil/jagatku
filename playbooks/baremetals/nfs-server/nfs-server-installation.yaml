@@ -7,13 +7,13 @@
     nfs_export_options: "(rw,sync,no_subtree_check)"
   tasks:
     - name: Ensure NFS server packages are installed
-      apt:
+      ansible.builtin.apt:
         name: nfs-kernel-server
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Ensure export directory exists
-      file:
+      ansible.builtin.file:
         path: "{{ nfs_export_dir }}"
         state: directory
         owner: root
@@ -29,10 +29,11 @@
         mode: '0644'
 
     - name: Export NFS shares
-      command: exportfs -ra
+      changed_when: false
+      ansible.builtin.command: exportfs -ra
 
     - name: Ensure NFS server is enabled and running
-      service:
+      ansible.builtin.systemd_service:
         name: nfs-kernel-server
         state: started
-        enabled: yes
+        enabled: true

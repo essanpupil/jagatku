@@ -48,7 +48,7 @@
 ;http_port = 3000
 
 # The public facing domain name used to access grafana from a browser
-domain = {{ grafana_local_domain }}
+domain = {{ grafana.fqdn }}
 
 # Redirect to correct domain if host header does not match domain
 # Prevents DNS rebinding attacks

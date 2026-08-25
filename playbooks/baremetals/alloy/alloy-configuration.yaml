@@ -21,6 +21,7 @@
       check_mode: false
       ansible.builtin.command:
         cmd: alloy validate /tmp/alloy_config.yml
+      changed_when: false
 
     - name: Ensure alloy user belongs to system groups for log access
       ansible.builtin.user:
@@ -40,11 +41,6 @@
         validate: alloy validate %s
       register: config_output
       notify: Restart alloy
-
-    - name: Validate Alloy configuration
-      check_mode: no
-      when: config_output.changed
-      command: alloy validate /etc/alloy/config.alloy
 
     - name: Deploy Alloy systemd service unit file
       ansible.builtin.template:

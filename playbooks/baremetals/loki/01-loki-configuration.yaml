@@ -7,10 +7,11 @@
       ansible.builtin.apt:
         name: loki
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Render loki config for validation
       check_mode: false
+      register: temp_loki_config
       ansible.builtin.template:
         src: config.loki.j2
         dest: /tmp/loki_config.yml
@@ -18,6 +19,7 @@
         mode: '0640'
 
     - name: Validate loki config
+      changed_when: temp_loki_config.changed
       check_mode: false
       ansible.builtin.command:
         cmd: loki -config.file=/tmp/loki_config.yml -verify-config
@@ -36,7 +38,7 @@
       ansible.builtin.systemd:
         name: loki
         state: started
-        enabled: yes
+        enabled: true
 
   handlers:
     - name: Restart loki
