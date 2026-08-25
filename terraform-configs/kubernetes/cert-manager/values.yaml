@@ -1,2 +1,5 @@
 crds:
   enabled: true
+serviceAccount:
+  create: true
+  name: ${service_account_name}
