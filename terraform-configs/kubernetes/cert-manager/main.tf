@@ -30,6 +30,7 @@ resource "kubernetes_manifest" "sa_secret" {
     kind: Secret
     metadata:
       name: ${local.service_account_secret_name}
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       annotations:
         kubernetes.io/service-account.name: ${local.service_account_name}
     type: kubernetes.io/service-account-token
