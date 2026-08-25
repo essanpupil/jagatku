@@ -38,13 +38,13 @@ data "vault_policy_document" "this" {
   rule {
     path         = "sys/mounts/*"
     capabilities = ["create", "read", "update", "delete", "list"]
-    description  = "Allow cicd to manage secrets engine"
+    description  = "Enable secrets engine"
   }
 
   rule {
     path         = "sys/mounts"
     capabilities = ["read", "list"]
-    description  = "Allow cicd to list enabled secrets engine"
+    description  = "List enabled secrets engine"
   }
 
   rule {
