@@ -7,18 +7,10 @@ resource "vault_mount" "pki" {
   max_lease_ttl_seconds     = 315360000
 }
 
-output "pki_path" {
-  value = vault_mount.pki.path
-}
-
-output "issuer_id" {
-  value = vault_pki_secret_backend_issuer.root_2023.issuer_id
-}
-
 resource "vault_pki_secret_backend_root_cert" "root_2023" {
   backend     = vault_mount.pki.path
   type        = "internal"
-  common_name = "Root CA"
+  common_name = "jagatku.local"
   ttl         = 315360000
   issuer_name = "root-2023"
 }
@@ -32,12 +24,10 @@ resource "vault_pki_secret_backend_issuer" "root_2023" {
 
 resource "vault_pki_secret_backend_role" "role" {
   backend          = vault_mount.pki.path
-  name             = "2023-servers"
-  ttl              = 86400
+  name             = "2023-servers-role"
   allow_ip_sans    = true
   key_type         = "rsa"
   key_bits         = 4096
-  allowed_domains  = ["jagatku.local", "laptop1.local"]
   allow_subdomains = true
   allow_any_name   = true
 }
