@@ -34,7 +34,7 @@ resource "kubernetes_manifest" "cert_issuer" {
         auth:
           kubernetes:
             mountPath: ${data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path}
-            role: issuer
+            role: ${vault_pki_secret_backend_role.intermediate_role.name}
             secretRef:
               name: ${local.service_account_token_name}
               key: token
