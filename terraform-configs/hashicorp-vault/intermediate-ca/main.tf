@@ -5,7 +5,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "csr-request" {
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "intermediate" {
-  backend     = data.terraform_remote_state.root_ca.outputs.pki_path
+  backend     = data.terraform_remote_state.vault_common.outputs.pki_path
   common_name = "new_intermediate"
   csr         = vault_pki_secret_backend_intermediate_cert_request.csr-request.csr
   format      = "pem_bundle"
