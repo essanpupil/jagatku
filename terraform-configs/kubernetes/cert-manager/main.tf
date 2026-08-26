@@ -1,12 +1,21 @@
-locals {
-  service_account_name        = "cert-manager"
-  service_account_secret_name = "cert-manager-token"
-}
-
 resource "kubernetes_namespace_v1" "this" {
   metadata {
     name = "cert-manager"
   }
+}
+
+resource "vault_policy" "this" {
+  name   = "cert-manager-policy"
+  policy = data.vault_policy_document.this.hcl
+}
+
+resource "vault_kubernetes_auth_backend_role" "this" {
+  backend                          = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+  role_name                        = "cert-manager"
+  bound_service_account_names      = [local.service_account_name]
+  bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
+  token_policies                   = [vault_policy.this.name]
+  token_ttl                        = 1800 # 30 minutes
 }
 
 resource "helm_release" "this" {
@@ -24,16 +33,30 @@ resource "helm_release" "this" {
   ]
 }
 
-resource "kubernetes_manifest" "sa_secret" {
-  manifest = yamldecode(<<EOF
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: ${local.service_account_secret_name}
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      annotations:
-        kubernetes.io/service-account.name: ${local.service_account_name}
-    type: kubernetes.io/service-account-token
-  EOF
-  )
+resource "kubernetes_cluster_role_v1" "this" {
+  metadata {
+    name = "cert-manager-token-creator"
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["serviceaccounts/token"]
+    verbs      = ["create"]
+  }
+}
+
+resource "kubernetes_cluster_role_binding_v1" "this" {
+  metadata {
+    name = "cert-manager-token-creator-binding"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cert-manager-token-creator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "cert-manager"
+    namespace = "cert-manager"
+  }
 }
