@@ -9,7 +9,8 @@ backstage:
         origin: https://backstage.jagatku.local
     auth:
       providers:
-        guest: {}
+        guest:
+          dangerouslyAllowInsecureDevelopmentMode: true
 ingress:
   enabled: true
   className: cilium
