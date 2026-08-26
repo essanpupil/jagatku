@@ -21,7 +21,9 @@ terraform {
 provider "vault" {
   address          = "http://vault.laptop1.local"
   skip_child_token = true
-  auth_login_userpass {}
+  auth_login_token_file {
+    filename = pathexpand("~/.vault_pass")
+  }
 }
 
 provider "kubernetes" {

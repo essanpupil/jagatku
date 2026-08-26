@@ -1,7 +1,3 @@
-output "pki_path" {
-  value = vault_mount.pki.path
-}
-
 output "issuer_id" {
   value = vault_pki_secret_backend_issuer.root_2023.issuer_id
 }
