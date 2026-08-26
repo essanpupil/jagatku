@@ -1,5 +1,5 @@
 resource "vault_pki_secret_backend_role" "intermediate_role" {
-  backend          = data.terraform_remote_state.intermediate_ca.outputs.pki_path
+  backend          = data.terraform_remote_state.vault_common.outputs.pki_int_path
   issuer_ref       = data.terraform_remote_state.intermediate_ca.outputs.issuer_ref
   name             = "backstage-jagatku-local"
   ttl              = 86400
@@ -20,28 +20,6 @@ resource "vault_pki_secret_backend_cert" "backstage_jagatku_local" {
   revoke      = true
 }
 
-resource "kubernetes_manifest" "cert_issuer" {
-  manifest = yamldecode(<<EOF
-    apiVersion: cert-manager.io/v1
-    kind: Issuer
-    metadata:
-      name: ${local.cert_issuer_name}
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      vault:
-        server: http://vault.laptop1.local
-        path: ${data.terraform_remote_state.intermediate_ca.outputs.pki_path}
-        auth:
-          kubernetes:
-            mountPath: ${data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path}
-            role: ${vault_pki_secret_backend_role.intermediate_role.name}
-            secretRef:
-              name: ${local.service_account_token_name}
-              key: token
-  EOF
-  )
-}
-
 resource "kubernetes_manifest" "backstage_cert" {
   manifest = yamldecode(<<EOF
     apiVersion: cert-manager.io/v1
@@ -50,12 +28,19 @@ resource "kubernetes_manifest" "backstage_cert" {
       name: backstage-jagatku-local
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
-      secretName: backstage-jagatku-local-tls
+      secretName: ${local.tls_secret_name}
+      duration: 48h
+      renewBefore: 5h
       issuerRef:
-        name: ${local.cert_issuer_name}
+        name: ${data.terraform_remote_state.cert_manager.outputs.cluster_issuer_name}
+        kind: ClusterIssuer
       commonName: backstage.jagatku.local
       dnsNames:
         - backstage.jagatku.local
+      privateKey:
+        algorithm: RSA
+        size: 4096
+        rotationPolicy: Always
   EOF
   )
 }

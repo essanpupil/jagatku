@@ -15,6 +15,7 @@ resource "helm_release" "this" {
   values = [
     templatefile("${path.module}/values.yaml", {
       service_account_name = local.service_account_name
+      tls_secret           = local.tls_secret_name
     })
   ]
 }

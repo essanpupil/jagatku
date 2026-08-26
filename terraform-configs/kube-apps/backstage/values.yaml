@@ -2,19 +2,22 @@ backstage:
   appConfig:
     app:
       title: "Jagat Platform"
-      baseUrl: http://backstage.jagatku.local
+      baseUrl: https://backstage.jagatku.local
     backend:
-      baseUrl: http://backstage.jagatku.local
+      baseUrl: https://backstage.jagatku.local
       cors:
-        origin: http://backstage.jagatku.local
-      csp:
-        upgrade-insecure-requests: false
+        origin: https://backstage.jagatku.local
+      # csp:
+      #   upgrade-insecure-requests: true
 ingress:
   enabled: true
   className: cilium
   host: backstage.jagatku.local
   annotations:
-    ingress.cilium.io/force-https: disabled
+    ingress.cilium.io/force-https: enabled
+  tls:
+    enabled: true
+    secretName: ${tls_secret}
 serviceAccount:
   create: true
   name: ${service_account_name}

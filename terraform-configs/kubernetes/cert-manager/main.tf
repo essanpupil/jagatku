@@ -1,8 +1,3 @@
-locals {
-  service_account_name        = "cert-manager"
-  service_account_secret_name = "cert-manager-token"
-}
-
 resource "kubernetes_namespace_v1" "this" {
   metadata {
     name = "cert-manager"
@@ -24,16 +19,86 @@ resource "helm_release" "this" {
   ]
 }
 
-resource "kubernetes_manifest" "sa_secret" {
+resource "kubernetes_role_v1" "example" {
+  metadata {
+    name      = local.kubernetes_vault_role
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+    labels = {
+      test = "cert-manager-vault-kube-auth"
+    }
+  }
+
+  rule {
+    api_groups     = [""]
+    resources      = ["serviceaccounts/token"]
+    resource_names = [local.service_account_name]
+    verbs          = ["create"]
+  }
+}
+
+resource "kubernetes_role_binding_v1" "example" {
+  metadata {
+    name      = "${local.kubernetes_vault_role}-binding"
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Role"
+    name      = local.kubernetes_vault_role
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
+resource "kubernetes_cluster_role_v1" "this" {
+  metadata {
+    name = "cert-manager-token-creator"
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["serviceaccounts/token"]
+    verbs      = ["create"]
+  }
+}
+
+resource "kubernetes_cluster_role_binding_v1" "this" {
+  metadata {
+    name = "cert-manager-token-creator-binding"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cert-manager-token-creator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "cert-manager"
+    namespace = "cert-manager"
+  }
+}
+
+resource "kubernetes_manifest" "cluster_issuer" {
   manifest = yamldecode(<<EOF
-    apiVersion: v1
-    kind: Secret
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
     metadata:
-      name: ${local.service_account_secret_name}
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      annotations:
-        kubernetes.io/service-account.name: ${local.service_account_name}
-    type: kubernetes.io/service-account-token
+      name: cert-man-cluster-issuer
+    spec:
+      vault:
+        server: http://vault.laptop1.local
+        path: ${data.terraform_remote_state.vault_common.outputs.pki_path}/sign/${local.pki_role_name}
+        auth:
+          kubernetes:
+            mountPath: /v1/auth/${data.terraform_remote_state.vault_common.outputs.kubernetes_path}
+            role: ${vault_kubernetes_auth_backend_role.this.role_name}
+            # For ClusterIssuer, create this service account and RBAC in
+            # cert-manager's cluster resource namespace.
+            serviceAccountRef:
+              name: ${local.service_account_name}
   EOF
   )
 }
