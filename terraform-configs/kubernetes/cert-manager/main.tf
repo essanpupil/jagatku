@@ -10,7 +10,7 @@ resource "vault_policy" "this" {
 }
 
 resource "vault_kubernetes_auth_backend_role" "this" {
-  backend                          = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+  backend                          = data.terraform_remote_state.vault_common.outputs.kubernetes_path
   role_name                        = "cert-manager"
   bound_service_account_names      = [local.service_account_name]
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
