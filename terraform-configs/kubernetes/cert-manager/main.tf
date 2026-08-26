@@ -80,3 +80,25 @@ resource "kubernetes_cluster_role_binding_v1" "this" {
     namespace = "cert-manager"
   }
 }
+
+resource "kubernetes_manifest" "cluster_issuer" {
+  manifest = yamldecode(<<EOF
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: cert-man-cluster-issuer
+    spec:
+      vault:
+        server: http://vault.laptop1.local
+        path: ${data.terraform_remote_state.vault_common.outputs.pki_path}/sign/${local.pki_role_name}
+        auth:
+          kubernetes:
+            mountPath: /v1/auth/${data.terraform_remote_state.vault_common.outputs.kubernetes_path}
+            role: ${vault_kubernetes_auth_backend_role.this.role_name}
+            # For ClusterIssuer, create this service account and RBAC in
+            # cert-manager's cluster resource namespace.
+            serviceAccountRef:
+              name: ${local.service_account_name}
+  EOF
+  )
+}
