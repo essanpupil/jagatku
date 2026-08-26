@@ -28,7 +28,7 @@ resource "kubernetes_manifest" "backstage_cert" {
       name: backstage-jagatku-local
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
-      secretName: backstage-jagatku-local-tls
+      secretName: ${local.tls_secret_name}
       duration: 48h
       renewBefore: 5h
       issuerRef:
