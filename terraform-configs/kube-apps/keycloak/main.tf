@@ -143,7 +143,7 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             name = "KC_DB_PASSWORD"
             value_from {
               secret_key_ref {
-                name = local.secret_name
+                name = local.app_secret_name
                 key  = "password"
               }
             }
