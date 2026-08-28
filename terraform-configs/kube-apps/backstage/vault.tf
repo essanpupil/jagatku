@@ -60,6 +60,7 @@ resource "kubernetes_manifest" "backstage_secret" {
         create: true
         name: ${local.secret_name}
         overwrite: true
+        type: kubernetes.io/basic-auth
     EOF
   )
 }
