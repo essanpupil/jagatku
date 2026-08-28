@@ -129,23 +129,28 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
           }
           env {
             name  = "KC_DB_URL_DATABASE"
-            value = "keycloak"
+            value = local.db_name
           }
           env {
             name  = "KC_DB_URL_HOST"
-            value = "postgres"
+            value = "${local.db_cluster_name}-rw.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local"
           }
           env {
             name  = "KC_DB"
             value = "postgres"
           }
           env {
-            name  = "KC_DB_PASSWORD"
-            value = "keycloak"
+            name = "KC_DB_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = local.secret_name
+                key  = "password"
+              }
+            }
           }
           env {
             name  = "KC_DB_USERNAME"
-            value = "keycloak"
+            value = local.db_username
           }
 
           startup_probe {
