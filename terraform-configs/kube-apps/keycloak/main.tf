@@ -4,6 +4,13 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
+resource "kubernetes_service_account_v1" "keycloak_sa" {
+  metadata {
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
 resource "kubernetes_service_v1" "keycloak" {
   metadata {
     name      = "keycloak"

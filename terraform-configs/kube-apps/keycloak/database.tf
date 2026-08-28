@@ -6,7 +6,7 @@ resource "vault_policy" "this" {
 resource "vault_kubernetes_auth_backend_role" "this" {
   backend                          = data.terraform_remote_state.vault_common.outputs.kubernetes_path
   role_name                        = "backstage-app-role"
-  bound_service_account_names      = [local.service_account_name]
+  bound_service_account_names      = [kubernetes_service_account_v1.keycloak_sa.metadata[0].name]
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       mount: ${data.terraform_remote_state.vault_common.outputs.kubernetes_path}
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
-        serviceAccount: ${local.service_account_name}
+        serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
         audiences:
           - vault
   EOF
