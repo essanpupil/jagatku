@@ -103,6 +103,7 @@ resource "kubernetes_manifest" "cnfg" {
       name: ${local.db_cluster_name}
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
+      serviceAccountName: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
       instances: 3
       storage:
         size: 1Gi
@@ -110,8 +111,8 @@ resource "kubernetes_manifest" "cnfg" {
         initdb:
           database: "keycloak-db"
           owner: ${local.db_username}
-          superuserSecret:
-            name "${local.secret_name}-superuser"
+      superuserSecret:
+        name "${local.secret_name}-superuser"
   EOF
   )
 }
