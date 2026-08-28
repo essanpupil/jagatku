@@ -24,7 +24,7 @@ data "vault_policy_document" "this" {
     description  = "Access secrets for backstage"
   }
   rule {
-    path         = "${data.terraform_remote_state.vault_common.outputs.kubernetes_path}/login"
+    path         = "auth/${data.terraform_remote_state.vault_common.outputs.kubernetes_path}/login"
     capabilities = ["create", "read", "update", "list", "patch"]
     description  = "Access secrets for backstage"
   }
