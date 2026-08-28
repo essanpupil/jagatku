@@ -112,7 +112,7 @@ resource "kubernetes_manifest" "cnfg" {
           database: "keycloak-db"
           owner: ${local.db_username}
       superuserSecret:
-        name "${local.secret_name}-superuser"
+        name: "${local.secret_name}-superuser"
   EOF
   )
 }
@@ -123,6 +123,7 @@ resource "kubernetes_manifest" "keycloak_db_app_role" {
     kind: DatabaseRole
     metadata:
       name: keycloak-app-role
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
       cluster:
         name: ${local.db_cluster_name}
