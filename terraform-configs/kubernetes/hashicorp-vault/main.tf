@@ -38,7 +38,7 @@ resource "helm_release" "vso" {
   values = [
     templatefile("${path.module}/values.yaml", {
       vault_namespace                  = kubernetes_namespace_v1.this.metadata[0].name
-      allowed_namespaces               = ["platform"]
+      allowed_namespaces               = ["platform", "keycloak"]
       mount                            = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
       vault_kubernetes_role            = vault_kubernetes_auth_backend_role.this.role_name
       kubernetes_vault_service_account = kubernetes_service_account_v1.this.metadata[0].name
