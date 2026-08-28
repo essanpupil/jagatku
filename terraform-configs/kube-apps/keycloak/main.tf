@@ -4,21 +4,6 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
-resource "kubernetes_manifest" "cnfg" {
-  manifest = yamldecode(<<EOF
-    apiVersion: postgresql.cnpg.io/v1
-    kind: Cluster
-    metadata:
-      name: keycloak-db-cluster
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      instances: 3
-      storage:
-        size: 1Gi
-  EOF
-  )
-}
-
 resource "kubernetes_service_v1" "keycloak" {
   metadata {
     name      = "keycloak"
@@ -190,4 +175,9 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
       }
     }
   }
+}
+
+import {
+  to = kubernetes_stateful_set_v1.keycloak
+  id = "keycloak/keycloak"
 }
