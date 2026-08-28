@@ -29,7 +29,7 @@ resource "vault_kv_secret_v2" "app_passwd" {
 
   data_json = jsonencode({
     username = local.db_username
-    password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
+    password = "PleaseChangeMeAgain" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
 }
 
