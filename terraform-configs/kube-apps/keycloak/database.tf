@@ -18,6 +18,7 @@ resource "vault_kv_secret_v2" "superuser_passwd" {
   name  = "${local.secret_name}-superuser"
 
   data_json = jsonencode({
+    username = "postgres"
     password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
 }
@@ -69,6 +70,7 @@ resource "kubernetes_manifest" "superuser_secret" {
         create: true
         name: "${local.secret_name}-superuser"
         overwrite: true
+        type: kubernetes.io/basic-auth
     EOF
   )
 }
@@ -91,6 +93,7 @@ resource "kubernetes_manifest" "keycloak_app_secret" {
         create: true
         name: ${local.secret_name}
         overwrite: true
+        type: kubernetes.io/basic-auth
     EOF
   )
 }
@@ -109,8 +112,11 @@ resource "kubernetes_manifest" "cnfg" {
         size: 1Gi
       bootstrap:
         initdb:
-          database: "keycloak-db"
+          database: ${local.db_name}
           owner: ${local.db_username}
+          secret:
+            name: ${local.secret_name}
+      enableSuperuserAccess: true
       superuserSecret:
         name: "${local.secret_name}-superuser"
   EOF
