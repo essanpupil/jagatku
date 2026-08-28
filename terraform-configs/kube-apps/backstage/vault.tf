@@ -4,7 +4,7 @@ resource "vault_policy" "this" {
 }
 
 resource "vault_kubernetes_auth_backend_role" "this" {
-  backend                          = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+  backend                          = data.terraform_remote_state.vault_common.outputs.kubernetes_path
   role_name                        = "backstage-app-role"
   bound_service_account_names      = [local.service_account_name]
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
@@ -14,7 +14,7 @@ resource "vault_kubernetes_auth_backend_role" "this" {
 }
 
 resource "vault_kv_secret_v2" "backstage_config" {
-  mount = data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path
+  mount = data.terraform_remote_state.vault_common.outputs.kv_secret_path
   name  = local.secret_name
 
   data_json = jsonencode({
@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       name: ${local.vault_auth_name}
     spec:
       method: kubernetes
-      mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path}
+      mount: ${data.terraform_remote_state.vault_common.outputs.kubernetes_path}
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${local.service_account_name}
@@ -51,7 +51,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       name: ${local.secret_name}-static
     spec:
       vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
-      mount: ${data.terraform_remote_state.kubernetes_vault.outputs.kv_secret_path}
+      mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.secret_name}
       version: 2
