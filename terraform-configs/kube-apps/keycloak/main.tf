@@ -194,5 +194,5 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
 
 import {
   to = kubernetes_stateful_set_v1.keycloak
-  id = "keycloak/terraform-example"
+  id = "keycloak/keycloak"
 }
