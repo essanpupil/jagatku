@@ -9,7 +9,12 @@ data "terraform_remote_state" "vault_common" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = vault_kv_secret_v2.keycloak_db.path
+    path         = vault_kv_secret_v2.app_passwd.path
+    capabilities = ["create", "read", "update"]
+    description  = "Access secrets for backstage"
+  }
+  rule {
+    path         = vault_kv_secret_v2.superuser_passwd.path
     capabilities = ["create", "read", "update"]
     description  = "Access secrets for backstage"
   }
