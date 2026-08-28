@@ -11,6 +11,12 @@ resource "vault_auth_backend" "kubernetes" {
   path = "kubernetes"
 }
 
+resource "vault_kubernetes_auth_backend_config" "example" {
+  backend              = vault_auth_backend.kubernetes.path
+  kubernetes_host      = "https://kubernetes.jagat.local:6443"
+  disable_local_ca_jwt = true
+}
+
 resource "vault_mount" "pki" {
   path        = "pki"
   type        = "pki"
@@ -27,14 +33,4 @@ resource "vault_mount" "pki_int" {
 
   default_lease_ttl_seconds = 86400
   max_lease_ttl_seconds     = 157680000
-}
-
-import {
-  to = vault_mount.pki
-  id = "pki"
-}
-
-import {
-  to = vault_mount.pki_int
-  id = "pki_int"
 }
