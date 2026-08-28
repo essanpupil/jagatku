@@ -5,7 +5,7 @@ resource "kubernetes_namespace_v1" "this" {
 }
 
 resource "kubernetes_manifest" "cnfg" {
-  manifest = (<<EOF
+  manifest = yamldecode(<<EOF
     apiVersion: postgresql.cnpg.io/v1
     kind: Cluster
     metadata:
