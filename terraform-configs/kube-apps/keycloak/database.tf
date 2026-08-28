@@ -13,13 +13,22 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   audience                         = "vault"
 }
 
-resource "vault_kv_secret_v2" "keycloak_db" {
+resource "vault_kv_secret_v2" "superuser_passwd" {
+  mount = data.terraform_remote_state.vault_common.outputs.kv_secret_path
+  name  = "${local.secret_name}-superuser"
+
+  data_json = jsonencode({
+    password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
+  })
+}
+
+resource "vault_kv_secret_v2" "app_passwd" {
   mount = data.terraform_remote_state.vault_common.outputs.kv_secret_path
   name  = local.secret_name
 
   data_json = jsonencode({
-    db_username = local.db_username
-    db_password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
+    username = local.db_username
+    password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
 }
 
@@ -42,13 +51,35 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
   )
 }
 
-resource "kubernetes_manifest" "backstage_secret" {
+resource "kubernetes_manifest" "superuser_secret" {
   manifest = yamldecode(<<EOF
     apiVersion: secrets.hashicorp.com/v1beta1
     kind: VaultStaticSecret
     metadata:
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      name: ${local.secret_name}-static
+      name: ${local.secret_name}-superuser
+    spec:
+      vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
+      mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
+      type: kv-v2
+      path: "${local.secret_name}-superuser"
+      version: 2
+      refreshAfter: 60s
+      destination:
+        create: true
+        name: "${local.secret_name}-superuser"
+        overwrite: true
+    EOF
+  )
+}
+
+resource "kubernetes_manifest" "keycloak_app_secret" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultStaticSecret
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.secret_name}-app
     spec:
       vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
@@ -64,13 +95,12 @@ resource "kubernetes_manifest" "backstage_secret" {
   )
 }
 
-
 resource "kubernetes_manifest" "cnfg" {
   manifest = yamldecode(<<EOF
     apiVersion: postgresql.cnpg.io/v1
     kind: Cluster
     metadata:
-      name: keycloak-db-cluster
+      name: ${local.db_cluster_name}
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
       instances: 3
@@ -80,8 +110,30 @@ resource "kubernetes_manifest" "cnfg" {
         initdb:
           database: "keycloak-db"
           owner: ${local.db_username}
-          secret:
-            name: ${local.secret_name}
+          superuserSecret:
+            name "${local.secret_name}-superuser"
+  EOF
+  )
+}
+
+resource "kubernetes_manifest" "keycloak_db_app_role" {
+  manifest = yamldecode(<<EOF
+    apiVersion: postgresql.cnpg.io/v1
+    kind: DatabaseRole
+    metadata:
+      name: keycloak-app-role
+    spec:
+      cluster:
+        name: ${local.db_cluster_name}
+      name: ${local.db_username}
+      login: true
+      superuser: false
+      createdb: true
+      databaseRoleReclaimPolicy: delete
+      inRoles:
+        - pg_monitor
+      passwordSecret:
+        name: ${local.secret_name}
   EOF
   )
 }
