@@ -76,6 +76,12 @@ resource "kubernetes_manifest" "cnfg" {
       instances: 3
       storage:
         size: 1Gi
+      bootstrap:
+        initdb:
+          database: "keycloak-db"
+          owner: ${local.db_username}
+          secret:
+            name: ${local.secret_name}
   EOF
   )
 }
