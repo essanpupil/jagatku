@@ -30,7 +30,7 @@ resource "kubernetes_service_v1" "keycloak_discovery" {
     selector = {
       app = "keycloak"
     }
-    cluster_ip = null
+    cluster_ip = "None"
     type       = "ClusterIP"
   }
 }
