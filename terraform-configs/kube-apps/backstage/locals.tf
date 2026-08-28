@@ -5,6 +5,5 @@ locals {
   service_account_name       = "backstager-sa"
   service_account_token_name = "backstager-sa-token" # checkov:ignore:CKV_SECRET_6
   vault_auth_name            = "vault-auth"
-  cert_issuer_name           = "backstage-cert-issuer"
   tls_secret_name            = "backstage-jagatku-local-tls"
 }

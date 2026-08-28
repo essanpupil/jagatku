@@ -18,8 +18,8 @@ resource "vault_kv_secret_v2" "backstage_config" {
   name  = local.secret_name
 
   data_json = jsonencode({
-    db_username = local.db_username
-    db_password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
+    username = local.db_username
+    password = "PleaseChangeMe" # checkov:skip=CKV_SECRET_6 will be changed in vault web ui
   })
 }
 
@@ -55,7 +55,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       type: kv-v2
       path: ${local.secret_name}
       version: 2
-      refreshAfter: 60s
+      refreshAfter: 10s
       destination:
         create: true
         name: ${local.secret_name}
