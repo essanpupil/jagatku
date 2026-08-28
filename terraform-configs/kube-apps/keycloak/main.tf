@@ -11,6 +11,23 @@ resource "kubernetes_service_account_v1" "keycloak_sa" {
   }
 }
 
+resource "kubernetes_cluster_role_binding_v1" "keycloak" {
+  metadata {
+    name = "keycloak-vault"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "system:auth-delegator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
+
 resource "kubernetes_service_v1" "keycloak" {
   metadata {
     name      = "keycloak"
