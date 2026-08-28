@@ -1,4 +1,4 @@
-data "terraform_remote_state" "kubernetes_vault" {
+data "terraform_remote_state" "vault_common" {
   backend = "consul"
   config = {
     address = "consul.laptop1.local"
@@ -9,7 +9,7 @@ data "terraform_remote_state" "kubernetes_vault" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+    path         = data.terraform_remote_state.vault_common.outputs.kubernetes_path
     capabilities = ["read"]
     description  = "Grafana auth from cicd"
   }

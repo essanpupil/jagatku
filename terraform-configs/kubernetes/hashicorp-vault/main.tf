@@ -18,7 +18,7 @@ resource "vault_policy" "this" {
 
 
 resource "vault_kubernetes_auth_backend_role" "this" {
-  backend                          = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+  backend                          = data.terraform_remote_state.vault_common.outputs.kubernetes_path
   role_name                        = local.kube_vault_role
   bound_service_account_names      = [kubernetes_service_account_v1.this.metadata[0].name]
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
@@ -39,7 +39,7 @@ resource "helm_release" "vso" {
     templatefile("${path.module}/values.yaml", {
       vault_namespace                  = kubernetes_namespace_v1.this.metadata[0].name
       allowed_namespaces               = ["platform", "keycloak"]
-      mount                            = data.terraform_remote_state.kubernetes_vault.outputs.kubernetes_path
+      mount                            = data.terraform_remote_state.vault_common.outputs.kubernetes_path
       vault_kubernetes_role            = vault_kubernetes_auth_backend_role.this.role_name
       kubernetes_vault_service_account = kubernetes_service_account_v1.this.metadata[0].name
       token_audiences                  = [local.token_audience]
