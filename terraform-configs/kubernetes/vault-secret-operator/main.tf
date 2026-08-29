@@ -24,7 +24,6 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
-  audience                         = local.token_audience
 }
 
 resource "helm_release" "vso" {
@@ -42,7 +41,6 @@ resource "helm_release" "vso" {
       mount                            = data.terraform_remote_state.vault_common.outputs.kubernetes_path
       vault_kubernetes_role            = vault_kubernetes_auth_backend_role.this.role_name
       kubernetes_vault_service_account = kubernetes_service_account_v1.this.metadata[0].name
-      token_audiences                  = [local.token_audience]
     })
   ]
 }

@@ -16,4 +16,3 @@ defaultAuthMethod:
   kubernetes:
     role: ${vault_kubernetes_role}
     serviceAccount: ${kubernetes_vault_service_account}
-    tokenAudiences: ${jsonencode(token_audiences)}

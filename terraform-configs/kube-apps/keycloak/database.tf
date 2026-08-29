@@ -10,7 +10,6 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
-  audience                         = "vault"
 }
 
 resource "vault_kv_secret_v2" "superuser_passwd" {
@@ -46,8 +45,6 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
-        audiences:
-          - vault
   EOF
   )
 }
