@@ -3,7 +3,7 @@ terraform {
   backend "consul" {
     address = "consul.laptop1.local"
     scheme  = "http"
-    path    = "terraform-configs/kubernetes/hashicorp-vault"
+    path    = "terraform-configs/kubernetes/vault-secret-operator"
   }
 
   required_providers {
