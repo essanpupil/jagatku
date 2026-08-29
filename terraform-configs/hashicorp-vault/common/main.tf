@@ -1,3 +1,10 @@
+data "kubernetes_config_map_v1" "kube_root_ca" {
+  metadata {
+    name      = "kube-root-ca.crt"
+    namespace = "kube-system"
+  }
+}
+
 resource "vault_mount" "kvv2" {
   path = "sensitive-data"
   type = "kv-v2"
@@ -14,7 +21,7 @@ resource "vault_auth_backend" "kubernetes" {
 resource "vault_kubernetes_auth_backend_config" "example" {
   backend              = vault_auth_backend.kubernetes.path
   kubernetes_host      = "https://kubernetes.jagat.local:6443"
-  disable_local_ca_jwt = true
+  kubernetes_ca_cert = data.kubernetes_config_map_v1.kube_root_ca.data["ca.crt"]
 }
 
 resource "vault_mount" "pki" {
