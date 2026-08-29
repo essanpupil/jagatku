@@ -1,7 +1,7 @@
 crds:
   enabled: true
 serviceAccount:
-  create: true
+  create: false
   name: ${service_account_name}
 hostAliases:
   - ip: 192.168.1.50
