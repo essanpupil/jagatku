@@ -44,3 +44,41 @@ resource "helm_release" "vso" {
     })
   ]
 }
+
+resource "kubernetes_cluster_role_binding_v1" "this" {
+  metadata {
+    name = "vso-auth-delegator-binding"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "system:auth-delegator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account_v1.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
+resource "kubernetes_manifest" "test" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultStaticSecret
+    metadata:
+      name: test-static-secret
+      namespace: vault
+    spec:
+      mount: "sensitive-data"
+      type: kv-v2
+      path: "test-static-secret"
+      version: 2
+      refreshAfter: 10s
+      destination:
+        create: true
+        name: "test-static-secret"
+        overwrite: true
+        type: kubernetes.io/basic-auth
+  EOF
+  )
+}

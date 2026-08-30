@@ -16,3 +16,8 @@ defaultAuthMethod:
   kubernetes:
     role: ${vault_kubernetes_role}
     serviceAccount: ${kubernetes_vault_service_account}
+    # tokenAudiences:
+    #   - "vault://cert-man-cluster-issuer"
+    #   - "http://vault.laptop1.local"
+    #   - "vault"
+    #   - "keycloak"

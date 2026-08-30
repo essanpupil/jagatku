@@ -9,8 +9,15 @@ data "terraform_remote_state" "vault_common" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = data.terraform_remote_state.vault_common.outputs.kubernetes_path
+    path         = "sensitive-data/data/*"
     capabilities = ["read"]
-    description  = "Grafana auth from cicd"
   }
+}
+
+output "namespace" {
+  value = kubernetes_namespace_v1.this.metadata.0.name
+}
+
+output "service_account_name" {
+  value = kubernetes_service_account_v1.this.metadata.0.name
 }
