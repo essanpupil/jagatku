@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "vault_auth" {
       name: ${local.vault_auth_name}
     spec:
       method: kubernetes
-      mount: kubernetes
+      mount: ${data.terraform_remote_state.vault_common.outputs.kubernetes_path}
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
