@@ -3,6 +3,6 @@ locals {
   secret_name          = "backstage-db-secret"
   db_username          = "backstager"
   service_account_name = "backstager-sa"
-  vault_auth_name      = "vault-auth"
+  vault_auth_name      = "backstage-vault-auth"
   tls_secret_name      = "backstage-jagatku-local-tls"
 }

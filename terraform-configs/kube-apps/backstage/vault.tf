@@ -47,7 +47,7 @@ resource "kubernetes_manifest" "backstage_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.secret_name}-static
     spec:
-      vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
+      vaultAuthRef: ${kubernetes_manifest.backstage_vault_auth.object.metadata.name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.secret_name}
