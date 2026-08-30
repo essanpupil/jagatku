@@ -4,7 +4,7 @@
   become: true
   vars:
     nfs_export_dir: /mnt/kube_data
-    nfs_export_options: "(rw,sync,no_subtree_check)"
+    nfs_export_options: "(rw,sync,no_subtree_check,no_root_squash)"
   tasks:
     - name: Ensure NFS server packages are installed
       ansible.builtin.apt:
