@@ -20,9 +20,16 @@ resource "helm_release" "this" {
   ]
 }
 
-resource "kubernetes_cluster_role_binding_v1" "backstage" {
+resource "kubernetes_service_account_v1" "this" {
   metadata {
-    name = "backstage-vault"
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
+resource "kubernetes_cluster_role_binding_v1" "keycloak" {
+  metadata {
+    name = "backstage-role-binding"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -31,7 +38,7 @@ resource "kubernetes_cluster_role_binding_v1" "backstage" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = local.service_account_name
+    name      = kubernetes_service_account_v1.this.metadata[0].name
     namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
 }

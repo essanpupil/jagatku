@@ -10,7 +10,6 @@ resource "vault_kubernetes_auth_backend_role" "this" {
   bound_service_account_namespaces = [kubernetes_namespace_v1.this.metadata[0].name]
   token_policies                   = [vault_policy.this.name]
   token_ttl                        = 1800 # 30 minutes
-  audience                         = "vault"
 }
 
 resource "vault_kv_secret_v2" "superuser_passwd" {
@@ -33,7 +32,7 @@ resource "vault_kv_secret_v2" "app_passwd" {
   })
 }
 
-resource "kubernetes_manifest" "backstage_vault_auth" {
+resource "kubernetes_manifest" "vault_auth" {
   manifest = yamldecode(<<EOF
     apiVersion: secrets.hashicorp.com/v1beta1
     kind: VaultAuth
@@ -46,8 +45,6 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
-        audiences:
-          - vault
   EOF
   )
 }
@@ -60,7 +57,7 @@ resource "kubernetes_manifest" "superuser_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.superuser_secret_name}
     spec:
-      vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
+      vaultAuthRef: ${kubernetes_manifest.vault_auth.object.metadata.name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.superuser_secret_name}
@@ -83,7 +80,7 @@ resource "kubernetes_manifest" "keycloak_app_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.app_secret_name}
     spec:
-      vaultAuthRef: ${kubernetes_namespace_v1.this.metadata[0].name}/${local.vault_auth_name}
+      vaultAuthRef: ${kubernetes_manifest.vault_auth.object.metadata.name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.app_secret_name}
@@ -98,50 +95,50 @@ resource "kubernetes_manifest" "keycloak_app_secret" {
   )
 }
 
-resource "kubernetes_manifest" "cnfg" {
-  manifest = yamldecode(<<EOF
-    apiVersion: postgresql.cnpg.io/v1
-    kind: Cluster
-    metadata:
-      name: ${local.db_cluster_name}
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      serviceAccountName: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
-      instances: 3
-      storage:
-        size: 1Gi
-      bootstrap:
-        initdb:
-          database: ${local.db_name}
-          owner: ${local.db_username}
-          secret:
-            name: ${local.app_secret_name}
-      enableSuperuserAccess: true
-      superuserSecret:
-        name: ${local.superuser_secret_name}
-  EOF
-  )
-}
+# resource "kubernetes_manifest" "cnfg" {
+#   manifest = yamldecode(<<EOF
+#     apiVersion: postgresql.cnpg.io/v1
+#     kind: Cluster
+#     metadata:
+#       name: ${local.db_cluster_name}
+#       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+#     spec:
+#       serviceAccountName: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
+#       instances: 3
+#       storage:
+#         size: 1Gi
+#       bootstrap:
+#         initdb:
+#           database: ${local.db_name}
+#           owner: ${local.db_username}
+#           secret:
+#             name: ${local.app_secret_name}
+#       enableSuperuserAccess: true
+#       superuserSecret:
+#         name: ${local.superuser_secret_name}
+#   EOF
+#   )
+# }
 
-resource "kubernetes_manifest" "keycloak_db_app_role" {
-  manifest = yamldecode(<<EOF
-    apiVersion: postgresql.cnpg.io/v1
-    kind: DatabaseRole
-    metadata:
-      name: keycloak-app-role
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      cluster:
-        name: ${local.db_cluster_name}
-      name: ${local.db_username}
-      login: true
-      superuser: false
-      createdb: true
-      databaseRoleReclaimPolicy: delete
-      inRoles:
-        - pg_monitor
-      passwordSecret:
-        name: ${local.app_secret_name}
-  EOF
-  )
-}
+# resource "kubernetes_manifest" "keycloak_db_app_role" {
+#   manifest = yamldecode(<<EOF
+#     apiVersion: postgresql.cnpg.io/v1
+#     kind: DatabaseRole
+#     metadata:
+#       name: keycloak-app-role
+#       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+#     spec:
+#       cluster:
+#         name: ${local.db_cluster_name}
+#       name: ${local.db_username}
+#       login: true
+#       superuser: false
+#       createdb: true
+#       databaseRoleReclaimPolicy: delete
+#       inRoles:
+#         - pg_monitor
+#       passwordSecret:
+#         name: ${local.app_secret_name}
+#   EOF
+#   )
+# }

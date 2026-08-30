@@ -1,8 +1,9 @@
 crds:
   enabled: true
 serviceAccount:
-  create: true
+  create: false
   name: ${service_account_name}
+  # automountServiceAccountToken: false
 hostAliases:
   - ip: 192.168.1.50
     hostnames:

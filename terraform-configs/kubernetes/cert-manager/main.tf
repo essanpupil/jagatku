@@ -4,6 +4,13 @@ resource "kubernetes_namespace_v1" "this" {
   }
 }
 
+resource "kubernetes_service_account_v1" "this" {
+  metadata {
+    name      = local.service_account_name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
+  }
+}
+
 resource "helm_release" "this" {
   name       = "cert-manager"
   repository = "oci://quay.io/jetstack/charts"
@@ -14,54 +21,38 @@ resource "helm_release" "this" {
   wait       = true
   values = [
     templatefile("${path.module}/values.yaml", {
-      service_account_name : local.service_account_name
+      service_account_name : kubernetes_service_account_v1.this.metadata[0].name
     })
   ]
 }
 
-resource "kubernetes_role_v1" "example" {
+resource "kubernetes_role_v1" "this" {
   metadata {
-    name      = local.kubernetes_vault_role
+    name = "${local.service_account_name}-role"
     namespace = kubernetes_namespace_v1.this.metadata[0].name
-    labels = {
-      test = "cert-manager-vault-kube-auth"
-    }
   }
 
   rule {
     api_groups     = [""]
     resources      = ["serviceaccounts/token"]
-    resource_names = [local.service_account_name]
     verbs          = ["create"]
   }
 }
 
-resource "kubernetes_role_binding_v1" "example" {
+resource "kubernetes_role_binding_v1" "this" {
   metadata {
-    name      = "${local.kubernetes_vault_role}-binding"
+    name = "${local.service_account_name}-role-binding"
     namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = local.kubernetes_vault_role
+    name      = kubernetes_role_v1.this.metadata.0.name
   }
   subject {
     kind      = "ServiceAccount"
-    name      = local.service_account_name
+    name      = kubernetes_service_account_v1.this.metadata[0].name
     namespace = kubernetes_namespace_v1.this.metadata[0].name
-  }
-}
-
-resource "kubernetes_cluster_role_v1" "this" {
-  metadata {
-    name = "cert-manager-token-creator"
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["serviceaccounts/token"]
-    verbs      = ["create"]
   }
 }
 
@@ -72,12 +63,12 @@ resource "kubernetes_cluster_role_binding_v1" "this" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "cert-manager-token-creator"
+    name      = "system:auth-delegator"
   }
   subject {
     kind      = "ServiceAccount"
-    name      = "cert-manager"
-    namespace = "cert-manager"
+    name      = kubernetes_service_account_v1.this.metadata[0].name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
 }
 
@@ -98,7 +89,9 @@ resource "kubernetes_manifest" "cluster_issuer" {
             # For ClusterIssuer, create this service account and RBAC in
             # cert-manager's cluster resource namespace.
             serviceAccountRef:
-              name: ${local.service_account_name}
+              name: ${kubernetes_service_account_v1.this.metadata[0].name}
+              audiences:
+                - "https://kubernetes.default.svc.cluster.local"
   EOF
   )
 }

@@ -3,7 +3,7 @@ resource "kubernetes_manifest" "db_cluster" {
         apiVersion: postgresql.cnpg.io/v1
         kind: Cluster
         metadata:
-            name: backstage-db-cluster
+            name: ${local.db_cluster_name}
             namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
         spec:
             instances: 3
