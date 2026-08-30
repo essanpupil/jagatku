@@ -103,6 +103,8 @@ resource "kubernetes_manifest" "cnfg" {
       name: ${local.db_cluster_name}
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
+      postgresUID: 65534
+      postgresGID: 65534
       serviceAccountName: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
       instances: 3
       storage:
