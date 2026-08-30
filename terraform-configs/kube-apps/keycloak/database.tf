@@ -38,32 +38,13 @@ resource "kubernetes_manifest" "vault_auth" {
     kind: VaultAuth
     metadata:
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      name: keycloak-vault-auth
+      name: ${local.vault_auth_name}
     spec:
-      # required configuration
-      # VaultConnectionRef of the corresponding VaultConnection CustomResource.
-      # If no value is specified the Operator will default to the `default` VaultConnection,
-      # configured in its own Kubernetes namespace.
-      # vaultConnectionRef: vault-connection
-      # Method to use when authenticating to Vault.
       method: kubernetes
-      # Mount to use when authenticating to auth method.
       mount: kubernetes
-      # Kubernetes specific auth configuration, requires that the Method be set to kubernetes.
       kubernetes:
-        # role to use when authenticating to Vault
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
-        # ServiceAccount to use when authenticating to Vault
-        # it is recommended to always provide a unique serviceAccount per Pod/application
         serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
-
-      # optional configuration
-      # Vault namespace where the auth backend is mounted (requires Vault Enterprise)
-      # namespace: ""
-      # Params to use when authenticating to Vault
-      # params: []
-      # HTTP headers to be included in all Vault authentication requests.
-      # headers: []
   EOF
   )
 }
@@ -76,7 +57,7 @@ resource "kubernetes_manifest" "superuser_secret" {
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
       name: ${local.superuser_secret_name}
     spec:
-      vaultAuthRef: keycloak-vault-auth
+      vaultAuthRef: ${kubernetes_manifest.vault_auth.object.metadata.name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
       path: ${local.superuser_secret_name}
@@ -91,27 +72,28 @@ resource "kubernetes_manifest" "superuser_secret" {
   )
 }
 
-# resource "kubernetes_manifest" "keycloak_app_secret" {
-#   manifest = yamldecode(<<EOF
-#     apiVersion: secrets.hashicorp.com/v1beta1
-#     kind: VaultStaticSecret
-#     metadata:
-#       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-#       name: ${local.app_secret_name}
-#     spec:
-#       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
-#       type: kv-v2
-#       path: ${local.app_secret_name}
-#       version: 2
-#       refreshAfter: 10s
-#       destination:
-#         create: true
-#         name: ${local.app_secret_name}
-#         overwrite: true
-#         type: kubernetes.io/basic-auth
-#     EOF
-#   )
-# }
+resource "kubernetes_manifest" "keycloak_app_secret" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultStaticSecret
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.app_secret_name}
+    spec:
+      vaultAuthRef: ${kubernetes_manifest.vault_auth.object.metadata.name}
+      mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
+      type: kv-v2
+      path: ${local.app_secret_name}
+      version: 2
+      refreshAfter: 10s
+      destination:
+        create: true
+        name: ${local.app_secret_name}
+        overwrite: true
+        type: kubernetes.io/basic-auth
+    EOF
+  )
+}
 
 # resource "kubernetes_manifest" "cnfg" {
 #   manifest = yamldecode(<<EOF
