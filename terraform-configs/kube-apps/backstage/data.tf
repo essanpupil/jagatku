@@ -16,14 +16,14 @@ data "terraform_remote_state" "vault_common" {
   }
 }
 
-# data "terraform_remote_state" "cert_manager" {
-#   backend = "consul"
-#   config = {
-#     address = "consul.laptop1.local"
-#     scheme  = "http"
-#     path    = "terraform-configs/kubernetes/cert-manager"
-#   }
-# }
+data "terraform_remote_state" "cert_manager" {
+  backend = "consul"
+  config = {
+    address = "consul.laptop1.local"
+    scheme  = "http"
+    path    = "terraform-configs/kubernetes/cert-manager"
+  }
+}
 
 data "vault_policy_document" "this" {
   rule {

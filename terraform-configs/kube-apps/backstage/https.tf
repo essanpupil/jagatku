@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "backstage_cert" {
       duration: 48h
       renewBefore: 5h
       issuerRef:
-        name: "dummy"
+        name: ${data.terraform_remote_state.cert_manager.outputs.cluster_issuer_name}
         kind: ClusterIssuer
       commonName: backstage.jagatku.local
       dnsNames:

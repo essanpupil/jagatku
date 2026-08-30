@@ -35,6 +35,8 @@ resource "kubernetes_manifest" "backstage_vault_auth" {
       kubernetes:
         role: ${vault_kubernetes_auth_backend_role.this.role_name}
         serviceAccount: ${local.service_account_name}
+        audiences:
+          - "https://kubernetes.default.svc.cluster.local"
   EOF
   )
 }
@@ -45,12 +47,12 @@ resource "kubernetes_manifest" "backstage_secret" {
     kind: VaultStaticSecret
     metadata:
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-      name: ${local.secret_name}-static
+      name: ${local.secret_name}-vault-static
     spec:
       vaultAuthRef: ${kubernetes_manifest.backstage_vault_auth.object.metadata.name}
       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
       type: kv-v2
-      path: ${local.secret_name}
+      path: ${vault_kv_secret_v2.backstage_config.name}
       version: 2
       refreshAfter: 10s
       destination:
