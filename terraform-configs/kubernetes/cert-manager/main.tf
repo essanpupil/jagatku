@@ -91,7 +91,7 @@ resource "kubernetes_manifest" "cluster_issuer" {
             serviceAccountRef:
               name: ${kubernetes_service_account_v1.this.metadata[0].name}
               audiences:
-                - https://kubernetes.default.svc.cluster.local"
+                - "https://kubernetes.default.svc.cluster.local"
   EOF
   )
 }
