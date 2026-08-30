@@ -107,6 +107,9 @@ resource "kubernetes_manifest" "cnfg" {
       instances: 3
       storage:
         size: 1Gi
+      podSecurityContext:
+        fsGroup: 26
+        fsGroupChangePolicy: "Always"
       bootstrap:
         initdb:
           database: ${local.db_name}
