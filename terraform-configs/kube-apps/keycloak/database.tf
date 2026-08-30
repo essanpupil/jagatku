@@ -52,10 +52,10 @@ resource "kubernetes_manifest" "vault_auth" {
       # Kubernetes specific auth configuration, requires that the Method be set to kubernetes.
       kubernetes:
         # role to use when authenticating to Vault
-        role: example
+        role: ${vault_kubernetes_auth_backend_role.this.role_name}
         # ServiceAccount to use when authenticating to Vault
         # it is recommended to always provide a unique serviceAccount per Pod/application
-        serviceAccount: default
+        serviceAccount: ${kubernetes_service_account_v1.keycloak_sa.metadata[0].name}
 
       # optional configuration
       # Vault namespace where the auth backend is mounted (requires Vault Enterprise)
@@ -68,27 +68,28 @@ resource "kubernetes_manifest" "vault_auth" {
   )
 }
 
-# resource "kubernetes_manifest" "superuser_secret" {
-#   manifest = yamldecode(<<EOF
-#     apiVersion: secrets.hashicorp.com/v1beta1
-#     kind: VaultStaticSecret
-#     metadata:
-#       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-#       name: ${local.superuser_secret_name}
-#     spec:
-#       mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
-#       type: kv-v2
-#       path: ${local.superuser_secret_name}
-#       version: 2
-#       refreshAfter: 10s
-#       destination:
-#         create: true
-#         name: ${local.superuser_secret_name}
-#         overwrite: true
-#         type: kubernetes.io/basic-auth
-#     EOF
-#   )
-# }
+resource "kubernetes_manifest" "superuser_secret" {
+  manifest = yamldecode(<<EOF
+    apiVersion: secrets.hashicorp.com/v1beta1
+    kind: VaultStaticSecret
+    metadata:
+      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
+      name: ${local.superuser_secret_name}
+    spec:
+      vaultAuthRef: keycloak-vault-auth
+      mount: ${data.terraform_remote_state.vault_common.outputs.kv_secret_path}
+      type: kv-v2
+      path: ${local.superuser_secret_name}
+      version: 2
+      refreshAfter: 10s
+      destination:
+        create: true
+        name: ${local.superuser_secret_name}
+        overwrite: true
+        type: kubernetes.io/basic-auth
+    EOF
+  )
+}
 
 # resource "kubernetes_manifest" "keycloak_app_secret" {
 #   manifest = yamldecode(<<EOF
