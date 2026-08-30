@@ -8,7 +8,6 @@ storageClass:
   parameters:
     server: "nfs.laptop1.local"
     share: /mnt/kube_data
-    subDir: /
   reclaimPolicy: Delete
   volumeBindingMode: Immediate
   mountOptions:
