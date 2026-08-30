@@ -9,8 +9,9 @@ data "terraform_remote_state" "vault_common" {
 
 data "vault_policy_document" "this" {
   rule {
-    path         = "sensitive-data/data/*"
+    path         = "sensitive-data/data/test-static-secret"
     capabilities = ["read"]
+    description = "sensitive-data/data/test-static-secret"
   }
 }
 

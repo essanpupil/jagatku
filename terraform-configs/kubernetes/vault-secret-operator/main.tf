@@ -69,9 +69,9 @@ resource "kubernetes_manifest" "test" {
       name: test-static-secret
       namespace: vault
     spec:
-      mount: "sensitive-data"
+      mount: sensitive-data
       type: kv-v2
-      path: "test-static-secret"
+      path: test-static-secret
       version: 2
       refreshAfter: 10s
       destination:
