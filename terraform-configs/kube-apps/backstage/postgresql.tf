@@ -6,6 +6,8 @@ resource "kubernetes_manifest" "db_cluster" {
       name: ${local.db_cluster_name}
       namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
     spec:
+      postgresUID: 65534
+      postgresGID: 65534
       instances: 3
       bootstrap:
         initdb:
