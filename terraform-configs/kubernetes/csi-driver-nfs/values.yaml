@@ -7,7 +7,7 @@ storageClass:
     storageclass.kubernetes.io/is-default-class: "true"
   parameters:
     server: "nfs.laptop1.local"
-    share: /
+    share: /mnt/kube_data
     subDir: /
   reclaimPolicy: Delete
   volumeBindingMode: Immediate
