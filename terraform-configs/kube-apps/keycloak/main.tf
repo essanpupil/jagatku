@@ -58,6 +58,11 @@ resource "kubernetes_service_v1" "keycloak_discovery" {
   }
 }
 
+import {
+  to = kubernetes_stateful_set_v1.keycloak
+  id = "keycloak/keycloak"
+}
+
 resource "kubernetes_stateful_set_v1" "keycloak" {
   metadata {
     labels = {
