@@ -124,26 +124,3 @@ resource "kubernetes_manifest" "cnfg" {
   EOF
   )
 }
-
-resource "kubernetes_manifest" "keycloak_db_app_role" {
-  manifest = yamldecode(<<EOF
-    apiVersion: postgresql.cnpg.io/v1
-    kind: DatabaseRole
-    metadata:
-      name: keycloak-app-role
-      namespace: ${kubernetes_namespace_v1.this.metadata[0].name}
-    spec:
-      cluster:
-        name: ${local.db_cluster_name}
-      name: ${local.db_username}
-      login: true
-      superuser: false
-      createdb: true
-      databaseRoleReclaimPolicy: delete
-      inRoles:
-        - pg_monitor
-      passwordSecret:
-        name: ${local.app_secret_name}
-  EOF
-  )
-}
