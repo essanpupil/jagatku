@@ -18,7 +18,7 @@ resource "kubernetes_manifest" "db_cluster" {
       storage:
         size: 1Gi
       podSecurityContext:
-        fsGroup: 26
+        fsGroup: 65534
         fsGroupChangePolicy: "Always"
   EOF
   )
