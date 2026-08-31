@@ -10,3 +10,18 @@ resource "helm_release" "this" {
     file("${path.module}/values.yaml")
   ]
 }
+
+# resource "kubernetes_manifest" "csi_driver" {
+#   manifest = yamldecode(<<EOF
+#     apiVersion: v1
+#     kind: CSIDriver
+#     metadata:
+#       name: nfs.csi.k8s.io
+#     spec:
+#       attachRequired: false
+#       volumeLifecycleModes:
+#         - Persistent
+#       fsGroupPolicy: File
+#   EOF
+#   )
+# }
