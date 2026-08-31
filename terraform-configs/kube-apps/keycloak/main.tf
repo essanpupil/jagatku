@@ -83,10 +83,14 @@ resource "kubernetes_manifest" "keycloak_dep" {
               args:
                 - start
               env:
+                - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+                  value: "admin"
+                - name: KC_BOOTSTRAP_ADMIN_USERNAME
+                  value: "admin"
                 - name: KC_HOSTNAME_ADMIN
                   value: "http://keycloak.jagat.local"
                 - name: KC_HOSTNAME
-                  value: "http://keycloak.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local"
+                  value: "http://keycloak.jagat.local"
                 - name: KC_FEATURES_DISABLED
                   value: "twitter-broker,identity-brokering-api"
                 - name: KC_HTTP_ENABLED
