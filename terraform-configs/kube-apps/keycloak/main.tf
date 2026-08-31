@@ -58,6 +58,11 @@ resource "kubernetes_service_v1" "keycloak_discovery" {
   }
 }
 
+import {
+  to = kubernetes_stateful_set_v1.keycloak
+  id = "keycloak/keycloak"
+}
+
 resource "kubernetes_stateful_set_v1" "keycloak" {
   metadata {
     labels = {
@@ -148,6 +153,10 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             value = local.db_name
           }
           env {
+            name  = "KC_DB_URL_PORT"
+            value = "5432"
+          }
+          env {
             name  = "KC_DB_URL_HOST"
             value = "${local.db_cluster_name}-rw.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local"
           }
@@ -165,40 +174,45 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             }
           }
           env {
-            name  = "KC_DB_USERNAME"
-            value = local.db_username
-          }
-
-          startup_probe {
-            http_get {
-              path = "/health/started"
-              port = 9000
+            name = "KC_DB_USERNAME"
+            value_from {
+              secret_key_ref {
+                name = local.app_secret_name
+                key  = "username"
+              }
             }
-
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health/ready"
-              port = 9000
-            }
+          # startup_probe {
+          #   http_get {
+          #     path = "/health/started"
+          #     port = 9000
+          #   }
 
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
-          }
+          #   initial_delay_seconds = 30
+          #   timeout_seconds       = 30
+          # }
 
-          liveness_probe {
-            http_get {
-              path   = "/health/live"
-              port   = 9090
-              scheme = "HTTPS"
-            }
+          # readiness_probe {
+          #   http_get {
+          #     path = "/health/ready"
+          #     port = 9000
+          #   }
 
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
-          }
+          #   initial_delay_seconds = 30
+          #   timeout_seconds       = 30
+          # }
+
+          #   liveness_probe {
+          #     http_get {
+          #       path   = "/health/live"
+          #       port   = 9090
+          #       scheme = "HTTPS"
+          #     }
+
+          #     initial_delay_seconds = 30
+          #     timeout_seconds       = 30
+          #   }
         }
       }
     }
