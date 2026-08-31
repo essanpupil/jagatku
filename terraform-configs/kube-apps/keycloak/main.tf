@@ -37,10 +37,10 @@ resource "kubernetes_service_v1" "keycloak" {
       app = "keycloak"
     }
     port {
-      port        = 8080
-      target_port = 80
+      port        = 80
+      target_port = 8080
     }
-    type = "ClusterIP"
+    type = "LoadBalancer"
   }
 }
 
@@ -58,163 +58,68 @@ resource "kubernetes_service_v1" "keycloak_discovery" {
   }
 }
 
-import {
-  to = kubernetes_stateful_set_v1.keycloak
-  id = "keycloak/keycloak"
-}
-
-resource "kubernetes_stateful_set_v1" "keycloak" {
-  metadata {
-    labels = {
-      app = "keycloak"
-    }
-    name      = "keycloak"
-    namespace = kubernetes_namespace_v1.this.metadata[0].name
-  }
-
-  spec {
-    service_name = kubernetes_service_v1.keycloak_discovery.metadata[0].name
-    replicas     = "2"
-
-    selector {
-      match_labels = {
-        app = "keycloak"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "keycloak"
-        }
-      }
-
-      spec {
-        container {
-          name  = "keycloak"
-          image = "quay.io/keycloak/keycloak:26.7.2"
-          args  = ["start"]
-
-          port {
-            container_port = 8080
-            name           = "http"
-          }
-          port {
-            container_port = 7800
-            name           = "jgroups"
-          }
-          port {
-            container_port = 57800
-            name           = "jgroups-fd"
-          }
-
-          env {
-            name  = "KC_BOOTSTRAP_ADMIN_USERNAME"
-            value = "admin"
-          }
-          env {
-            name  = "KC_BOOTSTRAP_ADMIN_PASSWORD"
-            value = "admin"
-          }
-          env {
-            name  = "KC_PROXY_HEADERS"
-            value = "xforwarded"
-          }
-          env {
-            name  = "KC_HTTP_ENABLED"
-            value = "true"
-          }
-          env {
-            name  = "KC_HOSTNAME_STRICT"
-            value = "false"
-          }
-          env {
-            name  = "KC_HEALTH_ENABLED"
-            value = "true"
-          }
-          env {
-            name  = "KC_CACHE"
-            value = "ispn"
-          }
-          env {
-            name = "POD_IP"
-            value_from {
-              field_ref {
-                field_path = "status.podIP"
-              }
-            }
-          }
-          env {
-            name  = "KC_CACHE_EMBEDDED_NETWORK_BIND_ADDRESS"
-            value = "$(POD_IP)"
-          }
-          env {
-            name  = "KC_DB_URL_DATABASE"
-            value = local.db_name
-          }
-          env {
-            name  = "KC_DB_URL_PORT"
-            value = "5432"
-          }
-          env {
-            name  = "KC_DB_URL_HOST"
-            value = "${local.db_cluster_name}-rw.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local"
-          }
-          env {
-            name  = "KC_DB"
-            value = "postgres"
-          }
-          env {
-            name = "KC_DB_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = local.app_secret_name
-                key  = "password"
-              }
-            }
-          }
-          env {
-            name = "KC_DB_USERNAME"
-            value_from {
-              secret_key_ref {
-                name = local.app_secret_name
-                key  = "username"
-              }
-            }
-          }
-
-          # startup_probe {
-          #   http_get {
-          #     path = "/health/started"
-          #     port = 9000
-          #   }
-
-          #   initial_delay_seconds = 30
-          #   timeout_seconds       = 30
-          # }
-
-          # readiness_probe {
-          #   http_get {
-          #     path = "/health/ready"
-          #     port = 9000
-          #   }
-
-          #   initial_delay_seconds = 30
-          #   timeout_seconds       = 30
-          # }
-
-          #   liveness_probe {
-          #     http_get {
-          #       path   = "/health/live"
-          #       port   = 9090
-          #       scheme = "HTTPS"
-          #     }
-
-          #     initial_delay_seconds = 30
-          #     timeout_seconds       = 30
-          #   }
-        }
-      }
-    }
-  }
+resource "kubernetes_manifest" "keycloak_dep" {
+  manifest = yamldecode(<<EOF
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: keycloak-dep
+      namespace: keycloak
+      labels:
+        app: keycloak
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: keycloak
+      template:
+        metadata:
+          labels:
+            app: keycloak
+        spec:
+          containers:
+            - name: keycloak
+              image: quay.io/keycloak/keycloak:26.7.2
+              args:
+                - start
+              env:
+                - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+                  value: "admin"
+                - name: KC_BOOTSTRAP_ADMIN_USERNAME
+                  value: "admin"
+                - name: KC_HOSTNAME_ADMIN
+                  value: "http://keycloak.jagat.local"
+                - name: KC_HOSTNAME
+                  value: "http://keycloak.jagat.local"
+                - name: KC_FEATURES_DISABLED
+                  value: "twitter-broker,identity-brokering-api"
+                - name: KC_HTTP_ENABLED
+                  value: true
+                - name: KC_PROXY_HEADERS
+                  value: "xforwarded"
+                - name: KC_DB
+                  value: "postgres"
+                - name: KC_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${local.app_secret_name}
+                      key: password
+                - name: KC_DB_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${local.app_secret_name}
+                      key: username
+                - name: KC_DB_URL
+                  value: "jdbc:postgresql://${local.db_cluster_name}-rw.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local:5432/${local.db_name}"
+              ports:
+                - containerPort: 9000
+                  name: heatlh
+                - containerPort: 8080
+                  name: http
+                - containerPort: 7800
+                  name: jgroups
+                - containerPort: 57800
+                  name: jgroups-fd
+  EOF
+  )
 }
