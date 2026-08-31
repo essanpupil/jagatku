@@ -37,8 +37,8 @@ resource "kubernetes_service_v1" "keycloak" {
       app = "keycloak"
     }
     port {
-      port        = 8080
-      target_port = 80
+      port        = 80
+      target_port = 8080
     }
     type = "LoadBalancer"
   }
