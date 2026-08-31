@@ -178,36 +178,36 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             }
           }
 
-          startup_probe {
-            http_get {
-              path = "/health/started"
-              port = 9000
-            }
+          # startup_probe {
+          #   http_get {
+          #     path = "/health/started"
+          #     port = 9000
+          #   }
 
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
-          }
+          #   initial_delay_seconds = 30
+          #   timeout_seconds       = 30
+          # }
 
-          readiness_probe {
-            http_get {
-              path = "/health/ready"
-              port = 9000
-            }
+          # readiness_probe {
+          #   http_get {
+          #     path = "/health/ready"
+          #     port = 9000
+          #   }
 
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
-          }
+          #   initial_delay_seconds = 30
+          #   timeout_seconds       = 30
+          # }
 
-          liveness_probe {
-            http_get {
-              path   = "/health/live"
-              port   = 9090
-              scheme = "HTTPS"
-            }
+          #   liveness_probe {
+          #     http_get {
+          #       path   = "/health/live"
+          #       port   = 9090
+          #       scheme = "HTTPS"
+          #     }
 
-            initial_delay_seconds = 30
-            timeout_seconds       = 30
-          }
+          #     initial_delay_seconds = 30
+          #     timeout_seconds       = 30
+          #   }
         }
       }
     }
