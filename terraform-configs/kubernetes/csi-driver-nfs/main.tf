@@ -11,17 +11,17 @@ resource "helm_release" "this" {
   ]
 }
 
-resource "kubernetes_manifest" "csi_driver" {
-  manifest = yamldecode(<<EOF
-    apiVersion: storage.k8s.io/v1beta1
-    kind: CSIDriver
-    metadata:
-      name: nfs.csi.k8s.io
-    spec:
-      attachRequired: false
-      volumeLifecycleModes:
-        - Persistent
-      fsGroupPolicy: File
-  EOF
-  )
-}
+# resource "kubernetes_manifest" "csi_driver" {
+#   manifest = yamldecode(<<EOF
+#     apiVersion: v1
+#     kind: CSIDriver
+#     metadata:
+#       name: nfs.csi.k8s.io
+#     spec:
+#       attachRequired: false
+#       volumeLifecycleModes:
+#         - Persistent
+#       fsGroupPolicy: File
+#   EOF
+#   )
+# }
