@@ -148,6 +148,10 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             value = local.db_name
           }
           env {
+            name  = "KC_DB_URL_PORT"
+            value = "5432"
+          }
+          env {
             name  = "KC_DB_URL_HOST"
             value = "${local.db_cluster_name}-rw.${kubernetes_namespace_v1.this.metadata[0].name}.svc.cluster.local"
           }
@@ -165,8 +169,13 @@ resource "kubernetes_stateful_set_v1" "keycloak" {
             }
           }
           env {
-            name  = "KC_DB_USERNAME"
-            value = local.db_username
+            name = "KC_DB_USERNAME"
+            value_from {
+              secret_key_ref {
+                name = local.app_secret_name
+                key  = "username"
+              }
+            }
           }
 
           startup_probe {
