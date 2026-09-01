@@ -11,6 +11,8 @@ backstage:
       providers:
         guest:
           dangerouslyAllowInsecureDevelopmentMode: true
+    search:
+      engine: lunr
 ingress:
   enabled: true
   className: cilium
