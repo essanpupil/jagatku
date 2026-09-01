@@ -7,10 +7,22 @@ backstage:
       baseUrl: https://backstage.jagatku.local
       cors:
         origin: https://backstage.jagatku.local
+    # catalog:
+    #   providers:
+    #     keycloakOrg:
+    #       default:
+    #         baseUrl: http://keycloak.jagat.local
+    #         loginRealm: jagatku
+    #         realm: jagatku
+    #         clientId: backstage-jagat
+    #         clientSecret:
+    #         schedule:
+    #           frequency:
+    #           timeout:
     auth:
       providers:
         guest:
-          dangerouslyAllowInsecureDevelopmentMode: true
+          dangerouslyAllowOutsideDevelopment: true
     search:
       engine: lunr
 ingress:
