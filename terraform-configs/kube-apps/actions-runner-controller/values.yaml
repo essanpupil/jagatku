@@ -1,4 +1,0 @@
-githubConfigSecret: ${gh_pat_secret_name}
-serviceAccount:
-  create: false
-  name: ${service_account_name}
