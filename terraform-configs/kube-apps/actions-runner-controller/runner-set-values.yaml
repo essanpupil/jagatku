@@ -1,5 +1,0 @@
-githubConfigUrl: "https://github.com/essanpupil/backstage"
-githubConfigSecret: ${gh_pat_secret_name}
-controllerServiceAccount:
-  namespace: ${namespace}
-  name: ${sa_name}
