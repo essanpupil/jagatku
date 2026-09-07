@@ -1,0 +1,2 @@
+githubConfigUrl: ${github_config_url}
+githubConfigSecret: ${github_token_secret}

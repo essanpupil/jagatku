@@ -25,10 +25,11 @@ data "terraform_remote_state" "cert_manager" {
   }
 }
 
-data "vault_policy_document" "this" {
-  rule {
-    path         = vault_kv_secret_v2.backstage_config.path
-    capabilities = ["create", "read", "update"]
-    description  = "Access secrets for backstage"
+data "terraform_remote_state" "backstage_repo" {
+  backend = "consul"
+  config = {
+    address = "consul.laptop1.local"
+    scheme  = "http"
+    path    = "terraform-configs/github/backstage"
   }
 }
