@@ -25,10 +25,10 @@ data "terraform_remote_state" "cert_manager" {
   }
 }
 
-data "vault_policy_document" "this" {
-  rule {
-    path         = vault_kv_secret_v2.backstage_config.path
-    capabilities = ["create", "read", "update"]
-    description  = "Access secrets for backstage"
-  }
-}
+# data "vault_policy_document" "this" {
+#   rule {
+#     path         = vault_kv_secret_v2.backstage_config.path
+#     capabilities = ["create", "read", "update"]
+#     description  = "Access secrets for backstage"
+#   }
+# }
