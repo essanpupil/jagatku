@@ -14,6 +14,14 @@ locals {
         password = "PleaseChangeMe" #checkov:skip=CKV_SECRET_6
         username = "backstager"
       }
+    },
+    {
+      vault_static_name = "backstage-gh-pat-vault-static"
+      name              = "backstage-gh-pat"
+      type              = "generic"
+      data = {
+        github_token = "changeme"
+      }
     }
   ]
 }
