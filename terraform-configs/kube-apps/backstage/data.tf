@@ -24,3 +24,12 @@ data "terraform_remote_state" "cert_manager" {
     path    = "terraform-configs/kubernetes/cert-manager"
   }
 }
+
+data "terraform_remote_state" "backstage_repo" {
+  backend = "consul"
+  config = {
+    address = "consul.laptop1.local"
+    scheme  = "http"
+    path    = "terraform-configs/github/backstage"
+  }
+}
