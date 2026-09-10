@@ -67,7 +67,7 @@
         {{ hostvars['cp1']['join_command'].stdout }}
         --control-plane
         --node-name {{ node_name }}
-        --apiserver-advertise-address {{ ansible_facts['default_ipv4']['address'] }}
+        --apiserver-advertise-address {{ ansible_host }}
         --certificate-key {{ hostvars['cp1']['control_plane_cert_key'] }}
       become: true
       register: join_output
