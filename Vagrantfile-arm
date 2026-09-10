@@ -4,9 +4,9 @@
 Vagrant.configure("2") do |config|
   # Define VM configurations
   nodes = [
-    { name: "cp2", ip: "192.168.1.57", memory: 4096 },
-    { name: "node5", ip: "192.168.1.58", memory: 4096 },
-    { name: "node6", ip: "192.168.1.59", memory: 4096 },
+    { name: "cp3", ip: "192.168.1.60", memory: 2048 },
+    { name: "node5", ip: "192.168.1.58", memory: 6144 },
+    { name: "node6", ip: "192.168.1.59", memory: 6144 },
   ]
 
   # Common VM settings
