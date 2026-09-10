@@ -1,10 +1,10 @@
-include {
+include "root" {
   path = find_in_parent_folders("root.hcl")
 }
 
 locals {
-    project_id = "jagatku"
-    project_name = "jagatku"
+  project_id   = "jagatku"
+  project_name = "jagatku"
 }
 
 terraform {
@@ -12,8 +12,8 @@ terraform {
 }
 
 inputs = {
-  project_name = local.project_name
-  project_id   = local.project_id
+  project_name    = local.project_name
+  project_id      = local.project_id
   billing_account = "017F7F-B8D025-803DAC"
 }
 
