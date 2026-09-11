@@ -3,8 +3,9 @@ include "root" {
 }
 
 locals {
-  project_id   = "jagatku"
-  project_name = "jagatku"
+  project_config = read_terragrunt_config("project.hcl")
+  project_id     = local.project_config.locals.project_id
+  project_name   = local.project_config.locals.project_name
 }
 
 terraform {
