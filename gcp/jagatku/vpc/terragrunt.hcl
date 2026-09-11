@@ -17,8 +17,8 @@ locals {
 }
 
 terraform {
-  // source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.3-1"
-  source = "/Users/essan/Code/iac-modules/gcp/vpc"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.4"
+  // source = "/Users/essan/Code/iac-modules/gcp/vpc"
 }
 
 inputs = {
