@@ -17,17 +17,3 @@ inputs = {
   project_id      = local.project_id
   billing_account = "017F7F-B8D025-803DAC"
 }
-
-generate "provider" {
-  path      = "provider.tf"
-  if_exists = "overwrite_terragrunt"
-  contents  = <<EOF
-provider "google" {
-  project = "${local.project_id}"
-}
-
-provider "google-beta" {
-  project = "${local.project_id}"
-}
-EOF
-}
