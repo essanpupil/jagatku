@@ -23,7 +23,7 @@ locals {
 }
 
 terraform {
-  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/gke?ref=v0.0.4"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/gke?ref=v0.0.4-1"
   // source = "/Users/essan/Code/iac-modules/gcp/gke"
 }
 
