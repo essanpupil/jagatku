@@ -18,6 +18,9 @@ repos:
       - id: terraform_docs
       - id: terraform_checkov
       - id: terraform_validate
+        exclude: ^gcp/
+      - id: terragrunt_validate
+        files: ^gcp/
       # - id: infracost_breakdown
       - id: terraform_tflint
       # - id: terraform_tfsec
