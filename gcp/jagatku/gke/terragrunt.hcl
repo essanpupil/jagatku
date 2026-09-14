@@ -25,7 +25,7 @@ locals {
 }
 
 terraform {
-  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/gke?ref=v0.0.5"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/gke?ref=v0.0.5-1"
   # source = "/Users/essan/Code/iac-modules/gcp/gke"
 }
 
@@ -37,6 +37,7 @@ inputs = {
   network_name       = dependency.vpc.outputs.network_name
   subnetwork_id      = dependency.vpc.outputs.private_subnetworks[0]
   location           = "us-east1"
-  bastion_zone       = "b"
-  ssh_source_range   = ["222.124.102.240/32"]
+  create_bastion = false
+  enable_private_endpoint = false
+  public_authorized_cidr = "180.252.255.20/32"
 }
