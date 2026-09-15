@@ -7,7 +7,7 @@ locals {
 }
 
 terraform {
-  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/jagatku?ref=v0.0.6"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/project?ref=v0.0.6"
   # source = "/Users/essan/Code/iac-modules/gcp/project"
 }
 
