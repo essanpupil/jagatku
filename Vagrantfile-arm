@@ -4,15 +4,14 @@
 Vagrant.configure("2") do |config|
   # Define VM configurations
   nodes = [
-    { name: "cp1", ip: "192.168.1.53", memory: 2048 },
-    # { name: "cp2", ip: "192.168.1.54", memory: 2048 },
-    { name: "node1", ip: "192.168.1.56", memory: 6144 },
-    { name: "node2", ip: "192.168.1.57", memory: 6144 }
+    { name: "cp3", ip: "192.168.1.60", memory: 2048 },
+    { name: "node5", ip: "192.168.1.58", memory: 6144 },
+    { name: "node6", ip: "192.168.1.59", memory: 6144 },
   ]
 
   # Common VM settings
   box_name = "cloud-image/debian-13"
-  box_version = "20260623.2518.0"
+  box_version = "20260831.2587.0"
   disk_size = "30GB"
   cpus = 2
 
@@ -30,12 +29,12 @@ Vagrant.configure("2") do |config|
       node.vm.disk :disk, size: disk_size, primary: true
 
       node.vm.provider "virtualbox" do |v|
-        v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
-        v.customize ["modifyvm", :id, "--ioapic", "on"]
-        v.customize ["modifyvm", :id, "--pae", "on"]
+        # v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+        # v.customize ["modifyvm", :id, "--ioapic", "on"]
+        # v.customize ["modifyvm", :id, "--pae", "on"]
         v.customize ["modifyvm", :id, "--cpus", cpus.to_s]
-        v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
-        v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
+        # v.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+        # v.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
         v.memory = node_conf[:memory]
       end
 
