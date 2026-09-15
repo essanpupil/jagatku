@@ -28,26 +28,26 @@ resource "helm_release" "this" {
 
 resource "kubernetes_role_v1" "this" {
   metadata {
-    name = "${local.service_account_name}-role"
+    name      = "${local.service_account_name}-role"
     namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
 
   rule {
-    api_groups     = [""]
-    resources      = ["serviceaccounts/token"]
-    verbs          = ["create"]
+    api_groups = [""]
+    resources  = ["serviceaccounts/token"]
+    verbs      = ["create"]
   }
 }
 
 resource "kubernetes_role_binding_v1" "this" {
   metadata {
-    name = "${local.service_account_name}-role-binding"
+    name      = "${local.service_account_name}-role-binding"
     namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role_v1.this.metadata.0.name
+    name      = kubernetes_role_v1.this.metadata[0].name
   }
   subject {
     kind      = "ServiceAccount"
