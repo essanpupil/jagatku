@@ -73,7 +73,6 @@ resource "kubernetes_cluster_role_binding_v1" "this" {
 }
 
 resource "kubernetes_manifest" "cluster_issuer" {
-  depends_on = [ helm_release.this ]
   manifest = yamldecode(<<EOF
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
