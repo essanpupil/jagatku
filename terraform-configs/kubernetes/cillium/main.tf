@@ -4,14 +4,10 @@ resource "helm_release" "this" {
   chart      = "cilium"
   namespace  = "kube-system"
   version    = "1.19.6"
-  atomic     = true
-  wait       = true
+  atomic     = false
+  wait       = false  # cilium takes very long time to finished
+  # timeout = 900
   values = [
     file("${path.module}/values.yaml")
   ]
-}
-
-import {
-  to = helm_release.this
-  id = "kube-system/cilium"
 }

@@ -77,7 +77,7 @@ resource "kubernetes_manifest" "cluster_issuer" {
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
     metadata:
-      name: cert-man-cluster-issuer
+      name: ${local.cluster_issuer_name}
     spec:
       vault:
         server: http://vault.laptop1.local
