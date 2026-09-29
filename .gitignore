@@ -3,3 +3,4 @@
 .DS_Store
 .ansible/**
 **/.terragrunt-cache/**
+.vscode/
