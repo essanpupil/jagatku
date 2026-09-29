@@ -11,7 +11,7 @@ dependency "vpc" {
     private_subnetworks_id = ["subnetwork-mock12345"]
     private_subnetworks_name = ["subnetwork-mock12345"]
   }
-  mock_outputs_allowed_terraform_commands = ["plan", "init"]
+  mock_outputs_allowed_terraform_commands = ["init"]
   mock_outputs_merge_strategy_with_state  = "shallow"
 }
 
