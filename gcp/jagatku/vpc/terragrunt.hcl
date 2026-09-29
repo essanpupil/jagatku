@@ -18,14 +18,14 @@ locals {
   subnets = [
     {
       name          = "priv-jagatku"
-      ip_cidr_range = "10.2.0.0/16"
+      ip_cidr_range = "10.1.0.0/24"
       region        = "us-east1"
     }
   ]
 }
 
 terraform {
-  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.7"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.9"
   # source = "/Users/essan/Code/iac-modules/gcp/vpc"
 }
 
@@ -33,4 +33,6 @@ inputs = {
   network_name    = "${dependency.project.outputs.project_name}-${local.network_name}"
   project_id      = dependency.project.outputs.project_id
   private_subnets = local.subnets
+  allow_ssh = true
+  ssh_source_ranges = ["${run_cmd("curl", "api.ipify.org")}/32"]
 }
