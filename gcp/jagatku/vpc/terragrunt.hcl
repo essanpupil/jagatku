@@ -25,14 +25,12 @@ locals {
 }
 
 terraform {
-  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.9"
-  # source = "/Users/essan/Code/iac-modules/gcp/vpc"
+  source = "git::https://github.com/essanpupil/iac-modules.git//gcp/vpc?ref=v0.0.9-1"
+  # source = "/Users/essan/Code/iac-modules//gcp/vpc"
 }
 
 inputs = {
   network_name    = "${dependency.project.outputs.project_name}-${local.network_name}"
   project_id      = dependency.project.outputs.project_id
   private_subnets = local.subnets
-  allow_ssh = true
-  ssh_source_ranges = ["${run_cmd("curl", "api.ipify.org")}/32"]
 }
