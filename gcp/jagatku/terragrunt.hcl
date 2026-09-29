@@ -16,6 +16,9 @@ inputs = {
   project_id      = local.project_config.locals.project_id
   billing_account = "017F7F-B8D025-803DAC"
   enabled_services = [
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "container.googleapis.com",
+    "iam.googleapis.com",
+    "serviceusage.googleapis.com"
   ]
 }
