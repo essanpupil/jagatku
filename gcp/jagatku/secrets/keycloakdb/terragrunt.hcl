@@ -9,13 +9,13 @@ dependency "project" {
     project_id   = "prj-id-mock"
     project_name = "prj-name-mock"
   }
-  mock_outputs_allowed_terraform_commands = ["plan", "init"]
+  mock_outputs_allowed_terraform_commands = ["init"]
   mock_outputs_merge_strategy_with_state  = "shallow"
 }
 
 terraform {
-    source = "git::https://github.com/essanpupil/iac-modules.git//gcp/secret-manager?ref=v0.0.6"
-    # source = "/Users/essan/Code/iac-modules/gcp/secret-manager"
+    # source = "git::https://github.com/essanpupil/iac-modules.git//gcp/secret-manager?ref=v0.0.6"
+    source = "/Users/essan/Code/iac-modules/gcp/secret-manager"
 }
 
 inputs = {

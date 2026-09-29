@@ -11,7 +11,7 @@ dependency "vpc" {
     private_subnetworks_id = ["subnetwork-mock12345"]
     private_subnetworks_name = ["subnetwork-mock12345"]
   }
-  mock_outputs_allowed_terraform_commands = ["plan", "init"]
+  mock_outputs_allowed_terraform_commands = ["init"]
   mock_outputs_merge_strategy_with_state  = "shallow"
 }
 
@@ -37,6 +37,6 @@ inputs = {
   location           = local.cluster_config.locals.location
   create_bastion = false
   enable_private_endpoint = false
-  public_authorized_cidr = "180.252.255.20/32"
+  public_authorized_cidr = "${run_cmd("curl", "api.ipify.org")}/32"  # TODO: Change cluster access to use iap-tunnel
   enabled_secret_manager_config = true
 }
