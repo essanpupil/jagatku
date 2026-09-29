@@ -9,7 +9,7 @@ dependency "project" {
     project_id   = "prj-id-mock"
     project_name = "prj-name-mock"
   }
-  mock_outputs_allowed_terraform_commands = ["plan", "init"]
+  mock_outputs_allowed_terraform_commands = ["init"]
   mock_outputs_merge_strategy_with_state  = "shallow"
 }
 
